@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="Roave DocbookTool coding standard">
+    <arg value="p"/>
+    <arg value="s"/>
+    <arg name="colors"/>
+
+    <file>src</file>
+    <file>generate.php</file>
+
+    <rule ref="Doctrine">
+        <exclude name="Generic.Files.LineLength.TooLong"/>
+    </rule>
+
+</ruleset>
