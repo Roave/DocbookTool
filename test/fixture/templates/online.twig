@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8"/>
+    <title>Documentation</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.css" rel="stylesheet" />
+</head>
+<body>
+<nav>
+    <ul>
+        {% for page in pages %}
+            <li><a href="#{{ page.slug }}">{{ page.title }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
+<div id="content">
+    {% for page in pages %}
+        <section id="{{ page.slug }}" class="hidden">
+            {% if page.shouldGeneratePdf %}
+                <div class="pdf-link">
+                    <a href="pdf/{{ page.slug }}.pdf">Download PDF</a>
+                </div>
+            {% endif %}
+            {{ page.content|raw }}
+            <br />
+        </section>
+    {% endfor %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/autoloader/prism-autoloader.js"></script>
+</body>
+</html>
