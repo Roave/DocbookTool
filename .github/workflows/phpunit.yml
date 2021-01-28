@@ -25,6 +25,9 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v2"
 
+      - name: "Install wkhtmltopdf"
+        run: "sudo apt-get install xvfb libfontconfig wkhtmltopdf"
+
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
@@ -53,4 +56,4 @@ jobs:
         run: "composer install --no-interaction --no-progress --no-suggest"
 
       - name: "Run phpunit"
-        run: "vendor/bin/phpunit"
+        run: "xvfb-run -- vendor/bin/phpunit"
