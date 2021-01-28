@@ -7,6 +7,8 @@ namespace Roave\DocbookTool\Writer;
 use Roave\DocbookTool\DocbookPage;
 use Twig\Environment;
 
+use function Safe\file_put_contents;
+
 final class SingleStaticHtmlWriter implements OutputWriter
 {
     public function __construct(
@@ -17,7 +19,7 @@ final class SingleStaticHtmlWriter implements OutputWriter
     }
 
     /** @param DocbookPage[] $docbookPages */
-    public function __invoke(array $docbookPages) : void
+    public function __invoke(array $docbookPages): void
     {
         file_put_contents(
             $this->outputFile,

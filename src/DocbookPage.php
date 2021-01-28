@@ -23,32 +23,33 @@ class DocbookPage
 
     public function withReplacedContent(string $newContent): self
     {
-        $new = clone $this;
+        $new          = clone $this;
         $new->content = $newContent;
+
         return $new;
     }
 
-    public function slug() : string
+    public function slug(): string
     {
         return $this->slug;
     }
 
-    public function content() : string
+    public function content(): string
     {
         return $this->content;
     }
 
-    public function title() : string
+    public function title(): string
     {
         return $this->title;
     }
 
-    public function shouldGeneratePdf() : bool
+    public function shouldGeneratePdf(): bool
     {
         return $this->shouldGeneratePdf;
     }
 
-    public function confluencePageId() : ?int
+    public function confluencePageId(): ?int
     {
         return $this->confluencePageId;
     }
