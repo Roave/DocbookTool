@@ -6,14 +6,11 @@ namespace Roave\DocbookTool;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use RuntimeException;
 use SplFileInfo;
 
 use function assert;
 use function Safe\file_get_contents;
 use function str_replace;
-use function str_starts_with;
-use function strtok;
 
 class RecursivelyLoadPagesFromPath
 {
@@ -30,12 +27,10 @@ class RecursivelyLoadPagesFromPath
             $templateFilename = $file->getPathname();
             $slug             = $this->slugForFilename($docbookPath, $templateFilename);
             $content          = file_get_contents($templateFilename);
-            $title            = $this->titleForFile($templateFilename, $content);
 
             $pages[] = DocbookPage::fromSlugTitleAndContent(
                 $slug,
-                $content,
-                $title
+                $content
             );
         }
 
@@ -45,16 +40,5 @@ class RecursivelyLoadPagesFromPath
     private function slugForFilename(string $docbookPath, string $templateFilename): string
     {
         return str_replace([$docbookPath, '.md', '/'], ['', '', '__'], $templateFilename);
-    }
-
-    private function titleForFile(string $templateFilename, string $pageContent): string
-    {
-        $firstLine = strtok($pageContent, "\n");
-
-        if (! str_starts_with($firstLine, '# ')) {
-            throw new RuntimeException('First line of markdown file ' . $templateFilename . ' did not start with "# "...');
-        }
-
-        return str_replace('# ', '', $firstLine);
     }
 }
