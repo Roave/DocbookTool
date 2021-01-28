@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
-use function assert;
+use Webmozart\Assert\Assert;
 use function base64_encode;
 use function extension_loaded;
-use function is_string;
 use function posix_isatty;
 use function rtrim;
 use function Safe\sprintf;
@@ -26,7 +25,8 @@ class InteractiveHttpBasicAuthTokenCreator
     {
         /** @psalm-suppress ForbiddenCode */
         $input = shell_exec(sprintf("bash -c 'read %s input && echo \$input'", $secretive ? '-s' : ''));
-        assert(is_string($input));
+
+        Assert::string($input);
 
         return rtrim($input);
     }

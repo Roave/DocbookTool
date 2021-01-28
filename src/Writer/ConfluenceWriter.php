@@ -13,6 +13,7 @@ use JsonException;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 
+use Webmozart\Assert\Assert;
 use function array_column;
 use function array_merge;
 use function assert;
@@ -281,7 +282,7 @@ final class ConfluenceWriter implements OutputWriter
                 JSON_THROW_ON_ERROR
             );
 
-            assert(is_array($decodedResponse));
+            Assert::isArray($decodedResponse);
 
             return $decodedResponse;
         } catch (JsonException $jsonException) {
