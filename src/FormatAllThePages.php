@@ -15,15 +15,15 @@ class FormatAllThePages
 
     /**
      * @param DocbookPage[] $pages
+     *
      * @return DocbookPage[]
      */
-    public function __invoke(array $pages) : array
+    public function __invoke(array $pages): array
     {
         $newPages = [];
 
         foreach ($pages as $p) {
-            foreach ($this->formatters as $formatter)
-            {
+            foreach ($this->formatters as $formatter) {
                 $p = $formatter->__invoke($p);
             }
 

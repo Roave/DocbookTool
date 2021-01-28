@@ -19,24 +19,27 @@ use Roave\DocbookTool\Writer\SingleStaticHtmlWriter;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
+use function file_exists;
+use function unlink;
+
 final class DocbookToolGeneratorTest extends TestCase
 {
-    private const TEMPLATE_PATH = __DIR__ . '/../fixture/templates';
-    private const OUTPUT_DOCBOOK_HTML = __DIR__ . '/out.html';
+    private const TEMPLATE_PATH                = __DIR__ . '/../fixture/templates';
+    private const OUTPUT_DOCBOOK_HTML          = __DIR__ . '/out.html';
     private const EXPECTED_OUTPUT_DOCBOOK_HTML = __DIR__ . '/../fixture/expectations/out.html';
-    private const OUTPUT_PDF_PATH = __DIR__;
-    private const FEATURES_PATH = __DIR__ . '/../fixture/feature';
-    private const CONTENT_PATH = __DIR__ . '/../fixture/docbook';
+    private const OUTPUT_PDF_PATH              = __DIR__;
+    private const FEATURES_PATH                = __DIR__ . '/../fixture/feature';
+    private const CONTENT_PATH                 = __DIR__ . '/../fixture/docbook';
 
     public function testGeneration(): void
     {
-        $twig = new Environment(new FilesystemLoader(self::TEMPLATE_PATH));
+        $twig   = new Environment(new FilesystemLoader(self::TEMPLATE_PATH));
         $logger = new NullLogger();
 
         (new WriteAllTheOutputs([
             new SingleStaticHtmlWriter($twig, 'online.twig', self::OUTPUT_DOCBOOK_HTML),
             new MultiplePdfFilesWriter($twig, 'pdf.twig', 'wkhtmltopdf', self::OUTPUT_PDF_PATH, $logger),
-            new ConfluenceWriter()
+            new ConfluenceWriter(),
         ]))->__invoke(
             (new FormatAllThePages([
                 new ExtractFrontMatter(),
@@ -60,8 +63,10 @@ final class DocbookToolGeneratorTest extends TestCase
             unlink(self::OUTPUT_DOCBOOK_HTML);
         }
 
-        if (file_exists(self::OUTPUT_PDF_PATH . '/__test.pdf')) {
-            unlink(self::OUTPUT_PDF_PATH . '/__test.pdf');
+        if (! file_exists(self::OUTPUT_PDF_PATH . '/__test.pdf')) {
+            return;
         }
+
+        unlink(self::OUTPUT_PDF_PATH . '/__test.pdf');
     }
 }

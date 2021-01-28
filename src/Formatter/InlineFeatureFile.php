@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace Roave\DocbookTool\Formatter;
 
 use Roave\DocbookTool\DocbookPage;
+
+use function htmlentities;
+use function preg_replace_callback;
 use function Safe\file_get_contents;
+
+use const ENT_QUOTES;
 
 final class InlineFeatureFile implements PageFormatter
 {
@@ -13,7 +18,7 @@ final class InlineFeatureFile implements PageFormatter
     {
     }
 
-    public function __invoke(DocbookPage $page) : DocbookPage
+    public function __invoke(DocbookPage $page): DocbookPage
     {
         return $page->withReplacedContent(
             preg_replace_callback(

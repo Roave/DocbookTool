@@ -5,14 +5,20 @@ declare(strict_types=1);
 namespace Roave\DocbookTool\Formatter;
 
 use Roave\DocbookTool\DocbookPage;
+
+use function base64_encode;
+use function escapeshellcmd;
+use function md5;
+use function preg_replace_callback;
 use function Safe\file_get_contents;
 use function Safe\file_put_contents;
 use function Safe\unlink;
+use function shell_exec;
+use function sys_get_temp_dir;
 
 final class RenderPlantUmlDiagramInline implements PageFormatter
 {
-
-    public function __invoke(DocbookPage $page) : DocbookPage
+    public function __invoke(DocbookPage $page): DocbookPage
     {
         return $page->withReplacedContent(
             preg_replace_callback(

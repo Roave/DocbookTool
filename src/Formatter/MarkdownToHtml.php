@@ -13,11 +13,11 @@ final class MarkdownToHtml implements PageFormatter
 
     public function __construct()
     {
-        $this->markdownParser = new MarkdownExtra();
+        $this->markdownParser                    = new MarkdownExtra();
         $this->markdownParser->code_class_prefix = 'lang-';
     }
 
-    public function __invoke(DocbookPage $page) : DocbookPage
+    public function __invoke(DocbookPage $page): DocbookPage
     {
         return $page->withReplacedContent(
             $this->markdownParser->transform($page->content())

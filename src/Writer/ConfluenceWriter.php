@@ -9,7 +9,7 @@ use Roave\DocbookTool\DocbookPage;
 final class ConfluenceWriter implements OutputWriter
 {
     /** @param DocbookPage[] $docbookPages */
-    public function __invoke(array $docbookPages) : void
+    public function __invoke(array $docbookPages): void
     {
         // @todo write to a confluence instance
     }

@@ -8,9 +8,14 @@ use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 use Twig\Environment;
+
+use function escapeshellcmd;
+use function exec;
+use function implode;
 use function Safe\file_put_contents;
 use function Safe\sprintf;
 use function Safe\unlink;
+use function sys_get_temp_dir;
 
 class MultiplePdfFilesWriter
 {
@@ -24,7 +29,7 @@ class MultiplePdfFilesWriter
     }
 
     /** @param DocbookPage[] $docbookPages */
-    public function __invoke(array $docbookPages) : void
+    public function __invoke(array $docbookPages): void
     {
         foreach ($docbookPages as $page) {
             if (! $page->shouldGeneratePdf()) {

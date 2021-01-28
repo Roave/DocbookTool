@@ -6,9 +6,14 @@ namespace Roave\DocbookTool;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 use SplFileInfo;
+
+use function assert;
+use function Safe\file_get_contents;
+use function str_replace;
+use function str_starts_with;
+use function strtok;
 
 class RecursivelyLoadPagesFromPath
 {
@@ -23,9 +28,9 @@ class RecursivelyLoadPagesFromPath
             }
 
             $templateFilename = $file->getPathname();
-            $slug = $this->slugForFilename($docbookPath, $templateFilename);
-            $content = file_get_contents($templateFilename);
-            $title = $this->titleForFile($templateFilename, $content);
+            $slug             = $this->slugForFilename($docbookPath, $templateFilename);
+            $content          = file_get_contents($templateFilename);
+            $title            = $this->titleForFile($templateFilename, $content);
 
             $pages[] = DocbookPage::fromSlugTitleAndContent(
                 $slug,
