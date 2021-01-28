@@ -8,4 +8,8 @@ Static HTML and PDF generator tool for generating documentation from Markdown fi
 
 ## Usage
 
+```bash
+bin/docbook-tool [--html] [--pdf] [--confluence]
+```
+
 TBD
