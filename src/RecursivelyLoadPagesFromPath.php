@@ -34,6 +34,14 @@ class RecursivelyLoadPagesFromPath
             );
         }
 
+        // Currently, sort everything alphabetically. Would be nice to control sort order though.
+        usort(
+            $pages,
+            static function (DocbookPage $a, DocbookPage $b): int {
+                return $a->slug() <=> $b->slug();
+            }
+        );
+
         return $pages;
     }
 
