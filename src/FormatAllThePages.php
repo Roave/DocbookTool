@@ -8,7 +8,10 @@ use Roave\DocbookTool\Formatter\PageFormatter;
 
 class FormatAllThePages
 {
-    /** @param PageFormatter[] $formatters */
+    /**
+     * @param PageFormatter[] $formatters
+     * @psalm-param non-empty-list<PageFormatter> $formatters
+     */
     public function __construct(private array $formatters)
     {
     }

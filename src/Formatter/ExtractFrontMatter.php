@@ -7,9 +7,7 @@ namespace Roave\DocbookTool\Formatter;
 use Roave\DocbookTool\DocbookPage;
 use Symfony\Component\Yaml\Yaml;
 
-use function assert;
-use function count;
-use function is_array;
+use Webmozart\Assert\Assert;
 use function Safe\preg_match;
 use function str_contains;
 
@@ -25,11 +23,12 @@ final class ExtractFrontMatter implements PageFormatter
             return $page;
         }
 
-        assert($m !== null);
-        assert(count($m) === 2);
+        Assert::notNull($m);
+        Assert::count($m, 3);
 
         $frontMatter = Yaml::parse((string) $m[1]);
-        assert(is_array($frontMatter));
+
+        Assert::isArray($frontMatter);
 
         return $page
             ->withFrontMatter($frontMatter)

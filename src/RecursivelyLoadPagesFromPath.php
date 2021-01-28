@@ -8,7 +8,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 
-use function assert;
+use Webmozart\Assert\Assert;
 use function Safe\file_get_contents;
 use function str_replace;
 
@@ -19,7 +19,7 @@ class RecursivelyLoadPagesFromPath
     {
         $pages = [];
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($docbookPath)) as $file) {
-            assert($file instanceof SplFileInfo);
+            Assert::isInstanceOf($file, SplFileInfo::class);
             if ($file->isDir() || $file->getExtension() !== 'md') {
                 continue;
             }
