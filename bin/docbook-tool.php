@@ -7,6 +7,7 @@ namespace Roave\DocbookTool;
 use GuzzleHttp\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
@@ -108,7 +109,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
     }
 
     (new WriteAllTheOutputs($outputWriters))(
-        (new FormatAllThePages($pageFormatters))(
+        array_map(
+            [new AggregatePageFormatter($pageFormatters), '__invoke'],
             (new RecursivelyLoadPagesFromPath())($contentPath)
         )
     );
