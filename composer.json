@@ -45,5 +45,15 @@
     ],
     "config": {
         "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "which java",
+            "which wkhtmltopdf"
+        ],
+        "post-update-cmd": [
+            "which java",
+            "which wkhtmltopdf"
+        ]
     }
 }
