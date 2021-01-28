@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
-use GuzzleHttp\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
@@ -12,22 +11,13 @@ use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 use Roave\DocbookTool\Formatter\RenderPlantUmlDiagramInline;
-use Roave\DocbookTool\Writer\ConfluenceWriter;
-use Roave\DocbookTool\Writer\MultiplePdfFilesWriter;
-use Roave\DocbookTool\Writer\OutputWriter;
-use Roave\DocbookTool\Writer\SingleStaticHtmlWriter;
-use RuntimeException;
+use Roave\DocbookTool\Writer\WriterFactory;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 use function array_map;
-use function count;
-use function dirname;
-use function file_exists;
 use function getenv;
-use function in_array;
 use function is_string;
-use function Safe\mkdir;
 
 (static function (array $arguments): void {
     require_once __DIR__ . '/../vendor/autoload.php';
@@ -41,63 +31,7 @@ use function Safe\mkdir;
     $logger = new Logger('cli');
     $logger->pushHandler(new StreamHandler('php://stdout'));
 
-    /** @var OutputWriter[] $outputWriters */
-    $outputWriters = [];
-
-    if (in_array('--html', $arguments, true)) {
-        $outputDocbookHtml = getenv('DOCBOOK_TOOL_OUTPUT_HTML_FILE') ?: '/docs-package/docbook.html';
-
-        if (! file_exists(dirname($outputDocbookHtml))) {
-            mkdir(dirname($outputDocbookHtml), recursive: true);
-        }
-
-        $outputWriters[] = new SingleStaticHtmlWriter(
-            $twig,
-            'online.twig',
-            $outputDocbookHtml,
-            $logger
-        );
-    }
-
-    if (in_array('--pdf', $arguments, true)) {
-        $outputPdfPath = getenv('DOCBOOK_TOOL_OUTPUT_PDF_PATH') ?: '/docs-package/pdf';
-
-        if (! file_exists($outputPdfPath)) {
-            mkdir($outputPdfPath, recursive: true);
-        }
-
-        $outputWriters[] = new MultiplePdfFilesWriter(
-            $twig,
-            'pdf.twig',
-            'wkhtmltopdf',
-            $outputPdfPath,
-            $logger
-        );
-    }
-
-    if (in_array('--confluence', $arguments, true)) {
-        $confluenceUrl       = getenv('DOCBOOK_TOOL_CONFLUENCE_URL') ?: null;
-        $confluenceAuthToken = getenv('DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN') ?: null;
-
-        if ($confluenceAuthToken === null && InteractiveHttpBasicAuthTokenCreator::isInteractiveTty()) {
-            $confluenceAuthToken = (new InteractiveHttpBasicAuthTokenCreator())();
-        }
-
-        if ($confluenceUrl !== null && $confluenceAuthToken !== null) {
-            $outputWriters[] = new ConfluenceWriter(
-                new Client(['verify' => false]),
-                $confluenceUrl . '/rest/api/content',
-                $confluenceAuthToken,
-                $logger
-            );
-        } else {
-            $logger->notice('Skipping Confluence mirror step, DOCBOOK_TOOL_CONFLUENCE_URL and/or DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN was not set');
-        }
-    }
-
-    if (! count($outputWriters)) {
-        throw new RuntimeException('No writers specified.');
-    }
+    $outputWriters = (new WriterFactory($twig, $logger))($arguments);
 
     $pageFormatters = [
         new ExtractFrontMatter(),
