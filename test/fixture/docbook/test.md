@@ -1,3 +1,13 @@
+---
+# Title can be used as {{ page.title }} in your Twig template
+title: Great title
+
+# Controls whether a PDF version of this page is included
+pdf: true
+
+# If this is set to an integer, we will update the page content for the corresponding Confluence page
+confluencePageId: 1234
+---
 # Hello there this is a great file
 
 This is some markdown

@@ -52,6 +52,7 @@ final class DocbookToolGeneratorTest extends TestCase
         );
 
         self::assertFileEquals(self::EXPECTED_OUTPUT_DOCBOOK_HTML, self::OUTPUT_DOCBOOK_HTML);
+        self::assertFileExists(self::OUTPUT_PDF_PATH . '/__test.pdf');
         // @todo assert PDFs are the same
     }
 
