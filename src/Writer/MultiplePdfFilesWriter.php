@@ -17,7 +17,7 @@ use function Safe\sprintf;
 use function Safe\unlink;
 use function sys_get_temp_dir;
 
-class MultiplePdfFilesWriter
+class MultiplePdfFilesWriter implements OutputWriter
 {
     public function __construct(
         private Environment $twig,

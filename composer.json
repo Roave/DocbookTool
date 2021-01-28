@@ -20,6 +20,7 @@
     "require-dev": {
         "doctrine/coding-standard": "^8.2",
         "phpunit/phpunit": "^9.5",
+        "psalm/plugin-phpunit": "^0.15.1",
         "roave/security-advisories": "dev-latest",
         "vimeo/psalm": "^4.4"
     },
