@@ -24,34 +24,31 @@ use function dirname;
 use function file_exists;
 use function getenv;
 use function in_array;
+use function is_string;
 use function Safe\mkdir;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 (static function (array $arguments): void {
-    $contentPath       = getenv('DOCBOOK_TOOL_CONTENT_PATH') ?: '/app/docs/book';
-    $templatePath      = getenv('DOCBOOK_TOOL_TEMPLATE_PATH') ?: '/app/templates';
-    $featuresPath      = getenv('DOCBOOK_TOOL_FEATURES_PATH') ?: '/app/features';
-    $outputDocbookHtml = getenv('DOCBOOK_TOOL_OUTPUT_HTML_FILE') ?: '/docs-package/docbook.html';
-    $outputPdfPath     = getenv('DOCBOOK_TOOL_OUTPUT_PDF_PATH') ?: '/docs-package/pdf';
+    $contentPath  = getenv('DOCBOOK_TOOL_CONTENT_PATH') ?: '/app/docs/book';
+    $templatePath = getenv('DOCBOOK_TOOL_TEMPLATE_PATH') ?: '/app/templates';
+    $featuresPath = getenv('DOCBOOK_TOOL_FEATURES_PATH') ?: null;
 
     $twig = new Environment(new FilesystemLoader($templatePath));
 
     $logger = new Logger('cli');
     $logger->pushHandler(new StreamHandler('php://stdout'));
 
-    if (! file_exists(dirname($outputDocbookHtml))) {
-        mkdir(dirname($outputDocbookHtml), recursive: true);
-    }
-
-    if (! file_exists($outputPdfPath)) {
-        mkdir($outputPdfPath, recursive: true);
-    }
-
     /** @var OutputWriter[] $outputWriters */
     $outputWriters = [];
 
     if (in_array('--html', $arguments, true)) {
+        $outputDocbookHtml = getenv('DOCBOOK_TOOL_OUTPUT_HTML_FILE') ?: '/docs-package/docbook.html';
+
+        if (! file_exists(dirname($outputDocbookHtml))) {
+            mkdir(dirname($outputDocbookHtml), recursive: true);
+        }
+
         $outputWriters[] = new SingleStaticHtmlWriter(
             $twig,
             'online.twig',
@@ -61,6 +58,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
     }
 
     if (in_array('--pdf', $arguments, true)) {
+        $outputPdfPath = getenv('DOCBOOK_TOOL_OUTPUT_PDF_PATH') ?: '/docs-package/pdf';
+
+        if (! file_exists($outputPdfPath)) {
+            mkdir($outputPdfPath, recursive: true);
+        }
+
         $outputWriters[] = new MultiplePdfFilesWriter(
             $twig,
             'pdf.twig',
@@ -94,13 +97,18 @@ require_once __DIR__ . '/../vendor/autoload.php';
         throw new RuntimeException('No writers specified.');
     }
 
+    $pageFormatters = [
+        new ExtractFrontMatter(),
+        new RenderPlantUmlDiagramInline(),
+        new MarkdownToHtml(),
+    ];
+
+    if (is_string($featuresPath)) {
+        $pageFormatters[] = new InlineFeatureFile($featuresPath);
+    }
+
     (new WriteAllTheOutputs($outputWriters))(
-        (new FormatAllThePages([
-            new ExtractFrontMatter(),
-            new RenderPlantUmlDiagramInline(),
-            new MarkdownToHtml(),
-            new InlineFeatureFile($featuresPath),
-        ]))(
+        (new FormatAllThePages($pageFormatters))(
             (new RecursivelyLoadPagesFromPath())($contentPath)
         )
     );
