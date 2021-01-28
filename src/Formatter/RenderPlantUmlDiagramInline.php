@@ -28,7 +28,6 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
 
     public function __invoke(DocbookPage $page): DocbookPage
     {
-        // @todo need some kind of verification that `java` is present
         return $page->withReplacedContent(
             preg_replace_callback(
                 '/```puml([\w\W]*?)```/',
