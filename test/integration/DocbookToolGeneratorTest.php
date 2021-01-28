@@ -6,7 +6,7 @@ namespace Roave\DocbookToolIntegrationTest;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use Roave\DocbookTool\FormatAllThePages;
+use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
@@ -39,13 +39,17 @@ final class DocbookToolGeneratorTest extends TestCase
             new SingleStaticHtmlWriter($twig, 'online.twig', self::OUTPUT_DOCBOOK_HTML, $logger),
             new MultiplePdfFilesWriter($twig, 'pdf.twig', 'wkhtmltopdf', self::OUTPUT_PDF_PATH, $logger),
         ]))->__invoke(
-            (new FormatAllThePages([
-                new ExtractFrontMatter(),
-                new RenderPlantUmlDiagramInline(),
-                new MarkdownToHtml(),
-                new InlineFeatureFile(self::FEATURES_PATH),
-            ]))->__invoke(
-                (new RecursivelyLoadPagesFromPath())->__invoke(self::CONTENT_PATH)
+            array_map(
+                [
+                    new AggregatePageFormatter([
+                        new ExtractFrontMatter(),
+                        new RenderPlantUmlDiagramInline(),
+                        new MarkdownToHtml(),
+                        new InlineFeatureFile(self::FEATURES_PATH),
+                    ]),
+                    '__invoke'
+                ],
+                (new RecursivelyLoadPagesFromPath())(self::CONTENT_PATH)
             )
         );
 
