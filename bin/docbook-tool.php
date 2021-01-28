@@ -29,9 +29,9 @@ use function in_array;
 use function is_string;
 use function Safe\mkdir;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 (static function (array $arguments): void {
+    require_once __DIR__ . '/../vendor/autoload.php';
+
     $contentPath  = getenv('DOCBOOK_TOOL_CONTENT_PATH') ?: '/app/docs/book';
     $templatePath = getenv('DOCBOOK_TOOL_TEMPLATE_PATH') ?: '/app/templates';
     $featuresPath = getenv('DOCBOOK_TOOL_FEATURES_PATH') ?: null;
