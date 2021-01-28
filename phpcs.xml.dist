@@ -5,7 +5,7 @@
     <arg name="colors"/>
 
     <file>src</file>
-    <file>generate.php</file>
+    <file>test/integration</file>
 
     <rule ref="Doctrine">
         <exclude name="Generic.Files.LineLength.TooLong"/>
