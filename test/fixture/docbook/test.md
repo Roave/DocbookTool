@@ -14,3 +14,11 @@ This is some markdown
 Links [here](https://www.google.com). **Bold**, _italic_, ~~strikethrough~~, `inline code`.
 
 {{feature:test.feature}}
+
+## A diagram
+
+```puml
+@startuml
+Bob->Alice : hello
+@enduml
+```
