@@ -21,6 +21,9 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v2"
 
+      - name: "Install wkhtmltopdf"
+        run: "sudo apt-get install xvfb libfontconfig wkhtmltopdf"
+
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
