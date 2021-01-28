@@ -9,7 +9,11 @@
     <file>test/integration</file>
 
     <rule ref="Doctrine">
-        <exclude name="Generic.Files.LineLength.TooLong"/>
+        <exclude name="Generic.Files.LineLength.TooLong" />
+
+        <!-- These are excluded because doctrine/coding-standard doesn't work with promoted constructor properties yet -->
+        <exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact" />
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingTraversableTypeHintSpecification" />
     </rule>
 
 </ruleset>

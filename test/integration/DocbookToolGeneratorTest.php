@@ -18,8 +18,10 @@ use Roave\DocbookTool\Writer\SingleStaticHtmlWriter;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
+use function array_map;
 use function file_exists;
-use function unlink;
+use function Safe\file_get_contents;
+use function Safe\unlink;
 
 final class DocbookToolGeneratorTest extends TestCase
 {
@@ -47,7 +49,7 @@ final class DocbookToolGeneratorTest extends TestCase
                         new MarkdownToHtml(),
                         new InlineFeatureFile(self::FEATURES_PATH),
                     ]),
-                    '__invoke'
+                    '__invoke',
                 ],
                 (new RecursivelyLoadPagesFromPath())(self::CONTENT_PATH)
             )

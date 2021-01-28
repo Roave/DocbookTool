@@ -26,6 +26,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
 {
     private const PLANTUML_JAR = __DIR__ . '/../../bin/plantuml.jar';
 
+    /** @throws RuntimeException */
     public function __invoke(DocbookPage $page): DocbookPage
     {
         return $page->withReplacedContent(

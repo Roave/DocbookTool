@@ -60,6 +60,7 @@ class DocbookPage
         return $this->content;
     }
 
+    /** @throws RuntimeException */
     private function determineTitleFromContent(): string
     {
         $firstLine = strtok($this->content, "\n");

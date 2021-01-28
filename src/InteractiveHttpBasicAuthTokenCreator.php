@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
+use Safe\Exceptions\SafeExceptionInterface;
 use Webmozart\Assert\Assert;
+
 use function base64_encode;
 use function extension_loaded;
 use function posix_isatty;
@@ -31,6 +33,9 @@ class InteractiveHttpBasicAuthTokenCreator
         return rtrim($input);
     }
 
+    /**
+     * @throws SafeExceptionInterface
+     */
     public function __invoke(): string
     {
         echo 'Confluence username: ';

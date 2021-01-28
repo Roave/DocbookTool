@@ -7,10 +7,11 @@ namespace Roave\DocbookTool;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-
 use Webmozart\Assert\Assert;
+
 use function Safe\file_get_contents;
 use function str_replace;
+use function usort;
 
 class RecursivelyLoadPagesFromPath
 {

@@ -7,7 +7,9 @@ namespace Roave\DocbookTool\Writer;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
+use Safe\Exceptions\SafeExceptionInterface;
 use Twig\Environment;
+use Twig\Error\Error as TwigException;
 
 use function count;
 use function escapeshellcmd;
@@ -29,7 +31,13 @@ class MultiplePdfFilesWriter implements OutputWriter
     ) {
     }
 
-    /** @param DocbookPage[] $docbookPages */
+    /**
+     * @param DocbookPage[] $docbookPages
+     *
+     * @throws RuntimeException
+     * @throws SafeExceptionInterface
+     * @throws TwigException
+     */
     public function __invoke(array $docbookPages): void
     {
         foreach ($docbookPages as $page) {

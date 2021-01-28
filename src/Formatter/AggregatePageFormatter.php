@@ -10,6 +10,7 @@ class AggregatePageFormatter implements PageFormatter
 {
     /**
      * @param PageFormatter[] $formatters
+     *
      * @psalm-param non-empty-list<PageFormatter> $formatters
      */
     public function __construct(private array $formatters)

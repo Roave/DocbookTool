@@ -12,14 +12,13 @@ use GuzzleHttp\Psr7\Request;
 use JsonException;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
-
+use Safe\Exceptions\SafeExceptionInterface;
 use Webmozart\Assert\Assert;
+
 use function array_column;
 use function array_merge;
-use function assert;
 use function hash_equals;
 use function in_array;
-use function is_array;
 use function md5;
 use function preg_replace_callback;
 use function Safe\base64_decode;
@@ -44,7 +43,13 @@ final class ConfluenceWriter implements OutputWriter
     ) {
     }
 
-    /** @param DocbookPage[] $docbookPages */
+    /**
+     * @param DocbookPage[] $docbookPages
+     *
+     * @throws GuzzleException
+     * @throws JsonException
+     * @throws SafeExceptionInterface
+     */
     public function __invoke(array $docbookPages): void
     {
         foreach ($docbookPages as $page) {
