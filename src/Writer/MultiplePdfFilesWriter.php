@@ -9,6 +9,7 @@ use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 use Twig\Environment;
 
+use function count;
 use function escapeshellcmd;
 use function exec;
 use function implode;
