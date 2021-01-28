@@ -47,6 +47,7 @@ class MultiplePdfFilesWriter implements OutputWriter
                     ' ',
                     [
                         $this->locationOfWkhtmltopdf,
+                        '-q',
                         $tmpHtmlFile,
                         $pdfFile,
                     ]
@@ -55,7 +56,9 @@ class MultiplePdfFilesWriter implements OutputWriter
                 $exitCode
             );
 
-            $this->logger->debug('wkhtmltopdf output: ' . implode("\n", $output));
+            if (count($output) > 0) {
+                $this->logger->debug('wkhtmltopdf output: ' . implode("\n", $output));
+            }
 
             unlink($tmpHtmlFile);
 

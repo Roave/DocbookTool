@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\InlineFeatureFile;
@@ -34,7 +37,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
     $outputPdfPath     = getenv('DOCBOOK_TOOL_OUTPUT_PDF_PATH') ?: '/docs-package/pdf';
 
     $twig   = new Environment(new FilesystemLoader($templatePath));
-    $logger = new NullLogger(); // @todo
+
+    $logger = new Logger('cli');
+    $logger->pushHandler(new StreamHandler('php://stdout'));
 
     if (! file_exists(dirname($outputDocbookHtml))) {
         mkdir(dirname($outputDocbookHtml), recursive: true);
@@ -48,11 +53,22 @@ require_once __DIR__ . '/../vendor/autoload.php';
     $outputWriters = [];
 
     if (in_array('--html', $arguments, true)) {
-        $outputWriters[] = new SingleStaticHtmlWriter($twig, 'online.twig', $outputDocbookHtml);
+        $outputWriters[] = new SingleStaticHtmlWriter(
+            $twig,
+            'online.twig',
+            $outputDocbookHtml,
+            $logger
+        );
     }
 
     if (in_array('--pdf', $arguments, true)) {
-        $outputWriters[] = new MultiplePdfFilesWriter($twig, 'pdf.twig', 'wkhtmltopdf', $outputPdfPath, $logger);
+        $outputWriters[] = new MultiplePdfFilesWriter(
+            $twig,
+            'pdf.twig',
+            'wkhtmltopdf',
+            $outputPdfPath,
+            $logger
+        );
     }
 
     if (in_array('--confluence', $arguments, true)) {
