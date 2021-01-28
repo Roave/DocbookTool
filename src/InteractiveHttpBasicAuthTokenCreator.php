@@ -4,6 +4,17 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
+use function assert;
+use function base64_encode;
+use function extension_loaded;
+use function is_string;
+use function posix_isatty;
+use function rtrim;
+use function Safe\sprintf;
+use function shell_exec;
+
+use const STDIN;
+
 class InteractiveHttpBasicAuthTokenCreator
 {
     public static function isInteractiveTty(): bool
