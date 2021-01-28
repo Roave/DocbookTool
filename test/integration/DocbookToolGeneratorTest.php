@@ -54,7 +54,7 @@ final class DocbookToolGeneratorTest extends TestCase
             file_get_contents(self::OUTPUT_DOCBOOK_HTML)
         );
         self::assertFileExists(self::OUTPUT_PDF_PATH . '/__test.pdf');
-        // @todo assert PDFs are the same
+        // @todo assert PDFs are the same - https://github.com/Roave/DocbookTool/issues/3
     }
 
     public function tearDown(): void
