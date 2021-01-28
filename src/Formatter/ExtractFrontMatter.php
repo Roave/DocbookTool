@@ -8,6 +8,7 @@ use Roave\DocbookTool\DocbookPage;
 use Symfony\Component\Yaml\Yaml;
 
 use function assert;
+use function count;
 use function is_array;
 use function Safe\preg_match;
 use function str_contains;

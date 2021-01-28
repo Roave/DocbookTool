@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
-use Monolog\Handler\ErrorLogHandler;
+use GuzzleHttp\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Psr\Log\NullLogger;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
@@ -36,7 +35,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
     $outputDocbookHtml = getenv('DOCBOOK_TOOL_OUTPUT_HTML_FILE') ?: '/docs-package/docbook.html';
     $outputPdfPath     = getenv('DOCBOOK_TOOL_OUTPUT_PDF_PATH') ?: '/docs-package/pdf';
 
-    $twig   = new Environment(new FilesystemLoader($templatePath));
+    $twig = new Environment(new FilesystemLoader($templatePath));
 
     $logger = new Logger('cli');
     $logger->pushHandler(new StreamHandler('php://stdout'));
@@ -72,21 +71,37 @@ require_once __DIR__ . '/../vendor/autoload.php';
     }
 
     if (in_array('--confluence', $arguments, true)) {
-        $outputWriters[] = new ConfluenceWriter();
+        $confluenceUrl       = getenv('DOCBOOK_TOOL_CONFLUENCE_URL') ?: null;
+        $confluenceAuthToken = getenv('DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN') ?: null;
+
+        if ($confluenceAuthToken === null && InteractiveHttpBasicAuthTokenCreator::isInteractiveTty()) {
+            $confluenceAuthToken = (new InteractiveHttpBasicAuthTokenCreator())();
+        }
+
+        if ($confluenceUrl !== null && $confluenceAuthToken !== null) {
+            $outputWriters[] = new ConfluenceWriter(
+                new Client(['verify' => false]),
+                $confluenceUrl . '/rest/api/content',
+                $confluenceAuthToken,
+                $logger
+            );
+        } else {
+            $logger->notice('Skipping Confluence mirror step, DOCBOOK_TOOL_CONFLUENCE_URL and/or DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN was not set');
+        }
     }
 
     if (! count($outputWriters)) {
         throw new RuntimeException('No writers specified.');
     }
 
-    (new WriteAllTheOutputs($outputWriters))->__invoke(
+    (new WriteAllTheOutputs($outputWriters))(
         (new FormatAllThePages([
             new ExtractFrontMatter(),
             new RenderPlantUmlDiagramInline(),
             new MarkdownToHtml(),
             new InlineFeatureFile($featuresPath),
-        ]))->__invoke(
-            (new RecursivelyLoadPagesFromPath())->__invoke($contentPath)
+        ]))(
+            (new RecursivelyLoadPagesFromPath())($contentPath)
         )
     );
 })($argv);

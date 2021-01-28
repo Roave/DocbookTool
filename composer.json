@@ -12,6 +12,7 @@
     "require": {
         "php": "8.0.*",
         "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/psr7": "^1.7",
         "michelf/php-markdown": "^1.9",
         "monolog/monolog": "^2.2",
         "psr/log": "^1.1",
@@ -35,6 +36,9 @@
         "psr-4": {
             "Roave\\DocbookToolIntegrationTest\\": "test/integration"
         }
+    },
+    "suggest": {
+        "ext-posix": "Allows interactive entry of Confluence credentials"
     },
     "bin": [
         "bin/docbook-tool"
