@@ -19,6 +19,7 @@
     },
     "require-dev": {
         "doctrine/coding-standard": "^8.2",
+        "phpunit/phpunit": "^9.5",
         "roave/security-advisories": "dev-latest",
         "vimeo/psalm": "^4.4"
     },
@@ -29,7 +30,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Roave\\DocbookToolUnitTest\\": "test/unit"
+            "Roave\\DocbookToolIntegrationTest\\": "test/integration"
         }
     },
     "bin": [

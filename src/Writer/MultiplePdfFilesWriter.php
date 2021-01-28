@@ -45,10 +45,12 @@ class MultiplePdfFilesWriter
                         $tmpHtmlFile,
                         $pdfFile,
                     ]
-                )),
+                )) . ' 2>&1',
                 $output,
                 $exitCode
             );
+
+            $this->logger->debug('wkhtmltopdf output: ' . implode("\n", $output));
 
             unlink($tmpHtmlFile);
 
