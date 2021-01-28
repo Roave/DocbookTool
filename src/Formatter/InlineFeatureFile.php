@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\DocbookTool\Formatter;
 
 use Roave\DocbookTool\DocbookPage;
+use Safe\Exceptions\SafeExceptionInterface;
 
 use function htmlentities;
 use function preg_replace_callback;
@@ -18,6 +19,9 @@ final class InlineFeatureFile implements PageFormatter
     {
     }
 
+    /**
+     * @throws SafeExceptionInterface
+     */
     public function __invoke(DocbookPage $page): DocbookPage
     {
         return $page->withReplacedContent(

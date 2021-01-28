@@ -20,6 +20,7 @@ use RuntimeException;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
+use function array_map;
 use function count;
 use function dirname;
 use function file_exists;
