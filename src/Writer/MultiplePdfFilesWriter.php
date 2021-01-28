@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 use Safe\Exceptions\SafeExceptionInterface;
-use Twig\Environment;
+use Twig\Environment as Twig;
 use Twig\Error\Error as TwigException;
 
 use function count;
@@ -23,7 +23,7 @@ use function sys_get_temp_dir;
 class MultiplePdfFilesWriter implements OutputWriter
 {
     public function __construct(
-        private Environment $twig,
+        private Twig $twig,
         private string $twigTemplate,
         private string $locationOfWkhtmltopdf,
         private string $pdfOutputPath,

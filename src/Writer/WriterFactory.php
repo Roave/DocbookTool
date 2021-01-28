@@ -6,21 +6,21 @@ namespace Roave\DocbookTool\Writer;
 
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
+use Roave\DocbookTool\Environment;
 use Roave\DocbookTool\InteractiveHttpBasicAuthTokenCreator;
 use RuntimeException;
 use Safe\Exceptions\SafeExceptionInterface;
-use Twig\Environment;
+use Twig\Environment as Twig;
 
 use function count;
 use function dirname;
 use function file_exists;
-use function getenv;
 use function in_array;
 use function Safe\mkdir;
 
 class WriterFactory
 {
-    public function __construct(private Environment $twig, private LoggerInterface $logger)
+    public function __construct(private Twig $twig, private LoggerInterface $logger)
     {
     }
 
@@ -37,7 +37,7 @@ class WriterFactory
         $outputWriters = [];
 
         if (in_array('--html', $arguments, true)) {
-            $outputDocbookHtml = getenv('DOCBOOK_TOOL_OUTPUT_HTML_FILE') ?: '/docs-package/docbook.html';
+            $outputDocbookHtml = Environment::require('DOCBOOK_TOOL_OUTPUT_HTML_FILE');
 
             if (! file_exists(dirname($outputDocbookHtml))) {
                 mkdir(dirname($outputDocbookHtml), recursive: true);
@@ -52,7 +52,7 @@ class WriterFactory
         }
 
         if (in_array('--pdf', $arguments, true)) {
-            $outputPdfPath = getenv('DOCBOOK_TOOL_OUTPUT_PDF_PATH') ?: '/docs-package/pdf';
+            $outputPdfPath = Environment::require('DOCBOOK_TOOL_OUTPUT_PDF_PATH');
 
             if (! file_exists($outputPdfPath)) {
                 mkdir($outputPdfPath, recursive: true);
@@ -68,14 +68,14 @@ class WriterFactory
         }
 
         if (in_array('--confluence', $arguments, true)) {
-            $confluenceUrl       = getenv('DOCBOOK_TOOL_CONFLUENCE_URL') ?: null;
-            $confluenceAuthToken = getenv('DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN') ?: null;
+            $confluenceUrl       = Environment::require('DOCBOOK_TOOL_CONFLUENCE_URL');
+            $confluenceAuthToken = Environment::optional('DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN');
 
             if ($confluenceAuthToken === null && InteractiveHttpBasicAuthTokenCreator::isInteractiveTty()) {
                 $confluenceAuthToken = (new InteractiveHttpBasicAuthTokenCreator())();
             }
 
-            if ($confluenceUrl !== null && $confluenceAuthToken !== null) {
+            if ($confluenceAuthToken !== null) {
                 $outputWriters[] = new ConfluenceWriter(
                     new Client(['verify' => false]),
                     $confluenceUrl . '/rest/api/content',
@@ -83,7 +83,7 @@ class WriterFactory
                     $this->logger
                 );
             } else {
-                $this->logger->notice('Skipping Confluence mirror step, DOCBOOK_TOOL_CONFLUENCE_URL and/or DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN was not set');
+                $this->logger->notice('Skipping Confluence mirror step, DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN was not set and could not be set interactively.');
             }
         }
 

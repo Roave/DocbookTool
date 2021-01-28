@@ -12,21 +12,20 @@ use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 use Roave\DocbookTool\Formatter\RenderPlantUmlDiagramInline;
 use Roave\DocbookTool\Writer\WriterFactory;
-use Twig\Environment;
+use Twig\Environment as Twig;
 use Twig\Loader\FilesystemLoader;
 
 use function array_map;
-use function getenv;
 use function is_string;
 
 (static function (array $arguments): void {
     require_once __DIR__ . '/../vendor/autoload.php';
 
-    $contentPath  = getenv('DOCBOOK_TOOL_CONTENT_PATH') ?: '/app/docs/book';
-    $templatePath = getenv('DOCBOOK_TOOL_TEMPLATE_PATH') ?: '/app/templates';
-    $featuresPath = getenv('DOCBOOK_TOOL_FEATURES_PATH') ?: null;
+    $contentPath  = Environment::require('DOCBOOK_TOOL_CONTENT_PATH');
+    $templatePath = Environment::require('DOCBOOK_TOOL_TEMPLATE_PATH');
+    $featuresPath = Environment::optional('DOCBOOK_TOOL_FEATURES_PATH');
 
-    $twig = new Environment(new FilesystemLoader($templatePath));
+    $twig = new Twig(new FilesystemLoader($templatePath));
 
     $logger = new Logger('cli');
     $logger->pushHandler(new StreamHandler('php://stdout'));
