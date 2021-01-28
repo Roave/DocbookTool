@@ -29,7 +29,6 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                     $pumlFilename = sys_get_temp_dir() . '/' . $contentHash . '.puml';
                     $pngFilename  = sys_get_temp_dir() . '/' . $contentHash . '.png';
                     file_put_contents($pumlFilename, $m[1]);
-                    /** @noinspection UnusedFunctionResultInspection */
                     /** @psalm-suppress ForbiddenCode */
                     shell_exec(escapeshellcmd('java -jar plantuml.jar ' . $pumlFilename));
                     $pngContent = base64_encode(file_get_contents($pngFilename));

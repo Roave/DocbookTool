@@ -4,6 +4,7 @@
     <arg value="s"/>
     <arg name="colors"/>
 
+    <file>bin</file>
     <file>src</file>
     <file>test/integration</file>
 
