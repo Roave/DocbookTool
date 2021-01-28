@@ -7,14 +7,14 @@ namespace Roave\DocbookTool\Writer;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use Safe\Exceptions\SafeExceptionInterface;
-use Twig\Environment;
+use Twig\Environment as Twig;
 
 use function Safe\file_put_contents;
 
 final class SingleStaticHtmlWriter implements OutputWriter
 {
     public function __construct(
-        private Environment $twig,
+        private Twig $twig,
         private string $twigTemplate,
         private string $outputFile,
         private LoggerInterface $logger
