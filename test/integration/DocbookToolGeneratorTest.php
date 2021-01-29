@@ -59,7 +59,7 @@ final class DocbookToolGeneratorTest extends TestCase
             file_get_contents(self::EXPECTED_OUTPUT_DOCBOOK_HTML),
             file_get_contents(self::OUTPUT_DOCBOOK_HTML)
         );
-        self::assertFileExists(self::OUTPUT_PDF_PATH . '/__test.pdf');
+        self::assertFileExists(self::OUTPUT_PDF_PATH . '/test.pdf');
         // @todo assert PDFs are the same - https://github.com/Roave/DocbookTool/issues/3
     }
 
@@ -71,10 +71,10 @@ final class DocbookToolGeneratorTest extends TestCase
             unlink(self::OUTPUT_DOCBOOK_HTML);
         }
 
-        if (! file_exists(self::OUTPUT_PDF_PATH . '/__test.pdf')) {
+        if (! file_exists(self::OUTPUT_PDF_PATH . '/test.pdf')) {
             return;
         }
 
-        unlink(self::OUTPUT_PDF_PATH . '/__test.pdf');
+        unlink(self::OUTPUT_PDF_PATH . '/test.pdf');
     }
 }

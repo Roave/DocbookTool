@@ -9,6 +9,7 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 use Webmozart\Assert\Assert;
 
+use function ltrim;
 use function Safe\file_get_contents;
 use function str_replace;
 use function usort;
@@ -48,6 +49,8 @@ class RecursivelyLoadPagesFromPath
 
     private function slugForFilename(string $docbookPath, string $templateFilename): string
     {
-        return str_replace([$docbookPath, '.md', '/'], ['', '', '__'], $templateFilename);
+        $filenameWithoutBasePath = ltrim(str_replace($docbookPath, '', $templateFilename), '/');
+
+        return str_replace(['.md', '/'], ['', '_'], $filenameWithoutBasePath);
     }
 }
