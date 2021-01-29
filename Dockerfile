@@ -7,12 +7,13 @@ RUN mkdir -p /usr/share/man/man1 \
     && add-apt-repository --yes ppa:ondrej/php \
     && curl --silent https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - \
     && add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ \
-    && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+    && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update \
     && apt-get install -y bash binutils php8.0-cli php8.0-zip php8.0-mbstring php8.0-xml nodejs adoptopenjdk-8-hotspot-jre xfonts-75dpi xfonts-base fontconfig libjpeg-turbo8 \
     && curl -L -o /wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb \
     && dpkg -i /wkhtmltox.deb \
     && npm install -g redoc-cli marked \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
 
@@ -29,6 +30,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 WORKDIR /app
 
 RUN composer install
+
+VOLUME /docs-src/book /docs-src/templates /docs-src/features /docs-package
 
 ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_TEMPLATE_PATH=/docs-src/templates \
