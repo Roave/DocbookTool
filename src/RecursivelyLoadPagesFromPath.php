@@ -48,6 +48,7 @@ class RecursivelyLoadPagesFromPath
 
     private function slugForFilename(string $docbookPath, string $templateFilename): string
     {
-        return str_replace([$docbookPath, '.md', '/'], ['', '', '__'], $templateFilename);
+        $filenameWithoutBasePath = ltrim(str_replace($docbookPath, '', $templateFilename), '/');
+        return str_replace(['.md', '/'], ['', '_'], $filenameWithoutBasePath);
     }
 }
