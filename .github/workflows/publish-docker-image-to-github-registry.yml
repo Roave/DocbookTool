@@ -3,7 +3,6 @@ name: "Publish Docker image"
 on:
   release:
     types: [published]
-  push: # @todo only for testing, remove this
 
 jobs:
   push_to_registry:

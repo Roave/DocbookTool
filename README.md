@@ -8,8 +8,6 @@ Static HTML and PDF generator tool for generating documentation from Markdown fi
 
 ## Running with Docker
 
-@todo - publish to a container registry, update this guide to remove the `docker build` (since it will be done by CI)
-
 A Docker image is provided with all the pre-built tools. You will need to map several volumes into the container:
 
  - `/docs-package` - this will be where the tool writes the output
@@ -21,10 +19,8 @@ Additionally, you can provide environment variables to override the default path
 functionality.
 
 ```bash
-docker build -t roave-docbook-tool .
-
 # Will build the test fixtures and put in a folder called "build"
-docker run -v $(pwd)/build:/docs-package --rm roave-docbook-tool
+docker run -v $(pwd)/build:/docs-package --rm ghcr.io/roave/docbooktool:latest
 
 # Will build your stuff - replace host paths as appropriate
 docker run \
@@ -32,7 +28,7 @@ docker run \
   -v $(pwd)/docs/templates:/docs-src/templates \
   -v $(pwd)/features:/docs-src/features \
   -v $(pwd)/build:/docs-package \
-  --rm roave-docbook-tool
+  --rm ghcr.io/roave/docbooktool:latest
 
 # Will generate HTML, PDF, and update any configured Confluence pages
 docker run \
@@ -42,7 +38,7 @@ docker run \
   -v $(pwd)/build:/docs-package \
   -e DOCBOOK_TOOL_CONFLUENCE_URL=https://confluence.mycompany.com \
   -e DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN="Basic bXktdXNlcm5hbWU6bXktcGFzc3dvcmQ=" \
-  --rm roave-docbook-tool --html --pdf --confluence
+  --rm ghcr.io/roave/docbooktool:latest --html --pdf --confluence
 ```
 
 ## Usage
