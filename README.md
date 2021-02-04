@@ -65,6 +65,7 @@ We have limited support for YAML front matter:
  * `title: Your title here` - when specified, this will be used as the page title (`{{ title }}` in template)
  * `pdf: true` - when specified, a PDF will be generated for this
  * `confluencePageId: 1234` - when specified, Confluence page `1234` will be updated (numeric ID only)
+ * `order: 100` - when specified, pages are ordered by this. Defaults to 100. Matching values are sorted alphabetically.
 
 Additionally, we have a special Markdown syntax:
 

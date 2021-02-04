@@ -12,6 +12,7 @@ use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 use Roave\DocbookTool\Formatter\RenderPlantUmlDiagramInline;
 use Roave\DocbookTool\RecursivelyLoadPagesFromPath;
+use Roave\DocbookTool\SortThePages;
 use Roave\DocbookTool\WriteAllTheOutputs;
 use Roave\DocbookTool\Writer\MultiplePdfFilesWriter;
 use Roave\DocbookTool\Writer\SingleStaticHtmlWriter;
@@ -40,18 +41,20 @@ final class DocbookToolGeneratorTest extends TestCase
         (new WriteAllTheOutputs([
             new SingleStaticHtmlWriter($twig, 'online.twig', self::OUTPUT_DOCBOOK_HTML, $logger),
             new MultiplePdfFilesWriter($twig, 'pdf.twig', 'wkhtmltopdf', self::OUTPUT_PDF_PATH, $logger),
-        ]))->__invoke(
-            array_map(
-                [
-                    new AggregatePageFormatter([
-                        new ExtractFrontMatter(),
-                        new RenderPlantUmlDiagramInline(),
-                        new MarkdownToHtml(),
-                        new InlineFeatureFile(self::FEATURES_PATH),
-                    ]),
-                    '__invoke',
-                ],
-                (new RecursivelyLoadPagesFromPath())(self::CONTENT_PATH)
+        ]))(
+            (new SortThePages())(
+                array_map(
+                    [
+                        new AggregatePageFormatter([
+                            new ExtractFrontMatter(),
+                            new RenderPlantUmlDiagramInline(),
+                            new MarkdownToHtml(),
+                            new InlineFeatureFile(self::FEATURES_PATH),
+                        ]),
+                        '__invoke',
+                    ],
+                    (new RecursivelyLoadPagesFromPath())(self::CONTENT_PATH)
+                )
             )
         );
 

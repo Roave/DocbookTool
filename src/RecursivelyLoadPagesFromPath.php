@@ -12,7 +12,6 @@ use Webmozart\Assert\Assert;
 use function ltrim;
 use function Safe\file_get_contents;
 use function str_replace;
-use function usort;
 
 class RecursivelyLoadPagesFromPath
 {
@@ -35,14 +34,6 @@ class RecursivelyLoadPagesFromPath
                 $content
             );
         }
-
-        // Currently, sort everything alphabetically. Would be nice to control sort order though.
-        usort(
-            $pages,
-            static function (DocbookPage $a, DocbookPage $b): int {
-                return $a->slug() <=> $b->slug();
-            }
-        );
 
         return $pages;
     }

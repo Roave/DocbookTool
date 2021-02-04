@@ -7,6 +7,9 @@ pdf: true
 
 # If this is set to an integer, we will update the page content for the corresponding Confluence page
 confluencePageId: 1234
+
+# If not specified, defaults to 100
+order: 105
 ---
 # Hello there this is a great file
 
