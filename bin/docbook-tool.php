@@ -43,9 +43,11 @@ use function is_string;
     }
 
     (new WriteAllTheOutputs($outputWriters))(
-        array_map(
-            [new AggregatePageFormatter($pageFormatters), '__invoke'],
-            (new RecursivelyLoadPagesFromPath())($contentPath)
+        (new SortThePages())(
+            array_map(
+                [new AggregatePageFormatter($pageFormatters), '__invoke'],
+                (new RecursivelyLoadPagesFromPath())($contentPath)
+            )
         )
     );
 })($argv);

@@ -18,6 +18,8 @@ use function strtok;
 /** @psalm-immutable */
 class DocbookPage
 {
+    private const DEFAULT_ORDER = 100;
+
     /** @param array<array-key, mixed> $frontMatter */
     private function __construct(
         private string $slug,
@@ -98,5 +100,12 @@ class DocbookPage
         }
 
         return $this->frontMatter['confluencePageId'];
+    }
+
+    public function order(): int
+    {
+        return array_key_exists('order', $this->frontMatter) && is_int($this->frontMatter['order'])
+            ? $this->frontMatter['order']
+            : self::DEFAULT_ORDER;
     }
 }

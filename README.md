@@ -58,6 +58,23 @@ $ DOCBOOK_TOOL_CONTENT_PATH=/path/to/myproject/docs/book \
 $
 ```
 
+## Formatting
+
+We have limited support for YAML front matter:
+
+ * `title: Your title here` - when specified, this will be used as the page title (`{{ title }}` in template)
+ * `pdf: true` - when specified, a PDF will be generated for this
+ * `confluencePageId: 1234` - when specified, Confluence page `1234` will be updated (numeric ID only)
+ * `order: 100` - when specified, pages are ordered by this. Defaults to 100. Matching values are sorted alphabetically.
+
+Additionally, we have a special Markdown syntax:
+
+ * `{{feature:test.feature}}` will render `$(DOCBOOK_TOOL_FEATURES_PATH)/test.feature` as a code block
+ * Code blocks (triple-backtick) with the `puml` syntax will be converted into a PlantUML diagram. Note your diagram
+   must start and end with `@startuml` and `@enduml` respectively.
+
+Example showing all syntax can be seen in `test/fixture/docbook/test.md`.
+
 ## Environment variables
 
  * `DOCBOOK_TOOL_CONTENT_PATH` - the path where your Markdown documentation is kept (Required)
