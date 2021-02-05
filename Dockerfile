@@ -28,8 +28,6 @@ WORKDIR /app
 
 RUN composer install
 
-VOLUME /docs-src/book /docs-src/templates /docs-src/features /docs-package
-
 ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_TEMPLATE_PATH=/docs-src/templates \
     DOCBOOK_TOOL_FEATURES_PATH=/docs-src/features \
