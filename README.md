@@ -20,7 +20,12 @@ functionality.
 
 ```bash
 # Will build the test fixtures and put in a folder called "build"
-docker run -v $(pwd)/build:/docs-package --rm ghcr.io/roave/docbooktool:latest
+docker run \
+  -v $(pwd)/test/fixture/docbook:/docs-src/book \
+  -v $(pwd)/test/fixture/templates:/docs-src/templates \
+  -v $(pwd)/test/fixture/feature:/docs-src/features \
+  -v $(pwd)/build:/docs-package \
+  --rm ghcr.io/roave/docbooktool:latest
 
 # Will build your stuff - replace host paths as appropriate
 docker run \

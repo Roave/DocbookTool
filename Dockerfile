@@ -21,9 +21,6 @@ ADD ./composer.json /app
 ADD ./composer.lock /app
 ADD ./src /app/src
 ADD ./bin /app/bin
-ADD ./test/fixture/docbook /docs-src/book
-ADD ./test/fixture/templates /docs-src/templates
-ADD ./test/fixture/feature /docs-src/features
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
