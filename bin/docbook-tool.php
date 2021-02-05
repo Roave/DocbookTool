@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
+use Jasny\Twig\ArrayExtension;
+use Jasny\Twig\PcreExtension;
+use Jasny\Twig\TextExtension;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
@@ -26,6 +29,9 @@ use function is_string;
     $featuresPath = Environment::optional('DOCBOOK_TOOL_FEATURES_PATH');
 
     $twig = new Twig(new FilesystemLoader($templatePath));
+    $twig->addExtension(new PcreExtension());
+    $twig->addExtension(new TextExtension());
+    $twig->addExtension(new ArrayExtension());
 
     $logger = new Logger('cli');
     $logger->pushHandler(new StreamHandler('php://stdout'));
