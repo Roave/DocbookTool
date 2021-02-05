@@ -25,7 +25,7 @@ final class ExtractFrontMatter implements PageFormatter
             return $page;
         }
 
-        if (! preg_match('/^---\n([^\-]+)---\n([\w\W]*)$/', $page->content(), $m)) {
+        if (! preg_match('/^---\n([\w\W]+?)\n---\n([\w\W]*)$/', $page->content(), $m)) {
             return $page;
         }
 

@@ -29,7 +29,7 @@ class RecursivelyLoadPagesFromPath
             $slug             = $this->slugForFilename($docbookPath, $templateFilename);
             $content          = file_get_contents($templateFilename);
 
-            $pages[] = DocbookPage::fromSlugTitleAndContent(
+            $pages[] = DocbookPage::fromSlugAndContent(
                 $slug,
                 $content
             );
