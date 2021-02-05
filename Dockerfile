@@ -21,17 +21,12 @@ ADD ./composer.json /app
 ADD ./composer.lock /app
 ADD ./src /app/src
 ADD ./bin /app/bin
-ADD ./test/fixture/docbook /docs-src/book
-ADD ./test/fixture/templates /docs-src/templates
-ADD ./test/fixture/feature /docs-src/features
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /app
 
 RUN composer install
-
-VOLUME /docs-src/book /docs-src/templates /docs-src/features /docs-package
 
 ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_TEMPLATE_PATH=/docs-src/templates \

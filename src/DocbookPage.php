@@ -28,7 +28,7 @@ class DocbookPage
     ) {
     }
 
-    public static function fromSlugTitleAndContent(string $slug, string $content): self
+    public static function fromSlugAndContent(string $slug, string $content): self
     {
         return new self($slug, $content, []);
     }
