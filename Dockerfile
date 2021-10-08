@@ -1,5 +1,7 @@
 FROM ubuntu:20.04
 
+ARG TARGETARCH=amd64
+
 RUN mkdir -p /usr/share/man/man1 \
     && apt-get update \
     && apt-get -y upgrade \
@@ -10,7 +12,7 @@ RUN mkdir -p /usr/share/man/man1 \
     && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update \
     && apt-get install -y bash binutils php8.0-cli php8.0-zip php8.0-mbstring php8.0-xml nodejs adoptopenjdk-8-hotspot-jre xfonts-75dpi xfonts-base fontconfig libjpeg-turbo8 \
-    && curl -L -o /wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb \
+    && curl -L -o /wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_$TARGETARCH.deb \
     && dpkg -i /wkhtmltox.deb \
     && npm install -g redoc-cli marked \
     && apt-get clean \
