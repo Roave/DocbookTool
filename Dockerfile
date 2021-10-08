@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ARG TARGETARCH
+ARG TARGETARCH=amd64
 
 RUN mkdir -p /usr/share/man/man1 \
     && apt-get update \
