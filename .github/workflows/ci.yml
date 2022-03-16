@@ -22,6 +22,7 @@ jobs:
             --target=development \
             --tag=test-image \
             .
+          docker image ls
 
       - name: "Psalm"
         run: "docker run --rm --entrypoint=bash test-image vendor/bin/psalm"
