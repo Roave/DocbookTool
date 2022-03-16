@@ -25,10 +25,10 @@ jobs:
             .
 
       - name: "Psalm"
-        run: "docker run --rm --entrypoint=bash test-image vendor/bin/psalm"
+        run: "docker run --rm --entrypoint=php test-image vendor/bin/psalm"
 
       - name: "PHPUnit"
-        run: "docker run --rm --entrypoint=bash test-image vendor/bin/phpunit"
+        run: "docker run --rm --entrypoint=php test-image vendor/bin/phpunit"
 
       - name: "PHPCS"
-        run: "docker run --rm --entrypoint=bash test-image vendor/bin/phpcs"
+        run: "docker run --rm --entrypoint=php test-image vendor/bin/phpcs"
