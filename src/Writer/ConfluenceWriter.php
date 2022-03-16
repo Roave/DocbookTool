@@ -208,8 +208,8 @@ final class ConfluenceWriter implements OutputWriter
 
         $replacedContent = (string) preg_replace_callback(
             '/<img src="data:image\/png;base64,([a-zA-Z0-9=+\/]+)" alt="Diagram" \/>/',
-            /** @param array<int,string> $m */
             static function (array $m) use (&$images): string {
+                /** @var array{1: string} $m */
                 $imageBinaryData = base64_decode($m[1]);
                 $imageHash       = md5($imageBinaryData);
                 /** @psalm-var ListOfExtractedImageData $images */

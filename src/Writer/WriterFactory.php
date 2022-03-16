@@ -33,7 +33,7 @@ class WriterFactory
      */
     public function __invoke(array $arguments): array
     {
-        /** @var non-empty-list<OutputWriter> $outputWriters */
+        /** @var list<OutputWriter> $outputWriters */
         $outputWriters = [];
 
         if (in_array('--html', $arguments, true)) {
