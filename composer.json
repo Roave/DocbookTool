@@ -12,7 +12,7 @@
     "require": {
         "php": "8.0.*",
         "guzzlehttp/guzzle": "^7.2",
-        "guzzlehttp/psr7": "^1.7",
+        "guzzlehttp/psr7": "^1.8",
         "jasny/twig-extensions": "^1.3",
         "michelf/php-markdown": "^1.9",
         "monolog/monolog": "^2.2",
