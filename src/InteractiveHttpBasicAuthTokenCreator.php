@@ -11,8 +11,8 @@ use function base64_encode;
 use function extension_loaded;
 use function posix_isatty;
 use function rtrim;
-use function Safe\sprintf;
 use function shell_exec;
+use function sprintf;
 
 use const STDIN;
 

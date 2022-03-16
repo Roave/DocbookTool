@@ -32,12 +32,12 @@ final class ExtractFrontMatter implements PageFormatter
         Assert::notNull($m);
         Assert::count($m, 3);
 
-        $frontMatter = Yaml::parse((string) $m[1]);
+        $frontMatter = Yaml::parse($m[1]);
 
         Assert::isArray($frontMatter);
 
         return $page
             ->withFrontMatter($frontMatter)
-            ->withReplacedContent((string) $m[2]);
+            ->withReplacedContent($m[2]);
     }
 }
