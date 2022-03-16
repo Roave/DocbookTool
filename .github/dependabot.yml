@@ -33,7 +33,7 @@
             "schedule": {
                 "interval": "daily"
             }
-        }
+        },
         {
             "directory": "/",
             "package-ecosystem": "github-actions",
