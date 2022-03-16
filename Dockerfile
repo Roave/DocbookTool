@@ -1,4 +1,4 @@
-FROM composer:2.2.7 AS composer-base-image
+FROM composer:2.2.9 AS composer-base-image
 FROM node:17.7 AS npm-dependencies
 
 COPY ./package.json \
