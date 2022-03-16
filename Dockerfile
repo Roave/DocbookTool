@@ -1,4 +1,28 @@
-FROM ubuntu:20.04
+FROM composer:2.2.5 AS composer-base-image
+FROM composer-base-image AS production-dependencies
+
+COPY ./composer.json \
+    ./composer.lock \
+    /app/
+
+RUN composer install \
+    --ignore-platform-reqs \
+    --no-autoloader \
+    --no-cache \
+    --no-dev \
+    --no-plugins \
+    --no-scripts
+
+FROM production-dependencies AS development-dependencies
+
+RUN composer install \
+    --ignore-platform-reqs \
+    --no-autoloader \
+    --no-cache \
+    --no-plugins \
+    --no-scripts
+
+FROM ubuntu:20.04 AS base-dependencies
 
 ARG TARGETARCH
 
@@ -32,16 +56,15 @@ RUN mkdir -p /usr/share/man/man1 \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
 
-ADD ./composer.json /app
-ADD ./composer.lock /app
-ADD ./src /app/src
-ADD ./bin /app/bin
 
-COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+COPY ./composer.json \
+    ./composer.lock \
+    /app/
 
-WORKDIR /app
+COPY ./src /app/src
+COPY ./bin /app/bin
 
-RUN composer install
+COPY --from=production-dependencies /usr/bin/composer /usr/local/bin/composer
 
 ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_TEMPLATE_PATH=/docs-src/templates \
@@ -49,5 +72,29 @@ ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_OUTPUT_HTML_FILE=/docs-package/index.html \
     DOCBOOK_TOOL_OUTPUT_PDF_PATH=/docs-package/pdf
 
+WORKDIR /app
+
 ENTRYPOINT ["bin/docbook-tool"]
 CMD ["--html", "--pdf"]
+
+FROM base-dependencies AS production
+
+COPY --from=production-dependencies /app/vendor /app/vendor
+
+RUN composer install \
+    --classmap-authoritative \
+    --no-cache \
+    --no-dev
+
+FROM base-dependencies AS development
+
+COPY --from=development-dependencies /app/vendor /app/vendor
+COPY ./phpcs.xml.dist \
+    ./phpunit.xml.dist \
+    ./psalm.xml.dist \
+    /app/
+COPY ./test /app/test
+
+RUN composer install \
+    --classmap-authoritative \
+    --no-cache

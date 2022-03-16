@@ -20,6 +20,7 @@ jobs:
             ghcr.io/roave/docbooktool
           tags: |
             type=semver,pattern={{version}}
+          target: production
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
