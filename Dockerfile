@@ -11,7 +11,20 @@ RUN mkdir -p /usr/share/man/man1 \
     && add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ \
     && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update \
-    && apt-get install -y bash binutils php8.0-cli php8.0-zip php8.0-mbstring php8.0-xml nodejs adoptopenjdk-8-hotspot-jre xfonts-75dpi xfonts-base fontconfig libjpeg-turbo8 \
+    && apt-get install -y \
+      bash \
+      binutils \
+      graphviz \
+      php8.0-cli \
+      php8.0-zip \
+      php8.0-mbstring \
+      php8.0-xml \
+      nodejs \
+      adoptopenjdk-8-hotspot-jre \
+      xfonts-75dpi \
+      xfonts-base \
+      fontconfig \
+      libjpeg-turbo8 \
     && curl -L -o /wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_${TARGETARCH:-amd64}.deb \
     && dpkg -i /wkhtmltox.deb \
     && npm install -g redoc-cli marked \
