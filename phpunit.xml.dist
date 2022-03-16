@@ -8,6 +8,9 @@
         <testsuite name="integration">
             <directory>./test/integration</directory>
         </testsuite>
+        <testsuite name="unit">
+            <directory>./test/unit</directory>
+        </testsuite>
     </testsuites>
     <coverage processUncoveredFiles="true">
         <include>
