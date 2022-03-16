@@ -18,11 +18,11 @@ jobs:
 
       - name: "Build docker image"
         run: |
-          docker build \
+          docker buildx build \
+            --load \
             --target=development \
             --tag=test-image \
             .
-          docker image ls
 
       - name: "Psalm"
         run: "docker run --rm --entrypoint=bash test-image vendor/bin/psalm"
