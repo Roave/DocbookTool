@@ -1,4 +1,13 @@
 FROM composer:2.2.5 AS composer-base-image
+FROM node:17.7 AS npm-dependencies
+
+COPY ./package.json \
+    ./package-lock.json \
+    /app/
+
+RUN cd /app \
+    && npm ci
+
 FROM composer-base-image AS production-dependencies
 
 COPY ./composer.json \
@@ -51,7 +60,6 @@ RUN mkdir -p /usr/share/man/man1 \
       libjpeg-turbo8 \
     && curl -L -o /wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_${TARGETARCH:-amd64}.deb \
     && dpkg -i /wkhtmltox.deb \
-    && npm install -g redoc-cli marked \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
@@ -59,12 +67,18 @@ RUN mkdir -p /usr/share/man/man1 \
 
 COPY ./composer.json \
     ./composer.lock \
+    ./package.json \
+    ./package-lock.json \
     /app/
 
 COPY ./src /app/src
 COPY ./bin /app/bin
 
 COPY --from=production-dependencies /usr/bin/composer /usr/local/bin/composer
+COPY --from=npm-dependencies /app/node_modules /app/node_modules
+
+RUN ln -s /app/node_modules/.bin/marked /usr/local/bin/marked \
+    && ln -s /app/node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli
 
 ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_TEMPLATE_PATH=/docs-src/templates \
