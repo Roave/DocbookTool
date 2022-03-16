@@ -32,8 +32,8 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
         return $page->withReplacedContent(
             preg_replace_callback(
                 '/```puml([\w\W]*?)```/',
-                /** @psalm-param array<int,string> $m */
                 static function (array $m) use ($page) {
+                    /** @var array{1: string} $m */
                     if (! str_starts_with(trim($m[1]), '@startuml')) {
                         throw new RuntimeException(sprintf(
                             'Ensure the PUML in %s starts with @startuml and ends with @enduml',
@@ -53,6 +53,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                     );
 
                     if ($exitCode !== 0) {
+                        /** @psalm-var list<string> $output */
                         throw new RuntimeException(sprintf(
                             'Failed to render PUML in %s - starts "%s". Output was: %s',
                             $page->slug(),

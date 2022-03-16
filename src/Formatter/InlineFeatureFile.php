@@ -27,8 +27,8 @@ final class InlineFeatureFile implements PageFormatter
         return $page->withReplacedContent(
             preg_replace_callback(
                 '/{{feature:([a-zA-Z0-9\/.-]+)}}/',
-                /** @psalm-param array<int,string> $m */
                 function (array $m): string {
+                    /** @var array{1: string} $m */
                     $feature = file_get_contents($this->featuresPath . '/' . $m[1]);
 
                     return '<pre><code class="lang-gherkin">' . htmlentities($feature, ENT_QUOTES) . '</code></pre>';
