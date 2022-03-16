@@ -28,9 +28,6 @@ jobs:
           target: development
           push: false
           tags: ghcr.io/roave/docbooktool-ci:${{ github.sha }}
-          cache-to: type=registry,ref=ghcr.io/roave/docbooktool-ci:ci-cache
-          cache-from: |
-            type=registry,ref=ghcr.io/roave/docbooktool-ci:ci-cache
 
       - name: "Psalm"
         run: "docker run --rm --entrypoint=bash ghcr.io/roave/docbooktool-ci:${{ github.sha }} vendor/bin/psalm"
