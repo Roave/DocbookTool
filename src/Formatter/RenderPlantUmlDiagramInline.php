@@ -53,7 +53,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                     );
 
                     if ($exitCode !== 0) {
-                        /** @var list<string> $output */
+                        /** @psalm-var list<string> $output */
                         throw new RuntimeException(sprintf(
                             'Failed to render PUML in %s - starts "%s". Output was: %s',
                             $page->slug(),

@@ -66,7 +66,7 @@ class MultiplePdfFilesWriter implements OutputWriter
             );
 
             if (count($output) > 0) {
-                /** @var non-empty-list<string> $output */
+                /** @psalm-var list<string> $output */
                 $this->logger->debug('wkhtmltopdf output: ' . implode("\n", $output));
             }
 
