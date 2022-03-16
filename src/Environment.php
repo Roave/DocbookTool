@@ -8,7 +8,7 @@ use RuntimeException;
 use Safe\Exceptions\SafeExceptionInterface;
 
 use function getenv;
-use function Safe\sprintf;
+use function sprintf;
 
 class Environment
 {

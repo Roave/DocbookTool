@@ -48,10 +48,10 @@ RUN mkdir -p /usr/share/man/man1 \
       bash \
       binutils \
       graphviz \
-      php8.0-cli \
-      php8.0-zip \
-      php8.0-mbstring \
-      php8.0-xml \
+      php8.1-cli \
+      php8.1-zip \
+      php8.1-mbstring \
+      php8.1-xml \
       nodejs \
       adoptopenjdk-8-hotspot-jre \
       xfonts-75dpi \

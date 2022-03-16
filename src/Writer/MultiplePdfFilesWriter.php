@@ -16,8 +16,8 @@ use function escapeshellcmd;
 use function exec;
 use function implode;
 use function Safe\file_put_contents;
-use function Safe\sprintf;
 use function Safe\unlink;
+use function sprintf;
 use function sys_get_temp_dir;
 
 class MultiplePdfFilesWriter implements OutputWriter

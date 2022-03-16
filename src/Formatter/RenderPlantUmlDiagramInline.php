@@ -15,10 +15,10 @@ use function md5;
 use function preg_replace_callback;
 use function Safe\file_get_contents;
 use function Safe\file_put_contents;
-use function Safe\sprintf;
-use function Safe\substr;
 use function Safe\unlink;
+use function sprintf;
 use function str_starts_with;
+use function substr;
 use function sys_get_temp_dir;
 use function trim;
 

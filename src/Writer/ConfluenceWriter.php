@@ -24,7 +24,7 @@ use function preg_replace_callback;
 use function Safe\base64_decode;
 use function Safe\json_decode;
 use function Safe\json_encode;
-use function Safe\sprintf;
+use function sprintf;
 
 use const JSON_THROW_ON_ERROR;
 
