@@ -33,5 +33,6 @@ Links [here](https://www.google.com). **Bold**, _italic_, ~~strikethrough~~, `in
 ```puml
 @startuml
 Bob->Alice : hello
+hexagon TestingHexagon
 @enduml
 ```

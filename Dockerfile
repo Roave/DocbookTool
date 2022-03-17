@@ -62,7 +62,6 @@ RUN export DEBIAN_FRONTEND="noninteractive" \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
 
-
 COPY ./composer.json \
     ./composer.lock \
     ./package.json \
@@ -71,6 +70,8 @@ COPY ./composer.json \
 
 COPY ./src /app/src
 COPY ./bin /app/bin
+
+ADD https://github.com/plantuml/plantuml/releases/download/v1.2022.2/plantuml-1.2022.2.jar /app/bin/plantuml.jar
 
 COPY --from=production-dependencies /usr/bin/composer /usr/local/bin/composer
 COPY --from=npm-dependencies /app/node_modules /app/node_modules
