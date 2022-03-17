@@ -33,9 +33,8 @@ RUN composer install \
 
 FROM ubuntu:20.04 AS base-dependencies
 
-ARG TARGETARCH
-
-RUN mkdir -p /usr/share/man/man1 \
+RUN export DEBIAN_FRONTEND="noninteractive" \
+    && mkdir -p /usr/share/man/man1 \
     && apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y software-properties-common gnupg curl \
@@ -58,8 +57,7 @@ RUN mkdir -p /usr/share/man/man1 \
       xfonts-base \
       fontconfig \
       libjpeg-turbo8 \
-    && curl -L -o /wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_${TARGETARCH:-amd64}.deb \
-    && dpkg -i /wkhtmltox.deb \
+      wkhtmltopdf \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
