@@ -24,6 +24,7 @@ use function trim;
 
 final class RenderPlantUmlDiagramInline implements PageFormatter
 {
+    /** Note: this is added by the `Dockerfile` build, it no longer exists in the repo itself */
     private const PLANTUML_JAR = __DIR__ . '/../../bin/plantuml.jar';
 
     /** @throws RuntimeException */
