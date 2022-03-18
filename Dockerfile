@@ -1,5 +1,7 @@
 FROM composer:2.2.9 AS composer-base-image
 FROM node:17.7 AS npm-base-image
+FROM ubuntu:20.04 AS ubuntu-base-image
+
 
 FROM npm-base-image AS npm-dependencies
 
@@ -12,36 +14,7 @@ RUN \
     npm ci
 
 
-FROM composer-base-image AS production-composer-dependencies
-
-WORKDIR /build
-
-RUN  \
-    --mount=type=cache,target=/tmp,id=composer \
-    --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.json,target=composer.lock,rw=true \
-    composer install \
-    --ignore-platform-reqs \
-    --no-autoloader \
-    --no-dev \
-    --no-plugins \
-    --no-scripts
-
-
-FROM production-dependencies AS development-composer-dependencies
-
-RUN \
-    --mount=type=cache,target=/tmp,id=composer \
-    --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.json,target=composer.lock,rw=true \
-    composer install \
-    --ignore-platform-reqs \
-    --no-autoloader \
-    --no-plugins \
-    --no-scripts
-
-
-FROM ubuntu:20.04 AS base-dependencies
+FROM ubuntu-base-image AS base-with-dependencies
 
 RUN export DEBIAN_FRONTEND="noninteractive" \
     && mkdir -p /usr/share/man/man1 \
@@ -72,12 +45,43 @@ RUN export DEBIAN_FRONTEND="noninteractive" \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
 
+ADD https://github.com/plantuml/plantuml/releases/download/v1.2022.2/plantuml-1.2022.2.jar app/bin/plantuml.jar
+
+
+FROM base-with-dependencies AS production-composer-dependencies
+
+WORKDIR /build
+
+RUN  \
+    --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
+    --mount=type=cache,target=/root/.composer,id=composer \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer install \
+    --no-autoloader \
+    --no-dev \
+    --no-plugins
+
+
+FROM base-with-dependencies AS development-composer-dependencies
+
+WORKDIR /build
+
+RUN \
+    --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
+    --mount=type=cache,target=/root/.composer,id=composer \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer install \
+    --no-plugins
+
+
+FROM base-with-dependencies AS base-with-codebase
+
 WORKDIR /app
 
 COPY ./src ./src
 COPY ./bin ./bin
-
-ADD https://github.com/plantuml/plantuml/releases/download/v1.2022.2/plantuml-1.2022.2.jar bin/plantuml.jar
 
 COPY --from=npm-dependencies /build/node_modules node_modules
 
@@ -94,19 +98,20 @@ ENTRYPOINT ["bin/docbook-tool"]
 CMD ["--html", "--pdf"]
 
 
-FROM base-dependencies AS production
+FROM base-with-codebase AS production
 
+COPY --from=production-composer-dependencies /build/vendor vendor
 RUN \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
     --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
     --mount=source=composer.json,target=composer.lock,rw=true \
-    composer install \
+    COMPOSER_DISABLE_NETWORK=1 composer dump-autoload \
     --classmap-authoritative \
     --no-dev
 
 
-FROM base-dependencies AS development
+FROM base-with-codebase AS development
 
 COPY ./phpcs.xml.dist \
     ./phpunit.xml.dist \
@@ -121,8 +126,34 @@ COPY ./composer.json \
     ./
 
 COPY --from=composer-base-image /usr/bin/composer /usr/local/bin/composer
+COPY --from=development-composer-dependencies /build/vendor vendor
 
+# run the plugins
 RUN \
     --mount=type=cache,target=/root/.composer,id=composer \
-    composer install \
-    --classmap-authoritative
+    composer install
+
+
+FROM development AS tested
+
+RUN vendor/bin/phpunit
+RUN vendor/bin/phpcs
+RUN vendor/bin/psalm
+RUN touch .tested
+
+
+FROM base-with-codebase AS production
+
+COPY --from=production-composer-dependencies /build/vendor vendor
+
+RUN \
+    --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
+    --mount=type=cache,target=/root/.composer,id=composer \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer dump-autoload \
+    --classmap-authoritative \
+    --no-dev
+
+# The tests must have run to build production
+COPY --from=tested /app/.tested .
