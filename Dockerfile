@@ -11,7 +11,8 @@ RUN \
     --mount=source=package-lock.json,target=package-lock.json,rw=true \
     npm ci
 
-FROM composer-base-image AS production-dependencies
+
+FROM composer-base-image AS production-composer-dependencies
 
 WORKDIR /build
 
@@ -26,7 +27,8 @@ RUN  \
     --no-plugins \
     --no-scripts
 
-FROM production-dependencies AS development-dependencies
+
+FROM production-dependencies AS development-composer-dependencies
 
 RUN \
     --mount=type=cache,target=/tmp,id=composer \
@@ -37,6 +39,7 @@ RUN \
     --no-autoloader \
     --no-plugins \
     --no-scripts
+
 
 FROM ubuntu:20.04 AS base-dependencies
 
@@ -90,6 +93,7 @@ ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
 ENTRYPOINT ["bin/docbook-tool"]
 CMD ["--html", "--pdf"]
 
+
 FROM base-dependencies AS production
 
 RUN \
@@ -100,6 +104,7 @@ RUN \
     composer install \
     --classmap-authoritative \
     --no-dev
+
 
 FROM base-dependencies AS development
 
@@ -115,7 +120,7 @@ COPY ./composer.json \
     ./package-lock.json \
     ./
 
-COPY --from=production-dependencies /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer-base-image /usr/bin/composer /usr/local/bin/composer
 
 RUN \
     --mount=type=cache,target=/root/.composer,id=composer \
