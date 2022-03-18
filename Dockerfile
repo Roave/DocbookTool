@@ -80,10 +80,10 @@ FROM base-with-dependencies AS base-with-codebase
 
 WORKDIR /app
 
-COPY ./src ./src
-COPY ./bin ./bin
+COPY --link ./src ./src
+COPY --link ./bin ./bin
 
-COPY --from=npm-dependencies /build/node_modules node_modules
+COPY --link --from=npm-dependencies /build/node_modules node_modules
 
 RUN ln -s node_modules/.bin/marked /usr/local/bin/marked \
     && ln -s node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli
@@ -113,20 +113,20 @@ RUN \
 
 FROM base-with-codebase AS development
 
-COPY ./phpcs.xml.dist \
+COPY --link ./phpcs.xml.dist \
     ./phpunit.xml.dist \
     ./psalm.xml.dist \
     ./
-COPY ./test test
+COPY --link ./test test
 
-COPY ./composer.json \
+COPY --link ./composer.json \
     ./composer.lock \
     ./package.json \
     ./package-lock.json \
     ./
 
-COPY --from=composer-base-image /usr/bin/composer /usr/local/bin/composer
-COPY --from=development-composer-dependencies /build/vendor vendor
+COPY --link --from=composer-base-image /usr/bin/composer /usr/local/bin/composer
+COPY --link --from=development-composer-dependencies /build/vendor vendor
 
 # run the plugins
 RUN \
@@ -144,7 +144,7 @@ RUN touch .tested
 
 FROM base-with-codebase AS production
 
-COPY --from=production-composer-dependencies /build/vendor vendor
+COPY --link --from=production-composer-dependencies /build/vendor vendor
 
 RUN \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
@@ -156,4 +156,4 @@ RUN \
     --no-dev
 
 # The tests must have run to build production
-COPY --from=tested /app/.tested .
+COPY --link --from=tested /app/.tested .
