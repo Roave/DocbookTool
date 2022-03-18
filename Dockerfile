@@ -6,6 +6,7 @@ FROM npm-base-image AS npm-dependencies
 WORKDIR /build
 
 RUN \
+    --mount=type=cache,target=/root/.npm,id=npm \
     --mount=source=package.json,target=package.json \
     --mount=source=package-lock.json,target=package-lock.json,rw=true \
     npm ci
@@ -15,12 +16,12 @@ FROM composer-base-image AS production-dependencies
 WORKDIR /build
 
 RUN  \
+    --mount=type=cache,target=/tmp,id=composer \
     --mount=source=composer.json,target=composer.json \
     --mount=source=composer.json,target=composer.lock,rw=true \
     composer install \
     --ignore-platform-reqs \
     --no-autoloader \
-    --no-cache \
     --no-dev \
     --no-plugins \
     --no-scripts
@@ -28,12 +29,12 @@ RUN  \
 FROM production-dependencies AS development-dependencies
 
 RUN \
+    --mount=type=cache,target=/tmp,id=composer \
     --mount=source=composer.json,target=composer.json \
     --mount=source=composer.json,target=composer.lock,rw=true \
     composer install \
     --ignore-platform-reqs \
     --no-autoloader \
-    --no-cache \
     --no-plugins \
     --no-scripts
 
@@ -91,15 +92,13 @@ CMD ["--html", "--pdf"]
 
 FROM base-dependencies AS production
 
-COPY --from=production-dependencies /build/vendor vendor
-
 RUN \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
+    --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
     --mount=source=composer.json,target=composer.lock,rw=true \
     composer install \
     --classmap-authoritative \
-    --no-cache \
     --no-dev
 
 FROM base-dependencies AS development
@@ -117,8 +116,8 @@ COPY ./composer.json \
     ./
 
 COPY --from=production-dependencies /usr/bin/composer /usr/local/bin/composer
-COPY --from=development-dependencies /build/vendor vendor
 
-RUN composer install \
-    --classmap-authoritative \
-    --no-cache
+RUN \
+    --mount=type=cache,target=/root/.composer,id=composer \
+    composer install \
+    --classmap-authoritative
