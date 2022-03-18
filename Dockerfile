@@ -3,21 +3,21 @@ FROM node:17.7 AS npm-base-image
 
 FROM npm-base-image AS npm-dependencies
 
-WORKDIR /app
+WORKDIR /build
 
-COPY ./package.json \
-    ./package-lock.json \
-    ./
-
-RUN npm ci
+RUN \
+    --mount=source=package.json,target=package.json \
+    --mount=source=package-lock.json,target=package-lock.json,rw=true \
+    npm ci
 
 FROM composer-base-image AS production-dependencies
 
-COPY ./composer.json \
-    ./composer.lock \
-    ./
+WORKDIR /build
 
-RUN composer install \
+RUN  \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer install \
     --ignore-platform-reqs \
     --no-autoloader \
     --no-cache \
@@ -27,7 +27,10 @@ RUN composer install \
 
 FROM production-dependencies AS development-dependencies
 
-RUN composer install \
+RUN \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer install \
     --ignore-platform-reqs \
     --no-autoloader \
     --no-cache \
@@ -67,19 +70,12 @@ RUN export DEBIAN_FRONTEND="noninteractive" \
 
 WORKDIR /app
 
-COPY ./composer.json \
-    ./composer.lock \
-    ./package.json \
-    ./package-lock.json \
-    ./
-
 COPY ./src ./src
 COPY ./bin ./bin
 
 ADD https://github.com/plantuml/plantuml/releases/download/v1.2022.2/plantuml-1.2022.2.jar bin/plantuml.jar
 
-COPY --from=production-dependencies /usr/bin/composer /usr/local/bin/composer
-COPY --from=npm-dependencies /app/node_modules node_modules
+COPY --from=npm-dependencies /build/node_modules node_modules
 
 RUN ln -s node_modules/.bin/marked /usr/local/bin/marked \
     && ln -s node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli
@@ -95,21 +91,33 @@ CMD ["--html", "--pdf"]
 
 FROM base-dependencies AS production
 
-COPY --from=production-dependencies /app/vendor vendor
+COPY --from=production-dependencies /build/vendor vendor
 
-RUN composer install \
+RUN \
+    --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer install \
     --classmap-authoritative \
     --no-cache \
     --no-dev
 
 FROM base-dependencies AS development
 
-COPY --from=development-dependencies /app/vendor vendor
 COPY ./phpcs.xml.dist \
     ./phpunit.xml.dist \
     ./psalm.xml.dist \
     ./
 COPY ./test test
+
+COPY ./composer.json \
+    ./composer.lock \
+    ./package.json \
+    ./package-lock.json \
+    ./
+
+COPY --from=production-dependencies /usr/bin/composer /usr/local/bin/composer
+COPY --from=development-dependencies /build/vendor vendor
 
 RUN composer install \
     --classmap-authoritative \
