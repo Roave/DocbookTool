@@ -34,6 +34,7 @@ RUN export DEBIAN_FRONTEND="noninteractive" \
       php8.1-zip \
       php8.1-mbstring \
       php8.1-xml \
+      php8.1-curl \
       nodejs \
       adoptopenjdk-8-hotspot-jre \
       xfonts-75dpi \
@@ -96,19 +97,6 @@ ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
 
 ENTRYPOINT ["bin/docbook-tool"]
 CMD ["--html", "--pdf"]
-
-
-FROM base-with-codebase AS production
-
-COPY --from=production-composer-dependencies /build/vendor vendor
-RUN \
-    --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
-    --mount=type=cache,target=/root/.composer,id=composer \
-    --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.json,target=composer.lock,rw=true \
-    COMPOSER_DISABLE_NETWORK=1 composer dump-autoload \
-    --classmap-authoritative \
-    --no-dev
 
 
 FROM base-with-codebase AS development
