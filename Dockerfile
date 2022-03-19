@@ -37,13 +37,13 @@ RUN export DEBIAN_FRONTEND="noninteractive" \
     && mkdir -p /usr/share/man/man1 \
     && apt-get update \
     && apt-get -y upgrade \
-    && apt-get install -y software-properties-common gnupg curl \
+    && apt-get install -y --no-install-recommends software-properties-common gnupg curl \
     && add-apt-repository --yes ppa:ondrej/php \
     && curl --silent https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - \
     && add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ \
     && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update \
-    && apt-get install -y \
+    && apt-get install -y --no-install-recommends \
       bash \
       binutils \
       graphviz \
