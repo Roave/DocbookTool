@@ -64,7 +64,7 @@ RUN  \
     --no-plugins
 
 
-FROM base-with-dependencies AS development-composer-dependencies
+FROM production-composer-dependencies AS development-composer-dependencies
 
 WORKDIR /build
 
