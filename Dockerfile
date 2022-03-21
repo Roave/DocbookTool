@@ -1,37 +1,20 @@
 FROM composer:2.2.9 AS composer-base-image
-FROM node:17.7 AS npm-dependencies
+FROM node:17.7 AS npm-base-image
+FROM ubuntu:20.04 AS ubuntu-base-image
 
-COPY ./package.json \
-    ./package-lock.json \
-    /app/
 
-RUN cd /app \
-    && npm ci
+FROM npm-base-image AS npm-dependencies
 
-FROM composer-base-image AS production-dependencies
+WORKDIR /build
 
-COPY ./composer.json \
-    ./composer.lock \
-    /app/
+RUN \
+    --mount=type=cache,target=/root/.npm,id=npm \
+    --mount=source=package.json,target=package.json \
+    --mount=source=package-lock.json,target=package-lock.json,rw=true \
+    npm ci
 
-RUN composer install \
-    --ignore-platform-reqs \
-    --no-autoloader \
-    --no-cache \
-    --no-dev \
-    --no-plugins \
-    --no-scripts
 
-FROM production-dependencies AS development-dependencies
-
-RUN composer install \
-    --ignore-platform-reqs \
-    --no-autoloader \
-    --no-cache \
-    --no-plugins \
-    --no-scripts
-
-FROM ubuntu:20.04 AS base-dependencies
+FROM ubuntu-base-image AS base-with-dependencies
 
 RUN export DEBIAN_FRONTEND="noninteractive" \
     && mkdir -p /usr/share/man/man1 \
@@ -51,6 +34,7 @@ RUN export DEBIAN_FRONTEND="noninteractive" \
       php8.1-zip \
       php8.1-mbstring \
       php8.1-xml \
+      php8.1-curl \
       nodejs \
       adoptopenjdk-8-hotspot-jre \
       xfonts-75dpi \
@@ -62,22 +46,48 @@ RUN export DEBIAN_FRONTEND="noninteractive" \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
 
-COPY ./composer.json \
-    ./composer.lock \
-    ./package.json \
-    ./package-lock.json \
-    /app/
+ADD https://github.com/plantuml/plantuml/releases/download/v1.2022.2/plantuml-1.2022.2.jar app/bin/plantuml.jar
 
-COPY ./src /app/src
-COPY ./bin /app/bin
 
-ADD https://github.com/plantuml/plantuml/releases/download/v1.2022.2/plantuml-1.2022.2.jar /app/bin/plantuml.jar
+FROM base-with-dependencies AS production-composer-dependencies
 
-COPY --from=production-dependencies /usr/bin/composer /usr/local/bin/composer
-COPY --from=npm-dependencies /app/node_modules /app/node_modules
+WORKDIR /build
 
-RUN ln -s /app/node_modules/.bin/marked /usr/local/bin/marked \
-    && ln -s /app/node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli
+RUN  \
+    --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
+    --mount=type=cache,target=/root/.composer,id=composer \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer install \
+    --no-autoloader \
+    --no-dev \
+    --no-plugins
+
+
+FROM production-composer-dependencies AS development-composer-dependencies
+
+WORKDIR /build
+
+RUN \
+    --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
+    --mount=type=cache,target=/root/.composer,id=composer \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer install \
+    --no-plugins
+
+
+FROM base-with-dependencies AS base-with-codebase
+
+WORKDIR /app
+
+COPY --link ./src ./src
+COPY --link ./bin ./bin
+
+COPY --link --from=npm-dependencies /build/node_modules node_modules
+
+RUN ln -s node_modules/.bin/marked /usr/local/bin/marked \
+    && ln -s node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli
 
 ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_TEMPLATE_PATH=/docs-src/templates \
@@ -85,29 +95,53 @@ ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_OUTPUT_HTML_FILE=/docs-package/index.html \
     DOCBOOK_TOOL_OUTPUT_PDF_PATH=/docs-package/pdf
 
-WORKDIR /app
-
 ENTRYPOINT ["bin/docbook-tool"]
 CMD ["--html", "--pdf"]
 
-FROM base-dependencies AS production
 
-COPY --from=production-dependencies /app/vendor /app/vendor
+FROM base-with-codebase AS development
 
-RUN composer install \
-    --classmap-authoritative \
-    --no-cache \
-    --no-dev
-
-FROM base-dependencies AS development
-
-COPY --from=development-dependencies /app/vendor /app/vendor
-COPY ./phpcs.xml.dist \
+COPY --link ./phpcs.xml.dist \
     ./phpunit.xml.dist \
     ./psalm.xml.dist \
-    /app/
-COPY ./test /app/test
+    ./
+COPY --link ./test test
 
-RUN composer install \
+COPY --link ./composer.json \
+    ./composer.lock \
+    ./package.json \
+    ./package-lock.json \
+    ./
+
+COPY --link --from=composer-base-image /usr/bin/composer /usr/local/bin/composer
+COPY --link --from=development-composer-dependencies /build/vendor vendor
+
+# run the plugins
+RUN \
+    --mount=type=cache,target=/root/.composer,id=composer \
+    composer install
+
+
+FROM development AS tested
+
+RUN vendor/bin/phpunit
+RUN vendor/bin/phpcs
+RUN vendor/bin/psalm
+RUN touch .tested
+
+
+FROM base-with-codebase AS production
+
+COPY --link --from=production-composer-dependencies /build/vendor vendor
+
+RUN \
+    --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
+    --mount=type=cache,target=/root/.composer,id=composer \
+    --mount=source=composer.json,target=composer.json \
+    --mount=source=composer.json,target=composer.lock,rw=true \
+    composer dump-autoload \
     --classmap-authoritative \
-    --no-cache
+    --no-dev
+
+# The tests must have run to build production
+COPY --link --from=tested /app/.tested .
