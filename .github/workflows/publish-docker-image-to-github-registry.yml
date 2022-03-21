@@ -20,6 +20,8 @@ jobs:
             ghcr.io/roave/docbooktool
           tags: |
             type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
           target: production
 
       - name: Set up QEMU
