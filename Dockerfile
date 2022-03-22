@@ -57,7 +57,7 @@ RUN  \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
     --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.json,target=composer.lock,rw=true \
+    --mount=source=composer.lock,target=composer.lock,rw=true \
     composer install \
     --no-autoloader \
     --no-dev \
@@ -72,7 +72,7 @@ RUN \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
     --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.json,target=composer.lock,rw=true \
+    --mount=source=composer.lock,target=composer.lock,rw=true \
     composer install \
     --no-plugins
 
@@ -138,7 +138,7 @@ RUN \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
     --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.json,target=composer.lock,rw=true \
+    --mount=source=composer.lock,target=composer.lock,rw=true \
     composer dump-autoload \
     --classmap-authoritative \
     --no-dev
