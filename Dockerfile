@@ -12,7 +12,7 @@ WORKDIR /build
 RUN \
     --mount=type=cache,target=/root/.npm,id=npm \
     --mount=source=package.json,target=package.json \
-    --mount=source=package-lock.json,target=package-lock.json,rw=true \
+    --mount=source=package-lock.json,target=package-lock.json \
     npm ci
 
 
@@ -59,7 +59,7 @@ RUN  \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
     --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.lock,target=composer.lock,rw=true \
+    --mount=source=composer.lock,target=composer.lock \
     composer install \
     --no-autoloader \
     --no-dev \
@@ -74,7 +74,7 @@ RUN \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
     --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.lock,target=composer.lock,rw=true \
+    --mount=source=composer.lock,target=composer.lock \
     composer install \
     --no-plugins
 
@@ -140,7 +140,7 @@ RUN \
     --mount=source=/usr/bin/composer,target=/usr/bin/composer,from=composer-base-image \
     --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
-    --mount=source=composer.lock,target=composer.lock,rw=true \
+    --mount=source=composer.lock,target=composer.lock \
     composer dump-autoload \
     --classmap-authoritative \
     --no-dev
