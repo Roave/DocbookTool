@@ -14,12 +14,14 @@ jobs:
           install: true
 
       - name: "Build docker image"
-        uses: docker/build-push-action@v2
+        uses: "docker/build-push-action@v2"
         with:
           target: "development"
           tags: "ghcr.io/roave/docbooktool:test-image"
           push: "false"
-          load: true
+          load: "true"
+          cache-from: "type=gha,scope=ci-cache"
+          cache-to: "type=gha,mode=max,scope=ci-cache"
 
       - name: "Psalm"
         run: "docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/psalm"
