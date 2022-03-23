@@ -18,7 +18,11 @@ RUN \
 
 FROM ubuntu-base-image AS base-with-dependencies
 
-RUN export DEBIAN_FRONTEND="noninteractive" \
+RUN  \
+    --mount=type=cache,target=/var/cache/apt,sharing=private \
+    --mount=type=cache,target=/var/lib/apt/lists/,sharing=private \
+    export DEBIAN_FRONTEND="noninteractive" \
+    && rm /etc/apt/apt.conf.d/docker-clean \
     && mkdir -p /usr/share/man/man1 \
     && apt-get update \
     && apt-get -y upgrade \
@@ -44,8 +48,6 @@ RUN export DEBIAN_FRONTEND="noninteractive" \
       fontconfig \
       libjpeg-turbo8 \
       wkhtmltopdf \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
 
 ADD https://github.com/plantuml/plantuml/releases/download/v1.2022.2/plantuml-1.2022.2.jar app/bin/plantuml.jar
