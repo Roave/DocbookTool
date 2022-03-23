@@ -13,16 +13,15 @@ jobs:
         with:
           install: true
 
-      - name: Checkout source code
-        uses: actions/checkout@v3
-
       - name: "Build docker image"
-        run: |
-          docker buildx build \
-            --load \
-            --target=development \
-            --tag=ghcr.io/roave/docbooktool:test-image \
-            .
+        uses: "docker/build-push-action@v2"
+        with:
+          target: "development"
+          tags: "ghcr.io/roave/docbooktool:test-image"
+          push: "false"
+          load: "true"
+          cache-from: "type=gha,scope=ci-cache"
+          cache-to: "type=gha,mode=max,scope=ci-cache"
 
       - name: "Psalm"
         run: "docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/psalm"
