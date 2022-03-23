@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 FROM composer:2.2.9 AS composer-base-image
 FROM node:17.7 AS npm-base-image
 FROM ubuntu:20.04 AS ubuntu-base-image
