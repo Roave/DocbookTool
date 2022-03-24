@@ -17,17 +17,17 @@ jobs:
         uses: "docker/build-push-action@v2"
         with:
           target: "development"
-          tags: "ghcr.io/roave/docbooktool:test-image"
+          tags: "ghcr.io/ciaranmcnulty/docbooktool:test-image"
           push: "false"
           load: "true"
           cache-from: "type=gha,scope=ci-cache"
           cache-to: "type=gha,mode=max,scope=ci-cache"
 
       - name: "Psalm"
-        run: "docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/psalm"
+        run: "docker run --rm --entrypoint=php ghcr.io/ciaranmcnulty/docbooktool:test-image vendor/bin/psalm"
 
       - name: "PHPUnit"
-        run: "docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpunit"
+        run: "docker run --rm --entrypoint=php ghcr.io/ciaranmcnulty/docbooktool:test-image vendor/bin/phpunit"
 
       - name: "PHPCS"
-        run: "docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpcs"
+        run: "docker run --rm --entrypoint=php ghcr.io/ciaranmcnulty/docbooktool:test-image vendor/bin/phpcs"
