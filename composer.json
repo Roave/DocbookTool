@@ -19,7 +19,7 @@
         "psr/log": "^3.0.0",
         "symfony/yaml": "^6.0.3",
         "thecodingmachine/safe": "^2.1.2",
-        "twig/twig": "^3.2",
+        "twig/twig": "^3.3",
         "webmozart/assert": "^1.9"
     },
     "require-dev": {
