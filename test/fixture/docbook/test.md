@@ -31,7 +31,7 @@ Links [here](https://www.google.com). **Bold**, _italic_, ~~strikethrough~~, `in
 ## A diagram
 
 ```puml
-@startuml
+@startuml dummy_filename
 Bob->Alice : hello
 hexagon TestingHexagon
 @enduml
