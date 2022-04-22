@@ -86,8 +86,8 @@ COPY --link ./bin ./bin
 
 COPY --link --from=npm-dependencies /build/node_modules node_modules
 
-RUN ln -s node_modules/.bin/marked /usr/local/bin/marked \
-    && ln -s node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli
+RUN ln -s /app/node_modules/.bin/marked /usr/local/bin/marked \
+    && ln -s /app/node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli
 
 ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_TEMPLATE_PATH=/docs-src/templates \
