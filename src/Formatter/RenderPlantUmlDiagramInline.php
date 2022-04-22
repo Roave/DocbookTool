@@ -12,15 +12,14 @@ use function escapeshellcmd;
 use function exec;
 use function implode;
 use function md5;
+use function preg_replace;
 use function preg_replace_callback;
 use function Safe\file_get_contents;
 use function Safe\file_put_contents;
 use function Safe\unlink;
 use function sprintf;
-use function str_starts_with;
 use function substr;
 use function sys_get_temp_dir;
-use function trim;
 
 final class RenderPlantUmlDiagramInline implements PageFormatter
 {
@@ -35,17 +34,23 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                 '/```puml([\w\W]*?)```/',
                 static function (array $m) use ($page) {
                     /** @var array{1: string} $m */
-                    if (! str_starts_with(trim($m[1]), '@startuml')) {
+                    $match = $m[1];
+
+                    // fix any "@startuml filename" first lines to omit the filename
+                    $match = preg_replace('/^(\s*@startuml)(\s.*)$/m', '\\1', $match, count: $startUmls);
+
+                    if ($startUmls === 0) {
                         throw new RuntimeException(sprintf(
                             'Ensure the PUML in %s starts with @startuml and ends with @enduml',
                             $page->slug()
                         ));
                     }
 
-                    $contentHash  = md5($m[1]);
+                    $contentHash  = md5($match);
                     $pumlFilename = sys_get_temp_dir() . '/' . $contentHash . '.puml';
                     $pngFilename  = sys_get_temp_dir() . '/' . $contentHash . '.png';
-                    file_put_contents($pumlFilename, $m[1]);
+                    file_put_contents($pumlFilename, $match);
+
                     /** @psalm-suppress ForbiddenCode */
                     exec(
                         escapeshellcmd('java -jar ' . self::PLANTUML_JAR . ' ' . $pumlFilename) . ' 2>&1',
@@ -58,7 +63,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                         throw new RuntimeException(sprintf(
                             'Failed to render PUML in %s - starts "%s". Output was: %s',
                             $page->slug(),
-                            substr($m[1], 0, 15),
+                            substr($match, 0, 15),
                             implode("\n", $output)
                         ));
                     }
