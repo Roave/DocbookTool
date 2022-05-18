@@ -2,7 +2,7 @@
     "name": "roave-docbook-tool-build-dependencies",
     "version": "0.0.1",
     "dependencies": {
-        "redoc-cli": "^0.13.13",
+        "redoc-cli": "^0.13.14",
         "marked": "^4.0.16"
     }
 }
