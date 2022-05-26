@@ -18,7 +18,7 @@
         "monolog/monolog": "^3.0",
         "psr/log": "^3.0.0",
         "symfony/yaml": "^6.0.3",
-        "thecodingmachine/safe": "^2.1.4",
+        "thecodingmachine/safe": "^2.2.0",
         "twig/twig": "^3.4",
         "webmozart/assert": "^1.9"
     },
