@@ -20,7 +20,7 @@
         "symfony/yaml": "^6.1.0",
         "thecodingmachine/safe": "^2.2.0",
         "twig/twig": "^3.4",
-        "webmozart/assert": "^1.9"
+        "webmozart/assert": "^1.11"
     },
     "require-dev": {
         "doctrine/coding-standard": "^9.0",
