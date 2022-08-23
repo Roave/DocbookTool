@@ -2,7 +2,7 @@
 
 FROM composer:2.4.1 AS composer-base-image
 FROM node:18.7.0 AS npm-base-image
-FROM ubuntu:20.04 AS ubuntu-base-image
+FROM ubuntu:22.04 AS ubuntu-base-image
 
 
 FROM npm-base-image AS npm-dependencies
