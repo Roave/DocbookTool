@@ -28,8 +28,6 @@ RUN  \
     && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends software-properties-common gnupg curl \
     && add-apt-repository --yes ppa:ondrej/php \
-    && curl --silent https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - \
-    && add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ \
     && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -42,7 +40,7 @@ RUN  \
       php8.1-xml \
       php8.1-curl \
       nodejs \
-      adoptopenjdk-8-hotspot-jre \
+      openjdk-18-jre \
       xfonts-75dpi \
       xfonts-base \
       fontconfig \
