@@ -31,7 +31,7 @@ class RecursivelyLoadPagesFromPath
 
             $pages[] = DocbookPage::fromSlugAndContent(
                 $slug,
-                $content
+                $content,
             );
         }
 

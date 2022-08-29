@@ -24,7 +24,7 @@ class DocbookPage
     private function __construct(
         private string $slug,
         private string $content,
-        private array $frontMatter
+        private array $frontMatter,
     ) {
     }
 
@@ -90,7 +90,7 @@ class DocbookPage
             && $this->frontMatter['pdf'];
     }
 
-    public function confluencePageId(): ?int
+    public function confluencePageId(): int|null
     {
         if (
             ! array_key_exists('confluencePageId', $this->frontMatter)

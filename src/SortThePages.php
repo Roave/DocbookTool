@@ -22,7 +22,7 @@ class SortThePages
                 // Sort by order (can be overridden with `order:` front matter), then alphabetically
                 return $a->order() <=> $b->order()
                     ?: $a->slug() <=> $b->slug();
-            }
+            },
         );
 
         return $pages;

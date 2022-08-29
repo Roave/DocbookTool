@@ -20,7 +20,7 @@ final class MarkdownToHtml implements PageFormatter
     public function __invoke(DocbookPage $page): DocbookPage
     {
         return $page->withReplacedContent(
-            $this->markdownParser->transform($page->content())
+            $this->markdownParser->transform($page->content()),
         );
     }
 }

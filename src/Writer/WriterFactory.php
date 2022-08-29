@@ -47,7 +47,7 @@ class WriterFactory
                 $this->twig,
                 'online.twig',
                 $outputDocbookHtml,
-                $this->logger
+                $this->logger,
             );
         }
 
@@ -63,7 +63,7 @@ class WriterFactory
                 'pdf.twig',
                 'wkhtmltopdf',
                 $outputPdfPath,
-                $this->logger
+                $this->logger,
             );
         }
 
@@ -80,7 +80,7 @@ class WriterFactory
                     new Client(['verify' => false]),
                     $confluenceUrl . '/rest/api/content',
                     $confluenceAuthToken,
-                    $this->logger
+                    $this->logger,
                 );
             } else {
                 $this->logger->notice('Skipping Confluence mirror step, DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN was not set and could not be set interactively.');

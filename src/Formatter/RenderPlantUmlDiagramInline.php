@@ -42,7 +42,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                     if ($startUmls === 0) {
                         throw new RuntimeException(sprintf(
                             'Ensure the PUML in %s starts with @startuml and ends with @enduml',
-                            $page->slug()
+                            $page->slug(),
                         ));
                     }
 
@@ -55,7 +55,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                     exec(
                         escapeshellcmd('java -jar ' . self::PLANTUML_JAR . ' ' . $pumlFilename) . ' 2>&1',
                         $output,
-                        $exitCode
+                        $exitCode,
                     );
 
                     if ($exitCode !== 0) {
@@ -64,7 +64,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                             'Failed to render PUML in %s - starts "%s". Output was: %s',
                             $page->slug(),
                             substr($match, 0, 15),
-                            implode("\n", $output)
+                            implode("\n", $output),
                         ));
                     }
 
@@ -74,8 +74,8 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
 
                     return '![Diagram](data:image/png;base64,' . $pngContent . ')';
                 },
-                $page->content()
-            )
+                $page->content(),
+            ),
         );
     }
 }

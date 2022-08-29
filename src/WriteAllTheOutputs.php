@@ -13,9 +13,7 @@ class WriteAllTheOutputs
     {
     }
 
-    /**
-     * @param DocbookPage[] $pages
-     */
+    /** @param DocbookPage[] $pages */
     public function __invoke(array $pages): void
     {
         foreach ($this->writers as $writer) {
