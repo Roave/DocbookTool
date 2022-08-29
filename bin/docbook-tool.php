@@ -52,8 +52,8 @@ use function is_string;
         (new SortThePages())(
             array_map(
                 [new AggregatePageFormatter($pageFormatters), '__invoke'],
-                (new RecursivelyLoadPagesFromPath())($contentPath)
-            )
-        )
+                (new RecursivelyLoadPagesFromPath())($contentPath),
+            ),
+        ),
     );
 })($argv);

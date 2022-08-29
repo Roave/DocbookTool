@@ -24,7 +24,7 @@ class Environment
         return $value;
     }
 
-    public static function optional(string $name): ?string
+    public static function optional(string $name): string|null
     {
         return getenv($name) ?: null;
     }

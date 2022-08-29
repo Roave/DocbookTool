@@ -27,7 +27,7 @@ class MultiplePdfFilesWriter implements OutputWriter
         private string $twigTemplate,
         private string $locationOfWkhtmltopdf,
         private string $pdfOutputPath,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -59,10 +59,10 @@ class MultiplePdfFilesWriter implements OutputWriter
                         '-q',
                         $tmpHtmlFile,
                         $pdfFile,
-                    ]
+                    ],
                 )) . ' 2>&1',
                 $output,
-                $exitCode
+                $exitCode,
             );
 
             if (count($output) > 0) {

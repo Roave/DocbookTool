@@ -17,7 +17,7 @@ final class SingleStaticHtmlWriter implements OutputWriter
         private Twig $twig,
         private string $twigTemplate,
         private string $outputFile,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -31,7 +31,7 @@ final class SingleStaticHtmlWriter implements OutputWriter
         $this->logger->info('Writing HTML output to ' . $this->outputFile);
         file_put_contents(
             $this->outputFile,
-            $this->twig->render($this->twigTemplate, ['pages' => $docbookPages])
+            $this->twig->render($this->twigTemplate, ['pages' => $docbookPages]),
         );
     }
 }

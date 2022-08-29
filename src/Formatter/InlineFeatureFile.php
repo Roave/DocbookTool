@@ -19,9 +19,7 @@ final class InlineFeatureFile implements PageFormatter
     {
     }
 
-    /**
-     * @throws SafeExceptionInterface
-     */
+    /** @throws SafeExceptionInterface */
     public function __invoke(DocbookPage $page): DocbookPage
     {
         return $page->withReplacedContent(
@@ -33,8 +31,8 @@ final class InlineFeatureFile implements PageFormatter
 
                     return '<pre><code class="lang-gherkin">' . htmlentities($feature, ENT_QUOTES) . '</code></pre>';
                 },
-                $page->content()
-            )
+                $page->content(),
+            ),
         );
     }
 }

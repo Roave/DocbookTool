@@ -28,9 +28,7 @@ use function sprintf;
 
 use const JSON_THROW_ON_ERROR;
 
-/**
- * @psalm-type ListOfExtractedImageData = list<array{hash: string, data: string}>
- */
+/** @psalm-type ListOfExtractedImageData = list<array{hash: string, data: string}> */
 final class ConfluenceWriter implements OutputWriter
 {
     private const CONFLUENCE_HEADER = '<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p>';
@@ -39,7 +37,7 @@ final class ConfluenceWriter implements OutputWriter
         private ClientInterface $client,
         private string $confluenceContentApiUrl,
         private string $authHeader,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -66,7 +64,7 @@ final class ConfluenceWriter implements OutputWriter
             ));
 
             [$confluenceContent, $imageData] = $this->extractImagesFromContent(
-                self::CONFLUENCE_HEADER . $page->content()
+                self::CONFLUENCE_HEADER . $page->content(),
             );
 
             $latestContentHash = md5($confluenceContent);
@@ -83,7 +81,7 @@ final class ConfluenceWriter implements OutputWriter
                 $confluenceHashResponse = $this->confluenceRequest(
                     'GET',
                     $confluencePageId . '/property/docbook-hash?expand=content,version',
-                    null
+                    null,
                 );
 
                 $hashUpdateMethod = 'PUT';
@@ -120,7 +118,7 @@ final class ConfluenceWriter implements OutputWriter
             $currentPageResponse = $this->confluenceRequest(
                 'GET',
                 (string) $confluencePageId,
-                null
+                null,
             );
 
             /**
@@ -157,7 +155,7 @@ final class ConfluenceWriter implements OutputWriter
                                 'filename' => $image['hash'] . '.png',
                             ],
                         ],
-                    ]
+                    ],
                 );
             }
 
@@ -181,7 +179,7 @@ final class ConfluenceWriter implements OutputWriter
                     'version' => [
                         'number' => (int) $currentPageResponse['version']['number'] + 1,
                     ],
-                ]
+                ],
             );
 
             /** @noinspection UnusedFunctionResultInspection */
@@ -194,14 +192,12 @@ final class ConfluenceWriter implements OutputWriter
                     'version' => [
                         'number' => $propertyVersion + 1,
                     ],
-                ]
+                ],
             );
         }
     }
 
-    /**
-     * @psalm-return array{0:string, 1:ListOfExtractedImageData}
-     */
+    /** @psalm-return array{0:string, 1:ListOfExtractedImageData} */
     private function extractImagesFromContent(string $renderedContent): array
     {
         $images = [];
@@ -220,7 +216,7 @@ final class ConfluenceWriter implements OutputWriter
 
                 return '<ac:image><ri:attachment ri:filename="' . $imageHash . '.png" /></ac:image>';
             },
-            $renderedContent
+            $renderedContent,
         );
 
         /** @psalm-var ListOfExtractedImageData $images */
@@ -240,9 +236,9 @@ final class ConfluenceWriter implements OutputWriter
     private function confluenceRequest(
         string $method,
         string $endpoint,
-        ?array $bodyContent,
+        array|null $bodyContent,
         array $overrideHeaders = [],
-        array $guzzleOptions = []
+        array $guzzleOptions = [],
     ): array {
         $headers = [
             'Authorization' => $this->authHeader,
@@ -261,7 +257,7 @@ final class ConfluenceWriter implements OutputWriter
                         array_merge($headers, $overrideHeaders),
                         $bodyContent !== null ? json_encode($bodyContent, JSON_THROW_ON_ERROR) : null,
                     ),
-                    $guzzleOptions
+                    $guzzleOptions,
                 )
                 ->getBody()
                 ->__toString();
@@ -284,7 +280,7 @@ final class ConfluenceWriter implements OutputWriter
                 $stringResponse,
                 true,
                 512,
-                JSON_THROW_ON_ERROR
+                JSON_THROW_ON_ERROR,
             );
 
             Assert::isArray($decodedResponse);

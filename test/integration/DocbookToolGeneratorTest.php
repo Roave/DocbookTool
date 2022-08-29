@@ -53,14 +53,14 @@ final class DocbookToolGeneratorTest extends TestCase
                         ]),
                         '__invoke',
                     ],
-                    (new RecursivelyLoadPagesFromPath())(self::CONTENT_PATH)
-                )
-            )
+                    (new RecursivelyLoadPagesFromPath())(self::CONTENT_PATH),
+                ),
+            ),
         );
 
         self::assertStringMatchesFormat(
             file_get_contents(self::EXPECTED_OUTPUT_DOCBOOK_HTML),
-            file_get_contents(self::OUTPUT_DOCBOOK_HTML)
+            file_get_contents(self::OUTPUT_DOCBOOK_HTML),
         );
         self::assertFileExists(self::OUTPUT_PDF_PATH . '/test.pdf');
         // @todo assert PDFs are the same - https://github.com/Roave/DocbookTool/issues/3

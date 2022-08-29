@@ -33,9 +33,7 @@ class InteractiveHttpBasicAuthTokenCreator
         return rtrim($input);
     }
 
-    /**
-     * @throws SafeExceptionInterface
-     */
+    /** @throws SafeExceptionInterface */
     public function __invoke(): string
     {
         echo 'Confluence username: ';
