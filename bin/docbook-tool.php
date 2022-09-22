@@ -11,6 +11,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
+use Roave\DocbookTool\Formatter\InlineExternalImages;
 use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 use Roave\DocbookTool\Formatter\RenderPlantUmlDiagramInline;
@@ -40,6 +41,7 @@ use function is_string;
 
     $pageFormatters = [
         new ExtractFrontMatter(),
+        new InlineExternalImages($contentPath),
         new RenderPlantUmlDiagramInline(),
         new MarkdownToHtml(),
     ];
