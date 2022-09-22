@@ -39,6 +39,7 @@ RUN  \
       php8.1-mbstring \
       php8.1-xml \
       php8.1-curl \
+      php8.1-gd \
       nodejs \
       openjdk-18-jre \
       xfonts-75dpi \

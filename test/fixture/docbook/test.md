@@ -37,10 +37,12 @@ hexagon TestingHexagon
 @enduml
 ```
 
-## An image
+## Some images
 
-Here is an image:
+Here are some images:
 
-![A smiley face](./smile.png)
+![A smiley face in PNG](./smile.png)
+![A smiley face in JPG](./smile.jpg)
+![A smiley face in GIF](./smile.gif)
 
-It was hand drawn, that's why it looks rubbish.
+They are hand drawn, that's why they look rubbish.
