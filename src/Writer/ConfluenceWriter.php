@@ -28,7 +28,7 @@ use function sprintf;
 
 use const JSON_THROW_ON_ERROR;
 
-/** @psalm-type ListOfExtractedImageData = list<array{hash: string, data: string}> */
+/** @psalm-type ListOfExtractedImageData = list<array{hashFilename: string, data: string}> */
 final class ConfluenceWriter implements OutputWriter
 {
     private const CONFLUENCE_HEADER = '<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p>';
@@ -137,7 +137,7 @@ final class ConfluenceWriter implements OutputWriter
             $uploadedImages = array_column($currentPageAttachments['results'], 'title');
 
             foreach ($imageData as $image) {
-                if (in_array($image['hash'] . '.png', $uploadedImages, true)) {
+                if (in_array($image['hashFilename'], $uploadedImages, true)) {
                     continue;
                 }
 
@@ -152,7 +152,7 @@ final class ConfluenceWriter implements OutputWriter
                             [
                                 'name' => 'file',
                                 'contents' => $image['data'],
-                                'filename' => $image['hash'] . '.png',
+                                'filename' => $image['hashFilename'],
                             ],
                         ],
                     ],
@@ -194,6 +194,12 @@ final class ConfluenceWriter implements OutputWriter
                     ],
                 ],
             );
+
+            $this->logger->debug(sprintf(
+                ' - OK! Successfully updated confluence page %s with %s ...',
+                $confluencePageId,
+                $page->slug(),
+            ));
         }
     }
 
@@ -203,18 +209,23 @@ final class ConfluenceWriter implements OutputWriter
         $images = [];
 
         $replacedContent = (string) preg_replace_callback(
-            '/<img src="data:image\/png;base64,([a-zA-Z0-9=+\/]+)" alt="Diagram" \/>/',
+            '/<img src="data:([^;]+);base64,([a-zA-Z0-9=+\/]+)" alt="([^\"]+)" \/>/',
             static function (array $m) use (&$images): string {
-                /** @var array{1: string} $m */
-                $imageBinaryData = base64_decode($m[1]);
-                $imageHash       = md5($imageBinaryData);
+                /** @var array{1: string, 2: string, 3: string} $m */
+                $imageBinaryData   = base64_decode($m[2]);
+                $imageHashFilename = md5($imageBinaryData) . '.' . match ($m[1]) {
+                    'image/png' => 'png',
+                    'image/jpeg', 'image/jpg' => 'jpg',
+                    'image/gif' => 'gif',
+                };
+
                 /** @psalm-var ListOfExtractedImageData $images */
                 $images[] = [
-                    'hash' => $imageHash,
+                    'hashFilename' => $imageHashFilename,
                     'data' => $imageBinaryData,
                 ];
 
-                return '<ac:image><ri:attachment ri:filename="' . $imageHash . '.png" /></ac:image>';
+                return '<ac:image><ri:attachment ri:filename="' . $imageHashFilename . '" /></ac:image>';
             },
             $renderedContent,
         );
