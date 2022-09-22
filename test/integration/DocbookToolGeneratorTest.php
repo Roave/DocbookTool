@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
+use Roave\DocbookTool\Formatter\InlineExternalImages;
 use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 use Roave\DocbookTool\Formatter\RenderPlantUmlDiagramInline;
@@ -47,6 +48,7 @@ final class DocbookToolGeneratorTest extends TestCase
                     [
                         new AggregatePageFormatter([
                             new ExtractFrontMatter(),
+                            new InlineExternalImages(self::CONTENT_PATH),
                             new RenderPlantUmlDiagramInline(),
                             new MarkdownToHtml(),
                             new InlineFeatureFile(self::FEATURES_PATH),

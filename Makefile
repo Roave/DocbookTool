@@ -21,5 +21,10 @@ cs: build ## Run coding standards checks
 static-analysis: build ## Run the static analysis checks
 	docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/psalm
 
+test-output: ## Write the test fixture outputs to build/ directory - useful for manual visual inspection
+	rm -Rf build
+	mkdir -p build
+	docker buildx build --output=build --target=test-output --tag=ghcr.io/roave/docbooktool:test-image .
+
 production: ## Build and tag a production image
 	docker buildx build --load --target=production  --tag=ghcr.io/roave/docbooktool:latest .

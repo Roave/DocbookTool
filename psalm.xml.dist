@@ -8,6 +8,7 @@
     <projectFiles>
         <directory name="src" />
         <directory name="bin" />
+        <directory name="test/unit" />
         <directory name="test/integration" />
         <ignoreFiles>
             <directory name="vendor" />

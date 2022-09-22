@@ -39,6 +39,7 @@ RUN  \
       php8.1-mbstring \
       php8.1-xml \
       php8.1-curl \
+      php8.1-gd \
       nodejs \
       openjdk-18-jre \
       xfonts-75dpi \
@@ -123,6 +124,16 @@ RUN \
     --mount=type=cache,target=/root/.composer,id=composer \
     composer install
 
+FROM development AS test-output-builder
+
+COPY --link ./test/fixture/templates /docs-src/templates
+COPY --link ./test/fixture/docbook /docs-src/book
+COPY --link ./test/fixture/feature /docs-src/features
+RUN bin/docbook-tool --html --pdf
+
+FROM scratch AS test-output
+
+COPY --from=test-output-builder /docs-package /
 
 FROM development AS tested
 
