@@ -7,6 +7,7 @@ namespace Roave\DocbookToolUnitTest\Formatter;
 use PHPUnit\Framework\TestCase;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\InlineExternalImages;
+use RuntimeException;
 
 use function sprintf;
 
@@ -84,5 +85,23 @@ MD,
         );
 
         self::assertSame($expectedOutput, $formattedPage->content());
+    }
+
+    public function testImageNotExisting(): void
+    {
+        $this->expectError();
+        $this->expectErrorMessage('Failed to open stream: No such file or directory');
+        (new InlineExternalImages(__DIR__ . '/../../fixture/docbook'))(
+            DocbookPage::fromSlugAndContent('slug', '![the alt text](something-that-should-not-exist.jpg)'),
+        );
+    }
+
+    public function testImageMimeTypeNotDetected(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unable to determine mime type');
+        (new InlineExternalImages(__DIR__ . '/../../fixture/docbook'))(
+            DocbookPage::fromSlugAndContent('slug', '![the alt text](test.md)'),
+        );
     }
 }
