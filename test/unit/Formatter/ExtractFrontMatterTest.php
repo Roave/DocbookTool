@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolUnitTest\Formatter;
 
+use PHPUnit\Framework\TestCase;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
-use PHPUnit\Framework\TestCase;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 
 /** @covers \Roave\DocbookTool\Formatter\ExtractFrontMatter */
 final class ExtractFrontMatterTest extends TestCase
 {
+    /** @return array<string,array{content:non-empty-string,expectedTitle:non-empty-string}> */
     public function titleProvider(): array
     {
         return [
@@ -70,7 +71,12 @@ MD,
         ];
     }
 
-    /** @dataProvider titleProvider */
+    /**
+     * @param non-empty-string $content
+     * @param non-empty-string $expectedTitle
+     *
+     * @dataProvider titleProvider
+     */
     public function testTitleCanBeSetInFrontMatter(string $content, string $expectedTitle): void
     {
         self::assertSame(
@@ -78,7 +84,7 @@ MD,
             (new AggregatePageFormatter([
                 new ExtractFrontMatter(),
                 new MarkdownToHtml(),
-            ]))(DocbookPage::fromSlugAndContent('slug', $content))->title()
+            ]))(DocbookPage::fromSlugAndContent('slug', $content))->title(),
         );
     }
 }

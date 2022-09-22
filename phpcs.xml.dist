@@ -6,6 +6,7 @@
 
     <file>bin</file>
     <file>src</file>
+    <file>test/unit</file>
     <file>test/integration</file>
 
     <rule ref="Doctrine">
