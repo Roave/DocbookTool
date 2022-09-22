@@ -36,3 +36,11 @@ Bob->Alice : hello
 hexagon TestingHexagon
 @enduml
 ```
+
+## An image
+
+Here is an image:
+
+![A smiley face](./smile.png)
+
+It was hand drawn, that's why it looks rubbish.
