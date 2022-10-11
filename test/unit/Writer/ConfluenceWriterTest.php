@@ -94,6 +94,7 @@ final class ConfluenceWriterTest extends TestCase
 
         $confluence->__invoke([
             DocbookPage::fromSlugAndContent(
+                'path',
                 'page-slug',
                 <<<'HTML'
 <strong>Hello</strong>

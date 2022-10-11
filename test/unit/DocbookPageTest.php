@@ -13,7 +13,7 @@ final class DocbookPageTest extends TestCase
 {
     public function testEmptyPageThrowsExceptionWhenFetchingTitle(): void
     {
-        $page = DocbookPage::fromSlugAndContent('the-slug', '');
+        $page = DocbookPage::fromSlugAndContent(__FILE__, 'the-slug', '');
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('First line of markdown file the-slug did not start with "# "');
@@ -30,7 +30,7 @@ final class DocbookPageTest extends TestCase
 Hey
 HTML;
 
-        $page = DocbookPage::fromSlugAndContent('the-slug', $content);
+        $page = DocbookPage::fromSlugAndContent(__FILE__, 'the-slug', $content);
 
         self::assertSame('This page has no front matter', $page->title());
     }
@@ -43,7 +43,7 @@ HTML;
 Hey
 HTML;
 
-        $page = DocbookPage::fromSlugAndContent('the-slug', $content)
+        $page = DocbookPage::fromSlugAndContent(__FILE__, 'the-slug', $content)
             ->withFrontMatter(['title' => 'Front matter title']);
 
         self::assertSame('Front matter title', $page->title());

@@ -22,15 +22,16 @@ class DocbookPage
 
     /** @param array<array-key, mixed> $frontMatter */
     private function __construct(
+        private string $path,
         private string $slug,
         private string $content,
         private array $frontMatter,
     ) {
     }
 
-    public static function fromSlugAndContent(string $slug, string $content): self
+    public static function fromSlugAndContent(string $path, string $slug, string $content): self
     {
-        return new self($slug, $content, []);
+        return new self($path, $slug, $content, []);
     }
 
     public function withReplacedContent(string $newContent): self
@@ -50,6 +51,11 @@ class DocbookPage
         $new->frontMatter = $frontMatter;
 
         return $new;
+    }
+
+    public function path(): string
+    {
+        return $this->path;
     }
 
     public function slug(): string

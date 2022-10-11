@@ -59,7 +59,7 @@ HTML,
             $logger,
         );
 
-        $page = DocbookPage::fromSlugAndContent('slug', 'content')
+        $page = DocbookPage::fromSlugAndContent(__FILE__, 'slug', 'content')
             ->withFrontMatter(['pdf' => true]);
 
         $writer->__invoke([$page]);

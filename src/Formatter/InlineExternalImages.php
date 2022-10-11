@@ -10,6 +10,7 @@ use RuntimeException;
 
 use function array_key_exists;
 use function base64_encode;
+use function dirname;
 use function getimagesize;
 use function is_array;
 use function is_string;
@@ -36,7 +37,7 @@ final class InlineExternalImages implements PageFormatter
                     $altText   = $m[1];
                     $imagePath = $m[2];
 
-                    $fullImagePath = $this->docbookPath . '/' . $imagePath;
+                    $fullImagePath = dirname($page->path()) . '/' . $imagePath;
 
                     $this->logger->debug(sprintf('[%s] Inlining image "%s" in page "%s"', self::class, $fullImagePath, $page->slug()));
 
