@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\DocbookToolUnitTest\Formatter;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\InlineExternalImages;
 use RuntimeException;
@@ -72,7 +73,7 @@ MD;
 
         $page = DocbookPage::fromSlugAndContent('slug', $markdown);
 
-        $formattedPage = (new InlineExternalImages($contentPath))($page);
+        $formattedPage = (new InlineExternalImages($contentPath, new NullLogger()))($page);
 
         $expectedOutput = sprintf(
             <<<'MD'
@@ -91,7 +92,7 @@ MD,
     {
         $this->expectError();
         $this->expectErrorMessage('Failed to open stream: No such file or directory');
-        (new InlineExternalImages(__DIR__ . '/../../fixture/docbook'))(
+        (new InlineExternalImages(__DIR__ . '/../../fixture/docbook', new NullLogger()))(
             DocbookPage::fromSlugAndContent('slug', '![the alt text](something-that-should-not-exist.jpg)'),
         );
     }
@@ -100,7 +101,7 @@ MD,
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to determine mime type');
-        (new InlineExternalImages(__DIR__ . '/../../fixture/docbook'))(
+        (new InlineExternalImages(__DIR__ . '/../../fixture/docbook', new NullLogger()))(
             DocbookPage::fromSlugAndContent('slug', '![the alt text](test.md)'),
         );
     }

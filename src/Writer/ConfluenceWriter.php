@@ -58,7 +58,8 @@ final class ConfluenceWriter implements OutputWriter
             $confluencePageId = $page->confluencePageId();
 
             $this->logger->info(sprintf(
-                'Updating confluence page %s with %s ...',
+                '[%s] Updating confluence page %s with %s ...',
+                self::class,
                 $confluencePageId,
                 $page->slug(),
             ));
@@ -98,7 +99,7 @@ final class ConfluenceWriter implements OutputWriter
             }
 
             if (hash_equals($latestContentHash, $confluenceHash)) {
-                $this->logger->info(sprintf(' - skipping %s, already up to date.', $page->slug()));
+                $this->logger->info(sprintf('[%s] - skipping %s, already up to date.', self::class, $page->slug()));
                 continue;
             }
 
@@ -196,7 +197,8 @@ final class ConfluenceWriter implements OutputWriter
             );
 
             $this->logger->debug(sprintf(
-                ' - OK! Successfully updated confluence page %s with %s ...',
+                '[%s] - OK! Successfully updated confluence page %s with %s ...',
+                self::class,
                 $confluencePageId,
                 $page->slug(),
             ));

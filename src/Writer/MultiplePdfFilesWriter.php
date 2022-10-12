@@ -42,10 +42,11 @@ class MultiplePdfFilesWriter implements OutputWriter
     {
         foreach ($docbookPages as $page) {
             if (! $page->shouldGeneratePdf()) {
+                $this->logger->debug(sprintf('[%s] Not rendering PDF of page "%s", as it was not enabled', self::class, $page->slug()));
                 continue;
             }
 
-            $this->logger->info(sprintf("Rendering %s.pdf ...\n", $page->slug()));
+            $this->logger->info(sprintf("[%s] Rendering %s.pdf ...\n", self::class, $page->slug()));
 
             $tmpHtmlFile = sys_get_temp_dir() . '/' . $page->slug() . '.html';
             $pdfFile     = $this->pdfOutputPath . '/' . $page->slug() . '.pdf';
@@ -67,7 +68,7 @@ class MultiplePdfFilesWriter implements OutputWriter
 
             if (count($output) > 0) {
                 /** @psalm-var list<string> $output */
-                $this->logger->debug('wkhtmltopdf output: ' . implode("\n", $output));
+                $this->logger->debug(sprintf('[%s] wkhtmltopdf output: %s', self::class, implode("\n", $output)));
             }
 
             unlink($tmpHtmlFile);
@@ -75,6 +76,8 @@ class MultiplePdfFilesWriter implements OutputWriter
             if ($exitCode !== 0) {
                 throw new RuntimeException('Failed to generate PDF. Output was: ' . implode("\n", $output));
             }
+
+            $this->logger->debug(sprintf('[%s] PDF render of %s complete', self::class, $page->slug()));
         }
     }
 }

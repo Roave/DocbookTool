@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 
@@ -18,22 +19,26 @@ use function sprintf;
 
 final class InlineExternalImages implements PageFormatter
 {
-    public function __construct(private readonly string $docbookPath)
+    public function __construct(private readonly string $docbookPath, private readonly LoggerInterface $logger)
     {
     }
 
     /** @throws RuntimeException */
     public function __invoke(DocbookPage $page): DocbookPage
     {
+        $this->logger->debug(sprintf('[%s] Checking if external images can be inlined in %s', self::class, $page->slug()));
+
         return $page->withReplacedContent(
             preg_replace_callback(
                 '/!\[([^]]+)]\(([^)]*?)\)/',
-                function (array $m) {
+                function (array $m) use ($page) {
                     /** @var array{1: string, 2: string} $m */
                     $altText   = $m[1];
                     $imagePath = $m[2];
 
                     $fullImagePath = $this->docbookPath . '/' . $imagePath;
+
+                    $this->logger->debug(sprintf('[%s] Inlining image "%s" in page "%s"', self::class, $fullImagePath, $page->slug()));
 
                     $imageContent = file_get_contents($fullImagePath);
 

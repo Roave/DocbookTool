@@ -43,19 +43,19 @@ final class DocbookToolGeneratorTest extends TestCase
             new SingleStaticHtmlWriter($twig, 'online.twig', self::OUTPUT_DOCBOOK_HTML, $logger),
             new MultiplePdfFilesWriter($twig, 'pdf.twig', 'wkhtmltopdf', self::OUTPUT_PDF_PATH, $logger),
         ]))(
-            (new SortThePages())(
+            (new SortThePages($logger))(
                 array_map(
                     [
                         new AggregatePageFormatter([
-                            new ExtractFrontMatter(),
-                            new InlineExternalImages(self::CONTENT_PATH),
-                            new RenderPlantUmlDiagramInline(),
-                            new MarkdownToHtml(),
-                            new InlineFeatureFile(self::FEATURES_PATH),
+                            new ExtractFrontMatter($logger),
+                            new InlineExternalImages(self::CONTENT_PATH, $logger),
+                            new RenderPlantUmlDiagramInline($logger),
+                            new MarkdownToHtml($logger),
+                            new InlineFeatureFile(self::FEATURES_PATH, $logger),
                         ]),
                         '__invoke',
                     ],
-                    (new RecursivelyLoadPagesFromPath())(self::CONTENT_PATH),
+                    (new RecursivelyLoadPagesFromPath($logger))(self::CONTENT_PATH),
                 ),
             ),
         );

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\DocbookToolUnitTest\Formatter;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
@@ -79,11 +80,12 @@ MD,
      */
     public function testTitleCanBeSetInFrontMatter(string $content, string $expectedTitle): void
     {
+        $logger = new NullLogger();
         self::assertSame(
             $expectedTitle,
             (new AggregatePageFormatter([
-                new ExtractFrontMatter(),
-                new MarkdownToHtml(),
+                new ExtractFrontMatter($logger),
+                new MarkdownToHtml($logger),
             ]))(DocbookPage::fromSlugAndContent('slug', $content))->title(),
         );
     }
