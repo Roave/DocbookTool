@@ -179,7 +179,7 @@ HTML,
         );
 
         self::assertContains(
-            ' - OK! Successfully updated confluence page 123456789 with page-slug ...',
+            sprintf('[%s] - OK! Successfully updated confluence page 123456789 with page-slug ...', ConfluenceWriter::class),
             $testLogger->logMessages,
         );
     }

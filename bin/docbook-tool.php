@@ -40,21 +40,21 @@ use function is_string;
     $outputWriters = (new WriterFactory($twig, $logger))($arguments);
 
     $pageFormatters = [
-        new ExtractFrontMatter(),
-        new InlineExternalImages($contentPath),
-        new RenderPlantUmlDiagramInline(),
-        new MarkdownToHtml(),
+        new ExtractFrontMatter($logger),
+        new InlineExternalImages($contentPath, $logger),
+        new RenderPlantUmlDiagramInline($logger),
+        new MarkdownToHtml($logger),
     ];
 
     if (is_string($featuresPath)) {
-        $pageFormatters[] = new InlineFeatureFile($featuresPath);
+        $pageFormatters[] = new InlineFeatureFile($featuresPath, $logger);
     }
 
     (new WriteAllTheOutputs($outputWriters))(
-        (new SortThePages())(
+        (new SortThePages($logger))(
             array_map(
                 [new AggregatePageFormatter($pageFormatters), '__invoke'],
-                (new RecursivelyLoadPagesFromPath())($contentPath),
+                (new RecursivelyLoadPagesFromPath($logger))($contentPath),
             ),
         ),
     );

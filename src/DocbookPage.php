@@ -67,7 +67,7 @@ class DocbookPage
     {
         $firstLine = strtok($this->content, "\n");
 
-        if (! str_starts_with($firstLine, '<h1>') || ! str_ends_with($firstLine, '</h1>')) {
+        if (! $firstLine || ! str_starts_with($firstLine, '<h1>') || ! str_ends_with($firstLine, '</h1>')) {
             throw new RuntimeException('First line of markdown file ' . $this->slug() . ' did not start with "# "...');
         }
 

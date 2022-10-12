@@ -17,10 +17,11 @@ use function dirname;
 use function file_exists;
 use function in_array;
 use function Safe\mkdir;
+use function sprintf;
 
 class WriterFactory
 {
-    public function __construct(private Twig $twig, private LoggerInterface $logger)
+    public function __construct(private readonly Twig $twig, private readonly LoggerInterface $logger)
     {
     }
 
@@ -43,6 +44,13 @@ class WriterFactory
                 mkdir(dirname($outputDocbookHtml), recursive: true);
             }
 
+            $this->logger->debug(sprintf(
+                '[%s] HTML output requested to file "%s", adding writer: %s',
+                self::class,
+                $outputDocbookHtml,
+                SingleStaticHtmlWriter::class,
+            ));
+
             $outputWriters[] = new SingleStaticHtmlWriter(
                 $this->twig,
                 'online.twig',
@@ -57,6 +65,13 @@ class WriterFactory
             if (! file_exists($outputPdfPath)) {
                 mkdir($outputPdfPath, recursive: true);
             }
+
+            $this->logger->debug(sprintf(
+                '[%s] PDF output requested to directory "%s", adding writer: %s',
+                self::class,
+                $outputPdfPath,
+                MultiplePdfFilesWriter::class,
+            ));
 
             $outputWriters[] = new MultiplePdfFilesWriter(
                 $this->twig,
@@ -76,6 +91,13 @@ class WriterFactory
             }
 
             if ($confluenceAuthToken !== null) {
+                $this->logger->debug(sprintf(
+                    '[%s] Confluence output requested to "%s" and auth token is available, adding writer: %s',
+                    self::class,
+                    $confluenceUrl,
+                    ConfluenceWriter::class,
+                ));
+
                 $outputWriters[] = new ConfluenceWriter(
                     new Client(['verify' => false]),
                     $confluenceUrl . '/rest/api/content',
@@ -83,7 +105,10 @@ class WriterFactory
                     $this->logger,
                 );
             } else {
-                $this->logger->notice('Skipping Confluence mirror step, DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN was not set and could not be set interactively.');
+                $this->logger->notice(sprintf(
+                    '[%s] Skipping Confluence mirror step, DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN was not set and could not be set interactively.',
+                    self::class,
+                ));
             }
         }
 
