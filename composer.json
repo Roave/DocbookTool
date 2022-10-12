@@ -28,7 +28,7 @@
         "phpunit/phpunit": "^9.5",
         "psalm/plugin-phpunit": "^0.17.0",
         "roave/security-advisories": "dev-latest",
-        "vimeo/psalm": "^4.28"
+        "vimeo/psalm": "^4.29"
     },
     "autoload": {
         "psr-4": {
