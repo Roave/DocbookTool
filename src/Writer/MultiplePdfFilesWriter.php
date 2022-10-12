@@ -14,6 +14,7 @@ use Twig\Error\Error as TwigException;
 use function count;
 use function escapeshellcmd;
 use function exec;
+use function file_exists;
 use function implode;
 use function Safe\file_put_contents;
 use function Safe\unlink;
@@ -56,7 +57,11 @@ class MultiplePdfFilesWriter implements OutputWriter
                     ' ',
                     [
                         $this->locationOfWkhtmltopdf,
-                        '-q',
+                        '--enable-local-file-access',
+                        '--load-error-handling',
+                        'ignore',
+                        '--load-media-error-handling',
+                        'ignore',
                         $tmpHtmlFile,
                         $pdfFile,
                     ],
@@ -72,7 +77,19 @@ class MultiplePdfFilesWriter implements OutputWriter
 
             unlink($tmpHtmlFile);
 
-            if ($exitCode !== 0) {
+            /**
+             * Previously, we'd check the exit code, but it seems it is not reliable. I observed that the PDF was still
+             * generated successfully, despite the 404 (e.g. in {@see \Roave\DocbookToolIntegrationTest\Writer\MultiplePdfFilesWriterTest::testFileNotFoundInHtmlDoesNotCrashPdfGeneration}
+             * and the flags `--load-error-handling ignore` and `--load-media-error-handling ignore` do not seem to
+             * have any effect on the exit code. Therefore, next best thing (although it may slip failures through
+             * unnoticed) is to just check the file is generated.
+             *
+             * @link https://github.com/wkhtmltopdf/wkhtmltopdf/issues/2051
+             *
+             * Note: there is a separate issue {@link https://github.com/Roave/DocbookTool/issues/3} to add testing
+             * around the actual PDF contents, in the backlog...
+             */
+            if (! file_exists($pdfFile)) {
                 throw new RuntimeException('Failed to generate PDF. Output was: ' . implode("\n", $output));
             }
         }
