@@ -89,6 +89,14 @@ class MultiplePdfFilesWriter implements OutputWriter
              * Note: there is a separate issue {@link https://github.com/Roave/DocbookTool/issues/3} to add testing
              * around the actual PDF contents, in the backlog...
              */
+            if ($exitCode !== 0) {
+                $this->logger->warning(sprintf(
+                    '[%s] Exit code from wkhtmltopdf was non-zero (%d). PDF may not have generated successfully, but then again it may have. Who knows, at this point? Check the debug output, and probably visually inspect the generated PDF to make sure it worked as you expected it to.',
+                    self::class,
+                    $exitCode,
+                ));
+            }
+
             if (! file_exists($pdfFile)) {
                 throw new RuntimeException('Failed to generate PDF. Output was: ' . implode("\n", $output));
             }
