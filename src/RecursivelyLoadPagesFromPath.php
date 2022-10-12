@@ -40,6 +40,7 @@ class RecursivelyLoadPagesFromPath
             $this->logger->debug(sprintf('[%s] Found Markdown file "%s", assigning slug "%s"', self::class, $templateFilename, $slug));
 
             $pages[] = DocbookPage::fromSlugAndContent(
+                $templateFilename,
                 $slug,
                 $content,
             );

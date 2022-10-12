@@ -13,13 +13,13 @@ build-tested: ## Builds the image and runs the tests but does not tag it
 	docker buildx build --target=tested --progress=plain .
 
 test: build ## Run the unit and integration tests
-	docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpunit
+	docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpunit $(OPTS)
 
 cs: build ## Run coding standards checks
-	docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpcs
+	docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpcs $(OPTS)
 
 static-analysis: build ## Run the static analysis checks
-	docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/psalm
+	docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/psalm $(OPTS)
 
 test-output: ## Write the test fixture outputs to build/ directory - useful for manual visual inspection
 	rm -Rf build

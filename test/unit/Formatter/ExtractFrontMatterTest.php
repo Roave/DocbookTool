@@ -86,7 +86,7 @@ MD,
             (new AggregatePageFormatter([
                 new ExtractFrontMatter($logger),
                 new MarkdownToHtml($logger),
-            ]))(DocbookPage::fromSlugAndContent('slug', $content))->title(),
+            ]))(DocbookPage::fromSlugAndContent('path', 'slug', $content))->title(),
         );
     }
 }

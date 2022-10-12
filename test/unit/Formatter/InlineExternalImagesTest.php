@@ -71,7 +71,7 @@ Here is some markdown
 More markdown
 MD;
 
-        $page = DocbookPage::fromSlugAndContent('slug', $markdown);
+        $page = DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', $markdown);
 
         $formattedPage = (new InlineExternalImages($contentPath, new NullLogger()))($page);
 
@@ -93,16 +93,17 @@ MD,
         $this->expectError();
         $this->expectErrorMessage('Failed to open stream: No such file or directory');
         (new InlineExternalImages(__DIR__ . '/../../fixture/docbook', new NullLogger()))(
-            DocbookPage::fromSlugAndContent('slug', '![the alt text](something-that-should-not-exist.jpg)'),
+            DocbookPage::fromSlugAndContent(__DIR__ . '/faked.md', 'slug', '![the alt text](something-that-should-not-exist.jpg)'),
         );
     }
 
     public function testImageMimeTypeNotDetected(): void
     {
+        $contentPath = __DIR__ . '/../../fixture/docbook';
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to determine mime type');
-        (new InlineExternalImages(__DIR__ . '/../../fixture/docbook', new NullLogger()))(
-            DocbookPage::fromSlugAndContent('slug', '![the alt text](test.md)'),
+        (new InlineExternalImages($contentPath, new NullLogger()))(
+            DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', '![the alt text](test.md)'),
         );
     }
 }
