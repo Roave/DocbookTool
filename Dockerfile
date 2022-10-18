@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM composer:2.4.2 AS composer-base-image
+FROM composer:2.4.3 AS composer-base-image
 FROM node:18.11.0 AS npm-base-image
 FROM ubuntu:22.04 AS ubuntu-base-image
 
