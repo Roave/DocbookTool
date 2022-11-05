@@ -3,6 +3,6 @@
     "version": "0.0.1",
     "dependencies": {
         "redoc-cli": "^0.13.20",
-        "marked": "^4.2.1"
+        "marked": "^4.2.2"
     }
 }
