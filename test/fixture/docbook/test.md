@@ -46,3 +46,9 @@ Here are some images:
 ![A smiley face in GIF](./smile.gif)
 
 They are hand drawn, that's why they look rubbish.
+
+### A larger image
+
+This is an image that's over 500kb so we can be sure that bigger images work:
+
+![A snowy mountain](./large-image.jpeg)
