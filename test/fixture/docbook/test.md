@@ -66,3 +66,9 @@ They are hand drawn, that's why they look rubbish.
 ## Inline PUML file
 
 ![An external PlantUML diagram](./external-diagram.puml)
+
+### A larger image
+
+This is an image that's over 500kb so we can be sure that bigger images work:
+
+![A snowy mountain](./large-image.jpeg)
