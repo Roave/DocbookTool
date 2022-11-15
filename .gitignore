@@ -1,5 +1,0 @@
-/vendor/
-.env
-/build/
-.phpunit.result.cache
-/bin/plantuml.jar
