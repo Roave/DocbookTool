@@ -1,5 +1,15 @@
+/**
+ * This file is used by projects making use of the DocBookTool to provide consistent JS for navigating around the
+ * documentation.
+ *
+ * Do NOT remove this file! Doing so will cause numerous downstream projects using this to no longer function correctly!
+ */
+
 "use strict";
 
+/**
+ * @param {string} title
+ */
 function loadDocBookNavigation(title) {
     /**
      * @param {NodeListOf<HTMLElement>} unselectedListElements
