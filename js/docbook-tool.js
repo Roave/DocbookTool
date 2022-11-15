@@ -1,6 +1,6 @@
 "use strict";
 
-(function () {
+function loadDocBookNavigation(title) {
     /**
      * @param {NodeListOf<HTMLElement>} unselectedListElements
      * @param {HTMLElement} selectedListElement
@@ -26,12 +26,10 @@
         }
     }
 
-    function fragmentRoute(pathWithHash) {
+    function fragmentRoute(pathWithHash, pageTitle) {
         const path = pathWithHash.substring(1);
 
         const pathParts = path.split("/");
-
-        let pageTitle = 'Need to gather this from app calling this JS';
 
         if (pathParts.length >= 1) {
             const topTabLink = document.querySelector('#top-nav-tabs a[href="#' + pathParts[0] + '"]');
@@ -73,7 +71,7 @@
             function (clickEvent) {
                 /** @type {EventTarget & HTMLAnchorElement} */
                 const target = clickEvent.target;
-                fragmentRoute(target.getAttribute('href'));
+                fragmentRoute(target.getAttribute('href'), title);
                 clickEvent.stopPropagation();
                 clickEvent.preventDefault();
             }
@@ -93,7 +91,7 @@
             function (clickEvent) {
                 /** @type {EventTarget & HTMLAnchorElement} */
                 const target = clickEvent.target.parentElement;
-                fragmentRoute(target.getAttribute('href'));
+                fragmentRoute(target.getAttribute('href'), title);
                 clickEvent.stopPropagation();
                 clickEvent.preventDefault();
             }
@@ -104,10 +102,10 @@
     // // If we have a valid fragment in URL, select the appropriate tab, default to general docs
     setTimeout(() => {
         if (window.location.hash) {
-            fragmentRoute(window.location.hash);
+            fragmentRoute(window.location.hash, title);
         } else {
-            fragmentRoute('#docs/index');
+            fragmentRoute('#docs/index', title);
         }
     }, 2000);
 
-})();
+}
