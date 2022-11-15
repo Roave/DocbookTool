@@ -43,7 +43,9 @@ function loadDocBookNavigation(title) {
 
         if (pathParts.length >= 1) {
             const topTabLink = document.querySelector('#top-nav-tabs a[href="#' + pathParts[0] + '"]');
-            selectFromList(document.querySelectorAll('ul#top-nav-tabs li'), topTabLink.parentElement, true, false);
+            if (topTabLink.parentElement) {
+                selectFromList(document.querySelectorAll('ul#top-nav-tabs li'), topTabLink.parentElement, true, false);
+            }
             selectFromList(document.querySelectorAll('section.tab-content'), document.getElementById(pathParts[0]), false, true);
             pageTitle = topTabLink.innerHTML + ' :: ' + pageTitle;
         }
@@ -82,6 +84,30 @@ function loadDocBookNavigation(title) {
                 /** @type {EventTarget & HTMLAnchorElement} */
                 const target = clickEvent.target;
                 fragmentRoute(target.getAttribute('href'), title);
+                clickEvent.stopPropagation();
+                clickEvent.preventDefault();
+            }
+        );
+    });
+
+    // This JS is meant to be run in a single page context where navigation links to pages are actually
+    // page jumps within a single HTML page.
+    document.querySelectorAll('a:not(.fragmentRoute)').forEach(function (e) {
+        e.addEventListener('click',
+            /**
+             * @param {MouseEvent} clickEvent
+             */
+            function (clickEvent) {
+                let href = clickEvent.target.getAttribute('href');
+                // If a protocol is set OR the URL is set to use whichever protocol is appropriate i.e. `//foo.com`
+                let looksLikeAbsolutePath = (href) => href.indexOf('://') > 0 || href.indexOf('//') === 0;
+                if (looksLikeAbsolutePath(href)) {
+                    return;
+                }
+
+                // Right now this is
+                let pageJump = `#docs/${href.replace('/', '_').replace('.md', '')}`;
+                fragmentRoute(pageJump, title);
                 clickEvent.stopPropagation();
                 clickEvent.preventDefault();
             }
