@@ -105,7 +105,7 @@ function loadDocBookNavigation(title) {
                     return;
                 }
 
-                // Right now this is
+                // Right now this is assuming that documentation pages are written in Markdown
                 let pageJump = `#docs/${href.replace('/', '_').replace('.md', '')}`;
                 fragmentRoute(pageJump, title);
                 clickEvent.stopPropagation();
