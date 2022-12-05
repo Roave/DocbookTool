@@ -26,7 +26,7 @@
     "require-dev": {
         "doctrine/coding-standard": "^10.0",
         "phpunit/phpunit": "^9.5.26",
-        "psalm/plugin-phpunit": "^0.18.3",
+        "psalm/plugin-phpunit": "^0.18.4",
         "roave/security-advisories": "dev-latest",
         "vimeo/psalm": "^5.1.0"
     },
