@@ -34,12 +34,12 @@ RUN  \
       bash \
       binutils \
       graphviz \
-      php8.1-cli \
-      php8.1-zip \
-      php8.1-mbstring \
-      php8.1-xml \
-      php8.1-curl \
-      php8.1-gd \
+      php8.2-cli \
+      php8.2-zip \
+      php8.2-mbstring \
+      php8.2-xml \
+      php8.2-curl \
+      php8.2-gd \
       nodejs \
       openjdk-18-jre \
       xfonts-75dpi \
