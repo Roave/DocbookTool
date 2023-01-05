@@ -3276,12 +3276,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "3793a63aac3c97bb8d5c9039b33b6101b6ab2841"
+                "reference": "ef9dca6c49faa06e7203bbed30411e26e474a8fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/3793a63aac3c97bb8d5c9039b33b6101b6ab2841",
-                "reference": "3793a63aac3c97bb8d5c9039b33b6101b6ab2841",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ef9dca6c49faa06e7203bbed30411e26e474a8fb",
+                "reference": "ef9dca6c49faa06e7203bbed30411e26e474a8fb",
                 "shasum": ""
             },
             "conflict": {
@@ -3705,7 +3705,7 @@
                 "tinymce/tinymce": "<5.10.7|>=6,<6.3.1",
                 "titon/framework": ">=0,<9.9.99",
                 "tobiasbg/tablepress": "<= 2.0-RC1",
-                "topthink/framework": "<=6.0.13",
+                "topthink/framework": "<6.0.14",
                 "topthink/think": "<=6.0.9",
                 "topthink/thinkphp": "<=3.2.3",
                 "tribalsystems/zenario": "<=9.3.57595",
@@ -3816,7 +3816,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-03T17:04:46+00:00"
+            "time": "2023-01-04T14:04:25+00:00"
         },
         {
             "name": "sebastian/cli-parser",
