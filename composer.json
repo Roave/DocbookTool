@@ -24,7 +24,7 @@
         "webmozart/assert": "^1.11"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^11.0.0",
+        "doctrine/coding-standard": "^11.1.0",
         "phpunit/phpunit": "^9.5.27",
         "psalm/plugin-phpunit": "^0.18.4",
         "roave/security-advisories": "dev-latest",
