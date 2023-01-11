@@ -11,4 +11,6 @@ The navigation JS ensures that side navigation, and links within the documentati
 <script>loadDocBookNavigation('My Page Title');</script>
 ```
 
+The argument passed will be combined with the text of the active tab or page link to update the Document's title.
+
 This JS is necessary if you're making use of Roave's common Twig template. If you are not using this template it is your responsibility to ensure navigation works for the structure of your site.
