@@ -14,3 +14,7 @@ The navigation JS ensures that side navigation, and links within the documentati
 The argument passed will be combined with the text of the active tab or page link to update the Document's title. For example, if you select a tab or side navigation link that has the content 'My Docs Page', with the argument passed in the example, the document's title would be updated to `My Docs Page :: My Page Title`.
 
 This JS is necessary if you're making use of Roave's common Twig template. If you are not using this template it is your responsibility to ensure navigation works for the structure of your site.
+
+### Tiny HTML page
+
+The `tiny.html` is a publicly accessible HTML page that is intentionally tiny. It can be used for requests that need a tiny weeny itsy bitsy little HTML file. The URL for this file is [https://roave.com/DocbookTool/tiny.html](https://roave.com/DocbookTool/tiny.html).
