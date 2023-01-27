@@ -17,4 +17,4 @@ This JS is necessary if you're making use of Roave's common Twig template. If yo
 
 ### Tiny HTML page
 
-The `tiny.html` is a publicly accessible HTML page that is intentionally tiny. It can be used for requests that need a tiny weeny itsy bitsy little HTML file.
+The `tiny.html` is a publicly accessible HTML page that is intentionally tiny. It can be used for requests that need a tiny weeny itsy bitsy little HTML file. The URL for this file is [https://roave.com/DocbookTool/tiny.html](https://roave.com/DocbookTool/tiny.html).
