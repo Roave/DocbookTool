@@ -14,7 +14,7 @@ jobs:
           install: true
 
       - name: "Build docker image"
-        uses: "docker/build-push-action@v3"
+        uses: "docker/build-push-action@v4"
         with:
           target: "development"
           tags: "ghcr.io/roave/docbooktool:test-image"
