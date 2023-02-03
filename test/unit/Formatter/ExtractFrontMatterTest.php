@@ -15,7 +15,7 @@ use Roave\DocbookTool\Formatter\MarkdownToHtml;
 final class ExtractFrontMatterTest extends TestCase
 {
     /** @return array<string,array{content:non-empty-string,expectedTitle:non-empty-string}> */
-    public function titleProvider(): array
+    public static function titleProvider(): array
     {
         return [
             'simpleTitle' => [
