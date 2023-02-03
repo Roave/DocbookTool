@@ -10,6 +10,7 @@ use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\InlineExternalImages;
 use RuntimeException;
 
+use Safe\Exceptions\FilesystemException;
 use function sprintf;
 
 /** @covers \Roave\DocbookTool\Formatter\InlineExternalImages */
@@ -26,7 +27,7 @@ final class InlineExternalImagesTest extends TestCase
     ];
 
     /** @return list<array{0:non-empty-string,1:non-empty-string,2:non-empty-string}> */
-    public function contentAndImagePathProvider(): array
+    public static function contentAndImagePathProvider(): array
     {
         return [
             [__DIR__ . '/../../fixture/docbook', 'smile.jpg', self::MIME_JPG],
@@ -90,8 +91,8 @@ MD,
 
     public function testImageNotExisting(): void
     {
-        $this->expectError();
-        $this->expectErrorMessage('Failed to open stream: No such file or directory');
+        $this->expectException(FilesystemException::class);
+
         (new InlineExternalImages(__DIR__ . '/../../fixture/docbook', new NullLogger()))(
             DocbookPage::fromSlugAndContent(__DIR__ . '/faked.md', 'slug', '![the alt text](something-that-should-not-exist.jpg)'),
         );
