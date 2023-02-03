@@ -9,8 +9,8 @@ use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\InlineExternalImages;
 use RuntimeException;
-
 use Safe\Exceptions\FilesystemException;
+
 use function sprintf;
 
 /** @covers \Roave\DocbookTool\Formatter\InlineExternalImages */
