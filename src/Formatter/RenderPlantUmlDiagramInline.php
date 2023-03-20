@@ -47,7 +47,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                     $this->logger->debug(sprintf('[%s] Found PlantUML diagram to render in %s', self::class, $page->slug()));
 
                     // fix any "@startuml filename" first lines to omit the filename
-                    $match = preg_replace('/^(\s*@startuml)(\s.*)$/m', '\\1', $match, count: $startUmls);
+                    $match = preg_replace('/^(\s*@startuml)(.*)$/m', '\\1', $match, count: $startUmls);
 
                     if ($startUmls === 0) {
                         throw new RuntimeException(sprintf(
@@ -65,7 +65,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
 
                     /** @psalm-suppress ForbiddenCode */
                     exec(
-                        escapeshellcmd('java -jar ' . self::PLANTUML_JAR . ' ' . $pumlFilename) . ' 2>&1',
+                        escapeshellcmd('java -jar ' . self::PLANTUML_JAR . ' -v ' . $pumlFilename) . ' 2>&1',
                         $output,
                         $exitCode,
                     );
@@ -75,7 +75,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                         throw new RuntimeException(sprintf(
                             'Failed to render PUML in %s - starts "%s". Output was: %s',
                             $page->slug(),
-                            substr($match, 0, 15),
+                            substr($match, 0, 30),
                             implode("\n", $output),
                         ));
                     }
