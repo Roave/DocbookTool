@@ -30,10 +30,22 @@ Links [here](https://www.google.com). **Bold**, _italic_, ~~strikethrough~~, `in
 
 ## A diagram
 
+Test with filename:
+
 ```puml
 @startuml dummy_filename
 Bob->Alice : hello
 hexagon TestingHexagon
+@enduml
+```
+
+Test without filename:
+
+```puml
+@startuml
+skinparam package {
+    BackGroundColor Seashell
+}
 @enduml
 ```
 

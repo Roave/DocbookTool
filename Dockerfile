@@ -49,7 +49,7 @@ RUN  \
       wkhtmltopdf \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
 
-ADD https://github.com/plantuml/plantuml/releases/download/v1.2022.4/plantuml-1.2022.4.jar app/bin/plantuml.jar
+ADD https://github.com/plantuml/plantuml/releases/download/v1.2023.4/plantuml-1.2023.4.jar app/bin/plantuml.jar
 ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 
 FROM base-with-dependencies AS production-composer-dependencies
