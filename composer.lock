@@ -3252,12 +3252,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "9edb62ebe942c2b9bb8416a19fc8655cb78a7a91"
+                "reference": "6b077f852cc72d9c585dbf1241746b5af08ea1d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/9edb62ebe942c2b9bb8416a19fc8655cb78a7a91",
-                "reference": "9edb62ebe942c2b9bb8416a19fc8655cb78a7a91",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6b077f852cc72d9c585dbf1241746b5af08ea1d4",
+                "reference": "6b077f852cc72d9c585dbf1241746b5af08ea1d4",
                 "shasum": ""
             },
             "conflict": {
@@ -3411,7 +3411,7 @@
                 "friendsofsymfony/user-bundle": ">=1.2,<1.3.5",
                 "friendsoftypo3/mediace": ">=7.6.2,<7.6.5",
                 "froala/wysiwyg-editor": "<3.2.7",
-                "froxlor/froxlor": "<2.0.13",
+                "froxlor/froxlor": "<2.0.14",
                 "fuel/core": "<1.8.1",
                 "funadmin/funadmin": "<=3.2",
                 "gaoming13/wechat-php-sdk": "<=1.10.2",
@@ -3844,7 +3844,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-04-13T17:04:11+00:00"
+            "time": "2023-04-17T18:04:34+00:00"
         },
         {
             "name": "sebastian/cli-parser",
