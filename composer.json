@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "~8.2.7",
+        "php": "~8.2.8",
         "ext-gd": "*",
         "guzzlehttp/guzzle": "^7.7.0",
         "guzzlehttp/psr7": "^2.5.0",
