@@ -8,11 +8,9 @@ use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 
-use function array_key_exists;
 use function base64_encode;
 use function dirname;
 use function getimagesize;
-use function is_array;
 use function is_string;
 use function preg_replace_callback;
 use function Safe\file_get_contents;
