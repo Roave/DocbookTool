@@ -43,16 +43,16 @@ final class InlineExternalImages implements PageFormatter
 
                     $imageContent = file_get_contents($fullImagePath);
 
-                    $imageInfo = getimagesize($fullImagePath);
+                    $mime = ((array) getimagesize($fullImagePath))['mime'] ?? null;
 
-                    if (! is_array($imageInfo) || ! array_key_exists('mime', $imageInfo) || ! is_string($imageInfo['mime'])) {
+                    if (! is_string($mime)) {
                         throw new RuntimeException('Unable to determine mime type of ' . $fullImagePath);
                     }
 
                     return sprintf(
                         '![%s](data:%s;base64,%s)',
                         $altText,
-                        $imageInfo['mime'],
+                        $mime,
                         base64_encode($imageContent),
                     );
                 },
