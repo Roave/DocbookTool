@@ -8,11 +8,9 @@ use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 
-use function array_key_exists;
 use function base64_encode;
 use function dirname;
 use function getimagesize;
-use function is_array;
 use function is_string;
 use function preg_replace_callback;
 use function Safe\file_get_contents;
@@ -43,16 +41,16 @@ final class InlineExternalImages implements PageFormatter
 
                     $imageContent = file_get_contents($fullImagePath);
 
-                    $imageInfo = getimagesize($fullImagePath);
+                    $mime = ((array) getimagesize($fullImagePath))['mime'] ?? null;
 
-                    if (! is_array($imageInfo) || ! array_key_exists('mime', $imageInfo) || ! is_string($imageInfo['mime'])) {
+                    if (! is_string($mime)) {
                         throw new RuntimeException('Unable to determine mime type of ' . $fullImagePath);
                     }
 
                     return sprintf(
                         '![%s](data:%s;base64,%s)',
                         $altText,
-                        $imageInfo['mime'],
+                        $mime,
                         base64_encode($imageContent),
                     );
                 },
