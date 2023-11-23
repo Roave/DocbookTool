@@ -3334,12 +3334,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "7b92ded2e25a622c3547604d545a2a614dc66a05"
+                "reference": "ec77ac73fe989601450c32ff4796bb7264ba97db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7b92ded2e25a622c3547604d545a2a614dc66a05",
-                "reference": "7b92ded2e25a622c3547604d545a2a614dc66a05",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ec77ac73fe989601450c32ff4796bb7264ba97db",
+                "reference": "ec77ac73fe989601450c32ff4796bb7264ba97db",
                 "shasum": ""
             },
             "conflict": {
@@ -3417,7 +3417,7 @@
                 "codeception/codeception": "<3.1.3|>=4,<4.1.22",
                 "codeigniter/framework": "<3.1.9",
                 "codeigniter4/framework": "<=4.4.2",
-                "codeigniter4/shield": "<1.0.0.0-beta4",
+                "codeigniter4/shield": "<1.0.0.0-beta8",
                 "codiad/codiad": "<=2.8.4",
                 "composer/composer": "<1.10.27|>=2,<2.2.22|>=2.3,<2.6.4",
                 "concrete5/concrete5": "<9.2.2",
@@ -4029,7 +4029,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-22T21:04:22+00:00"
+            "time": "2023-11-23T01:27:56+00:00"
         },
         {
             "name": "sebastian/cli-parser",
