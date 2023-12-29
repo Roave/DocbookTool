@@ -89,6 +89,33 @@ MD,
         self::assertSame($expectedOutput, $formattedPage->content());
     }
 
+    public function testExternalPumlIsInlined(): void
+    {
+        $contentPath = __DIR__ . '/../../fixture/docbook';
+        $markdown    = <<<'MD'
+Here is some markdown
+![an external diagram](external-diagram.puml)
+More markdown
+MD;
+
+        $page = DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', $markdown);
+
+        $formattedPage = (new InlineExternalImages($contentPath, new NullLogger()))($page);
+
+        self::assertSame(
+            <<<'MD'
+Here is some markdown
+```puml
+@startuml dummy_filename
+Bob->Alice : hello
+@enduml
+```
+More markdown
+MD,
+            $formattedPage->content(),
+        );
+    }
+
     public function testImageNotExisting(): void
     {
         $this->expectException(FilesystemException::class);
