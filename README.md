@@ -92,7 +92,14 @@ Example showing all syntax can be seen in `test/fixture/docbook/test.md`.
    * Example: `/path/to/myproject/build/docs/index.html`
  * `DOCBOOK_TOOL_OUTPUT_PDF_PATH` - where to generate the PDF files, if used (Required, if using `--pdf`)
    * Example: `/path/to/myproject/build/docs/pdf`
- * `DOCBOOK_TOOL_CONFLUENCE_URL` - the base URL of confluence (`/rest/api/content` is appended to this, so don't include that) (Required, if using `--confluence`)
+ * `DOCBOOK_TOOL_CONFLUENCE_URL` - the base URL of confluence (`/rest/api/content` is appended to this, so don't
+   include that) (Required, if using `--confluence`)
    * Example: `https://confluence.mycompany.com`
- * `DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN` - the `Authorization` header value to use (Required, if using `--confluence` in a non-interactive terminal)
+ * `DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN` - the `Authorization` header value to use (Required, if using `--confluence` in
+   a non-interactive terminal)
    * Example: `Basic bXktdXNlcm5hbWU6bXktcGFzc3dvcmQ=`
+ * `DOCBOOK_TOOL_CONFLUENCE_SKIP_CONTENT_HASH_CHECKS` - Should the content hash check be skipped. Set to `yes` to skip
+   the hash check. Note that this means every time the tool runs, the content will create a version in Confluence, even
+   if nothing has changed. This is a workaround for some API issues with certain Confluence setups, so we don't
+   recommend enabling this unless you have a specific need to.
+   * Example: `no`

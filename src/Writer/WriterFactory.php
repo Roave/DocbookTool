@@ -83,8 +83,9 @@ class WriterFactory
         }
 
         if (in_array('--confluence', $arguments, true)) {
-            $confluenceUrl       = Environment::require('DOCBOOK_TOOL_CONFLUENCE_URL');
-            $confluenceAuthToken = Environment::optional('DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN');
+            $confluenceUrl         = Environment::require('DOCBOOK_TOOL_CONFLUENCE_URL');
+            $confluenceAuthToken   = Environment::optional('DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN');
+            $skipContentHashChecks = Environment::optionalBoolean('DOCBOOK_TOOL_CONFLUENCE_SKIP_CONTENT_HASH_CHECKS');
 
             if ($confluenceAuthToken === null && InteractiveHttpBasicAuthTokenCreator::isInteractiveTty()) {
                 $confluenceAuthToken = (new InteractiveHttpBasicAuthTokenCreator())();
@@ -103,6 +104,7 @@ class WriterFactory
                     $confluenceUrl . '/rest/api/content',
                     $confluenceAuthToken,
                     $this->logger,
+                    $skipContentHashChecks,
                 );
             } else {
                 $this->logger->notice(sprintf(
