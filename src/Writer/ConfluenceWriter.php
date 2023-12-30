@@ -226,7 +226,6 @@ final class ConfluenceWriter implements OutputWriter
                     'image/gif' => 'gif',
                 };
 
-                /** @psalm-var ListOfExtractedImageData $images */
                 $images[] = [
                     'hashFilename' => $imageHashFilename,
                     'data' => $imageBinaryData,
