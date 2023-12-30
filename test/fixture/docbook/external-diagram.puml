@@ -1,0 +1,3 @@
+@startuml dummy_filename
+Bob->Alice : hello
+@enduml

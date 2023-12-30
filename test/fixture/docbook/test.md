@@ -58,3 +58,7 @@ Here are some images:
 ![A smiley face in GIF](./smile.gif)
 
 They are hand drawn, that's why they look rubbish.
+
+## Inline PUML file
+
+![An external PlantUML diagram](./external-diagram.puml)

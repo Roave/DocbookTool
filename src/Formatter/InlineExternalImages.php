@@ -15,6 +15,10 @@ use function is_string;
 use function preg_replace_callback;
 use function Safe\file_get_contents;
 use function sprintf;
+use function str_starts_with;
+use function trim;
+
+use const PHP_EOL;
 
 final class InlineExternalImages implements PageFormatter
 {
@@ -44,6 +48,15 @@ final class InlineExternalImages implements PageFormatter
                     $mime = ((array) getimagesize($fullImagePath))['mime'] ?? null;
 
                     if (! is_string($mime)) {
+                        if (str_starts_with($imageContent, '@startuml')) {
+                            return sprintf(
+                                '```puml%s%s%s```',
+                                PHP_EOL,
+                                trim($imageContent),
+                                PHP_EOL,
+                            );
+                        }
+
                         throw new RuntimeException('Unable to determine mime type of ' . $fullImagePath);
                     }
 
