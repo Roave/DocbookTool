@@ -25,10 +25,10 @@
     },
     "require-dev": {
         "doctrine/coding-standard": "^12.0.0",
-        "phpunit/phpunit": "^10.5.1",
+        "phpunit/phpunit": "^10.5.5",
         "psalm/plugin-phpunit": "^0.18.4",
         "roave/security-advisories": "dev-latest",
-        "vimeo/psalm": "^5.16.0"
+        "vimeo/psalm": "^5.18.0"
     },
     "autoload": {
         "psr-4": {
