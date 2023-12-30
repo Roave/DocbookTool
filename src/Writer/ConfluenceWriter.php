@@ -38,6 +38,7 @@ final class ConfluenceWriter implements OutputWriter
         private string $confluenceContentApiUrl,
         private string $authHeader,
         private LoggerInterface $logger,
+        private readonly bool $skipContentHashChecks,
     ) {
     }
 
@@ -68,39 +69,41 @@ final class ConfluenceWriter implements OutputWriter
                 self::CONFLUENCE_HEADER . $page->content(),
             );
 
+            $hashUpdateMethod  = 'POST';
             $latestContentHash = md5($confluenceContent);
+            $propertyVersion   = 0;
 
-            try {
-                /**
-                 * @psalm-var array{
-                 *   value: string,
-                 *   version: array{
-                 *     number: string,
-                 *   },
-                 * } $confluenceHashResponse
-                 */
-                $confluenceHashResponse = $this->confluenceRequest(
-                    'GET',
-                    $confluencePageId . '/property/docbook-hash?expand=content,version',
-                    null,
-                );
+            if (! $this->skipContentHashChecks) {
+                try {
+                    /**
+                     * @psalm-var array{
+                     *   value: string,
+                     *   version: array{
+                     *     number: string,
+                     *   },
+                     * } $confluenceHashResponse
+                     */
+                    $confluenceHashResponse = $this->confluenceRequest(
+                        'GET',
+                        $confluencePageId . '/property/docbook-hash?expand=content,version',
+                        null,
+                    );
 
-                $hashUpdateMethod = 'PUT';
-                $confluenceHash   = $confluenceHashResponse['value'];
-                $propertyVersion  = (int) $confluenceHashResponse['version']['number'];
-            } catch (ClientException $exception) {
-                if ($exception->getResponse()->getStatusCode() !== 404) {
-                    throw $exception;
+                    $hashUpdateMethod = 'PUT';
+                    $confluenceHash   = $confluenceHashResponse['value'];
+                    $propertyVersion  = (int) $confluenceHashResponse['version']['number'];
+                } catch (ClientException $exception) {
+                    if ($exception->getResponse()->getStatusCode() !== 404) {
+                        throw $exception;
+                    }
+
+                    $confluenceHash = '';
                 }
 
-                $hashUpdateMethod = 'POST';
-                $confluenceHash   = '';
-                $propertyVersion  = 0;
-            }
-
-            if (hash_equals($latestContentHash, $confluenceHash)) {
-                $this->logger->info(sprintf('[%s] - skipping %s, already up to date.', self::class, $page->slug()));
-                continue;
+                if (hash_equals($latestContentHash, $confluenceHash)) {
+                    $this->logger->info(sprintf('[%s] - skipping %s, already up to date.', self::class, $page->slug()));
+                    continue;
+                }
             }
 
             /**
@@ -183,18 +186,20 @@ final class ConfluenceWriter implements OutputWriter
                 ],
             );
 
-            /** @noinspection UnusedFunctionResultInspection */
-            $this->confluenceRequest(
-                $hashUpdateMethod,
-                $confluencePageId . '/property/docbook-hash',
-                [
-                    'key' => 'docbook-hash',
-                    'value' => $latestContentHash,
-                    'version' => [
-                        'number' => $propertyVersion + 1,
+            if (! $this->skipContentHashChecks) {
+                /** @noinspection UnusedFunctionResultInspection */
+                $this->confluenceRequest(
+                    $hashUpdateMethod,
+                    $confluencePageId . '/property/docbook-hash',
+                    [
+                        'key' => 'docbook-hash',
+                        'value' => $latestContentHash,
+                        'version' => [
+                            'number' => $propertyVersion + 1,
+                        ],
                     ],
-                ],
-            );
+                );
+            }
 
             $this->logger->debug(sprintf(
                 '[%s] - OK! Successfully updated confluence page %s with %s ...',

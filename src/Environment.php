@@ -8,6 +8,7 @@ use RuntimeException;
 use Safe\Exceptions\SafeExceptionInterface;
 
 use function getenv;
+use function in_array;
 use function sprintf;
 
 class Environment
@@ -27,5 +28,13 @@ class Environment
     public static function optional(string $name): string|null
     {
         return getenv($name) ?: null;
+    }
+
+    /** @param list<string> $trueValues */
+    public static function optionalBoolean(string $name, array $trueValues = ['yes']): bool
+    {
+        $value = self::optional($name);
+
+        return in_array($value, $trueValues, true);
     }
 }
