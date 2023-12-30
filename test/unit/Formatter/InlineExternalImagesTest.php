@@ -74,7 +74,7 @@ MD;
 
         $page = DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', $markdown);
 
-        $formattedPage = (new InlineExternalImages($contentPath, new NullLogger()))($page);
+        $formattedPage = (new InlineExternalImages(new NullLogger()))($page);
 
         $expectedOutput = sprintf(
             <<<'MD'
@@ -100,7 +100,7 @@ MD;
 
         $page = DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', $markdown);
 
-        $formattedPage = (new InlineExternalImages($contentPath, new NullLogger()))($page);
+        $formattedPage = (new InlineExternalImages(new NullLogger()))($page);
 
         self::assertSame(
             <<<'MD'
@@ -120,7 +120,7 @@ MD,
     {
         $this->expectException(FilesystemException::class);
 
-        (new InlineExternalImages(__DIR__ . '/../../fixture/docbook', new NullLogger()))(
+        (new InlineExternalImages(new NullLogger()))(
             DocbookPage::fromSlugAndContent(__DIR__ . '/faked.md', 'slug', '![the alt text](something-that-should-not-exist.jpg)'),
         );
     }
@@ -130,7 +130,7 @@ MD,
         $contentPath = __DIR__ . '/../../fixture/docbook';
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to determine mime type');
-        (new InlineExternalImages($contentPath, new NullLogger()))(
+        (new InlineExternalImages(new NullLogger()))(
             DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', '![the alt text](test.md)'),
         );
     }

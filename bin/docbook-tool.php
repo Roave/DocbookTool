@@ -41,7 +41,7 @@ use function is_string;
 
     $pageFormatters = [
         new ExtractFrontMatter($logger),
-        new InlineExternalImages($contentPath, $logger),
+        new InlineExternalImages($logger),
         new RenderPlantUmlDiagramInline($logger),
         new MarkdownToHtml($logger),
     ];

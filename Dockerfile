@@ -4,7 +4,6 @@ FROM composer:2.6.6 AS composer-base-image
 FROM node:21.5.0 AS npm-base-image
 FROM ubuntu:22.04 AS ubuntu-base-image
 
-
 FROM npm-base-image AS npm-dependencies
 
 WORKDIR /build
@@ -28,18 +27,18 @@ RUN  \
     && apt-get -y upgrade \
     && apt-get install -y --no-install-recommends software-properties-common gnupg curl \
     && add-apt-repository --yes ppa:ondrej/php \
-    && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+    && curl -sL https://deb.nodesource.com/setup_21.x | bash - \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
       bash \
       binutils \
       graphviz \
-      php8.2-cli \
-      php8.2-zip \
-      php8.2-mbstring \
-      php8.2-xml \
-      php8.2-curl \
-      php8.2-gd \
+      php8.3-cli \
+      php8.3-zip \
+      php8.3-mbstring \
+      php8.3-xml \
+      php8.3-curl \
+      php8.3-gd \
       nodejs \
       openjdk-18-jre \
       xfonts-75dpi \
@@ -90,7 +89,9 @@ COPY --link ./bin ./bin
 COPY --link --from=npm-dependencies /build/node_modules node_modules
 
 RUN ln -s /app/node_modules/.bin/marked /usr/local/bin/marked \
-    && ln -s /app/node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli
+    && marked --version \
+    && ln -s /app/node_modules/.bin/redoc-cli /usr/local/bin/redoc-cli \
+    && redoc-cli --version
 
 ENV DOCBOOK_TOOL_CONTENT_PATH=/docs-src/book \
     DOCBOOK_TOOL_TEMPLATE_PATH=/docs-src/templates \
