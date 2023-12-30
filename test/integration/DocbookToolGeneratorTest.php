@@ -48,7 +48,7 @@ final class DocbookToolGeneratorTest extends TestCase
                     [
                         new AggregatePageFormatter([
                             new ExtractFrontMatter($logger),
-                            new InlineExternalImages(self::CONTENT_PATH, $logger),
+                            new InlineExternalImages($logger),
                             new RenderPlantUmlDiagramInline($logger),
                             new MarkdownToHtml($logger),
                             new InlineFeatureFile(self::FEATURES_PATH, $logger),

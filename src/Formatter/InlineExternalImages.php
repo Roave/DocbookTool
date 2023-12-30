@@ -22,7 +22,7 @@ use const PHP_EOL;
 
 final class InlineExternalImages implements PageFormatter
 {
-    public function __construct(private readonly string $docbookPath, private readonly LoggerInterface $logger)
+    public function __construct(private readonly LoggerInterface $logger)
     {
     }
 
