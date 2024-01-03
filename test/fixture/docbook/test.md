@@ -28,6 +28,10 @@ Links [here](https://www.google.com). **Bold**, _italic_, ~~strikethrough~~, `in
 
 {{feature:test.feature}}
 
+## Inline some JSON
+
+{{src-json:example.json}}
+
 ## A diagram
 
 Test with filename:

@@ -77,6 +77,8 @@ Additionally, we have a special Markdown syntax:
  * `{{feature:test.feature}}` will render `$(DOCBOOK_TOOL_FEATURES_PATH)/test.feature` as a code block
  * Code blocks (triple-backtick) with the `puml` syntax will be converted into a PlantUML diagram. Note your diagram
    must start and end with `@startuml` and `@enduml` respectively.
+ * `{{src-json:test.json}}` will render `$(DOCBOOK_TOOL_FEATURES_PATH)/test.json` as a code block. Only `json` is
+   supported at the moment.
 
 Example showing all syntax can be seen in `test/fixture/docbook/test.md`.
 
