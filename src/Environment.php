@@ -25,9 +25,14 @@ class Environment
         return $value;
     }
 
+    /** @return non-empty-string|null */
     public static function optional(string $name): string|null
     {
-        return getenv($name) ?: null;
+        $value = getenv($name);
+
+        return $value === false || $value === ''
+            ? null
+            : $value;
     }
 
     /** @param list<string> $trueValues */
