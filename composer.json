@@ -18,7 +18,7 @@
         "michelf/php-markdown": "^2.0",
         "monolog/monolog": "^3.5.0",
         "psr/log": "^3.0.0",
-        "symfony/yaml": "^7.0.0",
+        "symfony/yaml": "^7.0.3",
         "thecodingmachine/safe": "^2.5.0",
         "twig/twig": "^3.8.0",
         "webmozart/assert": "^1.11"
