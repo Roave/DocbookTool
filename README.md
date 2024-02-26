@@ -42,7 +42,7 @@ docker run \
   -v $(pwd)/features:/docs-src/features \
   -v $(pwd)/build:/docs-package \
   -e DOCBOOK_TOOL_CONFLUENCE_URL=https://confluence.mycompany.com \
-  -e DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN="Basic bXktdXNlcm5hbWU6bXktcGFzc3dvcmQ=" \
+  -e DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN="<auth token>" \
   --rm ghcr.io/roave/docbooktool:latest --html --pdf --confluence
 ```
 
@@ -98,8 +98,9 @@ Example showing all syntax can be seen in `test/fixture/docbook/test.md`.
    include that) (Required, if using `--confluence`)
    * Example: `https://confluence.mycompany.com`
  * `DOCBOOK_TOOL_CONFLUENCE_AUTH_TOKEN` - the `Authorization` header value to use (Required, if using `--confluence` in
-   a non-interactive terminal)
-   * Example: `Basic bXktdXNlcm5hbWU6bXktcGFzc3dvcmQ=`
+   a non-interactive terminal).
+   * Example using a [personal access token (PAT)](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html): `Bearer MTA4NjU3Njg2OTEyOt53L29niGxOkuIZJpKcgjItNMoI`
+   * Example using [basic auth](https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/): `Basic bXktdXNlcm5hbWU6bXktcGFzc3dvcmQ=`
  * `DOCBOOK_TOOL_CONFLUENCE_SKIP_CONTENT_HASH_CHECKS` - Should the content hash check be skipped. Set to `yes` to skip
    the hash check. Note that this means every time the tool runs, the content will create a version in Confluence, even
    if nothing has changed. This is a workaround for some API issues with certain Confluence setups, so we don't
