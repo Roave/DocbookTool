@@ -6,6 +6,7 @@ namespace Roave\DocbookToolIntegrationTest;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Roave\DocbookTool\Client\FileClient;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\InlineCodeFromFile;
@@ -37,8 +38,9 @@ final class DocbookToolGeneratorTest extends TestCase
 
     public function testGeneration(): void
     {
-        $twig   = new Environment(new FilesystemLoader(self::TEMPLATE_PATH));
-        $logger = new NullLogger();
+        $twig       = new Environment(new FilesystemLoader(self::TEMPLATE_PATH));
+        $logger     = new NullLogger();
+        $fileClient = new FileClient();
 
         (new WriteAllTheOutputs([
             new SingleStaticHtmlWriter($twig, 'online.twig', self::OUTPUT_DOCBOOK_HTML, $logger),
@@ -49,7 +51,7 @@ final class DocbookToolGeneratorTest extends TestCase
                     [
                         new AggregatePageFormatter([
                             new ExtractFrontMatter($logger),
-                            new InlineExternalImages($logger),
+                            new InlineExternalImages($logger, $fileClient),
                             new RenderPlantUmlDiagramInline($logger),
                             new MarkdownToHtml($logger),
                             new InlineCodeFromFile(self::CONTENT_PATH, $logger),

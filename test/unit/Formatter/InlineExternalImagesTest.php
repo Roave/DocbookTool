@@ -6,10 +6,11 @@ namespace Roave\DocbookToolUnitTest\Formatter;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Roave\DocbookTool\Client\FileClient;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\InlineExternalImages;
 use RuntimeException;
-use Safe\Exceptions\FilesystemException;
+use Safe\Exceptions\CurlException;
 
 use function sprintf;
 
@@ -74,7 +75,7 @@ MD;
 
         $page = DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', $markdown);
 
-        $formattedPage = (new InlineExternalImages(new NullLogger()))($page);
+        $formattedPage = (new InlineExternalImages(new NullLogger(), new FileClient()))($page);
 
         $expectedOutput = sprintf(
             <<<'MD'
@@ -100,7 +101,7 @@ MD;
 
         $page = DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', $markdown);
 
-        $formattedPage = (new InlineExternalImages(new NullLogger()))($page);
+        $formattedPage = (new InlineExternalImages(new NullLogger(), new FileClient()))($page);
 
         self::assertSame(
             <<<'MD'
@@ -118,9 +119,9 @@ MD,
 
     public function testImageNotExisting(): void
     {
-        $this->expectException(FilesystemException::class);
+        $this->expectException(CurlException::class);
 
-        (new InlineExternalImages(new NullLogger()))(
+        (new InlineExternalImages(new NullLogger(), new FileClient()))(
             DocbookPage::fromSlugAndContent(__DIR__ . '/faked.md', 'slug', '![the alt text](something-that-should-not-exist.jpg)'),
         );
     }
@@ -130,7 +131,7 @@ MD,
         $contentPath = __DIR__ . '/../../fixture/docbook';
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to determine mime type');
-        (new InlineExternalImages(new NullLogger()))(
+        (new InlineExternalImages(new NullLogger(), new FileClient()))(
             DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', '![the alt text](test.md)'),
         );
     }

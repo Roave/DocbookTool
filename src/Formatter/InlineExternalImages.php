@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use GuzzleHttp\Psr7\Request;
+use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 
 use function base64_encode;
 use function dirname;
-use function getimagesize;
+use function getimagesizefromstring;
 use function is_string;
 use function preg_replace_callback;
-use function Safe\file_get_contents;
 use function sprintf;
 use function str_starts_with;
 use function trim;
@@ -22,7 +23,7 @@ use const PHP_EOL;
 
 final class InlineExternalImages implements PageFormatter
 {
-    public function __construct(private readonly LoggerInterface $logger)
+    public function __construct(private readonly LoggerInterface $logger, private ClientInterface $client)
     {
     }
 
@@ -39,13 +40,13 @@ final class InlineExternalImages implements PageFormatter
                     $altText   = $m[1];
                     $imagePath = $m[2];
 
-                    $fullImagePath = dirname($page->path()) . '/' . $imagePath;
+                    $fullImagePath = 'file://' . dirname($page->path()) . '/' . $imagePath;
 
                     $this->logger->debug(sprintf('[%s] Inlining image "%s" in page "%s"', self::class, $fullImagePath, $page->slug()));
 
-                    $imageContent = file_get_contents($fullImagePath);
+                    $imageContent = $this->client->sendRequest(new Request('GET', $fullImagePath))->getBody()->getContents();
 
-                    $mime = ((array) getimagesize($fullImagePath))['mime'] ?? null;
+                    $mime = ((array) getimagesizefromstring($imageContent))['mime'] ?? null;
 
                     if (! is_string($mime)) {
                         if (str_starts_with($imageContent, '@startuml')) {
