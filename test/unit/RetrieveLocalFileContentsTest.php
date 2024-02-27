@@ -18,6 +18,11 @@ final class RetrieveLocalFileContentsTest extends TestCase
         self::assertSame("Lorem ipsum\n", (new RetrieveLocalFileContents())('local-file.txt', __DIR__ . '/../fixture'));
     }
 
+    public function testRetrievesFileInSubdirectory(): void
+    {
+        self::assertSame("Lorem ipsum\n", (new RetrieveLocalFileContents())('./fixture/local-file.txt', __DIR__ . '/../'));
+    }
+
     public function testRetrievesFileWithQueryAndFragment(): void
     {
         self::assertSame("Lorem ipsum\n", (new RetrieveLocalFileContents())('local-file.txt?a#foo', __DIR__ . '/../fixture'));
