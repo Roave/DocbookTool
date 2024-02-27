@@ -6,7 +6,6 @@ namespace Roave\DocbookToolIntegrationTest;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use Roave\DocbookTool\Client\FileClient;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\InlineCodeFromFile;
@@ -15,6 +14,7 @@ use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 use Roave\DocbookTool\Formatter\RenderPlantUmlDiagramInline;
 use Roave\DocbookTool\RecursivelyLoadPagesFromPath;
+use Roave\DocbookTool\RetrieveLocalFileContents;
 use Roave\DocbookTool\SortThePages;
 use Roave\DocbookTool\WriteAllTheOutputs;
 use Roave\DocbookTool\Writer\MultiplePdfFilesWriter;
@@ -38,9 +38,9 @@ final class DocbookToolGeneratorTest extends TestCase
 
     public function testGeneration(): void
     {
-        $twig       = new Environment(new FilesystemLoader(self::TEMPLATE_PATH));
-        $logger     = new NullLogger();
-        $fileClient = new FileClient();
+        $twig                 = new Environment(new FilesystemLoader(self::TEMPLATE_PATH));
+        $logger               = new NullLogger();
+        $retrieveFileContents = new RetrieveLocalFileContents();
 
         (new WriteAllTheOutputs([
             new SingleStaticHtmlWriter($twig, 'online.twig', self::OUTPUT_DOCBOOK_HTML, $logger),
@@ -51,7 +51,7 @@ final class DocbookToolGeneratorTest extends TestCase
                     [
                         new AggregatePageFormatter([
                             new ExtractFrontMatter($logger),
-                            new InlineExternalImages($logger, $fileClient),
+                            new InlineExternalImages($logger, $retrieveFileContents),
                             new RenderPlantUmlDiagramInline($logger),
                             new MarkdownToHtml($logger),
                             new InlineCodeFromFile(self::CONTENT_PATH, $logger),

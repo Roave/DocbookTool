@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
-use GuzzleHttp\Psr7\Request;
-use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
+use Roave\DocbookTool\RetrieveFileContents;
 use RuntimeException;
 
 use function base64_encode;
@@ -23,7 +22,7 @@ use const PHP_EOL;
 
 final class InlineExternalImages implements PageFormatter
 {
-    public function __construct(private readonly LoggerInterface $logger, private ClientInterface $client)
+    public function __construct(private readonly LoggerInterface $logger, private RetrieveFileContents $retrieveFileContents)
     {
     }
 
@@ -34,17 +33,15 @@ final class InlineExternalImages implements PageFormatter
 
         return $page->withReplacedContent(
             preg_replace_callback(
-                '/!\[([^]]+)]\(([^)]*?)\)/',
+                '/!\[([^]]+)]\(([^)]+?)\)/',
                 function (array $m) use ($page) {
-                    /** @var array{1: string, 2: string} $m */
+                    /** @var array{1: non-empty-string, 2: non-empty-string} $m */
                     $altText   = $m[1];
                     $imagePath = $m[2];
 
-                    $fullImagePath = 'file://' . dirname($page->path()) . '/' . $imagePath;
+                    $this->logger->debug(sprintf('[%s] Inlining image "%s" in page "%s"', self::class, $imagePath, $page->slug()));
 
-                    $this->logger->debug(sprintf('[%s] Inlining image "%s" in page "%s"', self::class, $fullImagePath, $page->slug()));
-
-                    $imageContent = $this->client->sendRequest(new Request('GET', $fullImagePath))->getBody()->getContents();
+                    $imageContent = ($this->retrieveFileContents)($imagePath, dirname($page->path()));
 
                     $mime = ((array) getimagesizefromstring($imageContent))['mime'] ?? null;
 
@@ -58,7 +55,7 @@ final class InlineExternalImages implements PageFormatter
                             );
                         }
 
-                        throw new RuntimeException('Unable to determine mime type of ' . $fullImagePath);
+                        throw new RuntimeException(sprintf('Unable to determine mime type of %s in page %s.', $imagePath, $page->slug()));
                     }
 
                     return sprintf(

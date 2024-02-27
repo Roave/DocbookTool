@@ -9,7 +9,6 @@ use Jasny\Twig\PcreExtension;
 use Jasny\Twig\TextExtension;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Roave\DocbookTool\Client\FileClient;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\InlineCodeFromFile;
@@ -39,13 +38,13 @@ use function is_string;
     $logger = new Logger('cli');
     $logger->pushHandler(new StreamHandler('php://stdout'));
 
-    $fileClient = new FileClient();
+    $retrieveFileContents = new RetrieveLocalFileContents();
 
     $outputWriters = (new WriterFactory($twig, $logger))($arguments);
 
     $pageFormatters = [
         new ExtractFrontMatter($logger),
-        new InlineExternalImages($logger, $fileClient),
+        new InlineExternalImages($logger, $retrieveFileContents),
         new RenderPlantUmlDiagramInline($logger),
         new MarkdownToHtml($logger),
         new InlineCodeFromFile($contentPath, $logger),

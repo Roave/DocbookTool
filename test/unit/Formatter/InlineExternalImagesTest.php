@@ -6,11 +6,10 @@ namespace Roave\DocbookToolUnitTest\Formatter;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use Roave\DocbookTool\Client\FileClient;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\InlineExternalImages;
+use Roave\DocbookTool\RetrieveLocalFileContents;
 use RuntimeException;
-use Safe\Exceptions\CurlException;
 
 use function sprintf;
 
@@ -75,7 +74,7 @@ MD;
 
         $page = DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', $markdown);
 
-        $formattedPage = (new InlineExternalImages(new NullLogger(), new FileClient()))($page);
+        $formattedPage = (new InlineExternalImages(new NullLogger(), new RetrieveLocalFileContents()))($page);
 
         $expectedOutput = sprintf(
             <<<'MD'
@@ -101,7 +100,7 @@ MD;
 
         $page = DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', $markdown);
 
-        $formattedPage = (new InlineExternalImages(new NullLogger(), new FileClient()))($page);
+        $formattedPage = (new InlineExternalImages(new NullLogger(), new RetrieveLocalFileContents()))($page);
 
         self::assertSame(
             <<<'MD'
@@ -119,9 +118,9 @@ MD,
 
     public function testImageNotExisting(): void
     {
-        $this->expectException(CurlException::class);
+        $this->expectException(RuntimeException::class);
 
-        (new InlineExternalImages(new NullLogger(), new FileClient()))(
+        (new InlineExternalImages(new NullLogger(), new RetrieveLocalFileContents()))(
             DocbookPage::fromSlugAndContent(__DIR__ . '/faked.md', 'slug', '![the alt text](something-that-should-not-exist.jpg)'),
         );
     }
@@ -131,7 +130,7 @@ MD,
         $contentPath = __DIR__ . '/../../fixture/docbook';
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Unable to determine mime type');
-        (new InlineExternalImages(new NullLogger(), new FileClient()))(
+        (new InlineExternalImages(new NullLogger(), new RetrieveLocalFileContents()))(
             DocbookPage::fromSlugAndContent($contentPath . '/faked.md', 'slug', '![the alt text](test.md)'),
         );
     }
