@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\InlineCodeFromFile;
+use Roave\DocbookTool\RetrieveLocalFileContents;
 
 /** @covers \Roave\DocbookTool\Formatter\InlineCodeFromFile */
 final class InlineCodeFromFileTest extends TestCase
@@ -22,7 +23,7 @@ MD;
 
         $page = DocbookPage::fromSlugAndContent('/faked.md', 'slug', $markdown);
 
-        $formattedPage = (new InlineCodeFromFile(__DIR__ . '/../../fixture/docbook', new NullLogger()))($page);
+        $formattedPage = (new InlineCodeFromFile(__DIR__ . '/../../fixture/docbook', new NullLogger(), new RetrieveLocalFileContents()))($page);
 
         self::assertSame(
             <<<'MD'

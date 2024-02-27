@@ -47,11 +47,11 @@ use function is_string;
         new InlineExternalImages($logger, $retrieveFileContents),
         new RenderPlantUmlDiagramInline($logger),
         new MarkdownToHtml($logger),
-        new InlineCodeFromFile($contentPath, $logger),
+        new InlineCodeFromFile($contentPath, $logger, $retrieveFileContents),
     ];
 
     if (is_string($featuresPath)) {
-        $pageFormatters[] = new InlineFeatureFile($featuresPath, $logger);
+        $pageFormatters[] = new InlineFeatureFile($featuresPath, $logger, $retrieveFileContents);
     }
 
     (new WriteAllTheOutputs($outputWriters))(
