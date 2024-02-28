@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolUnitTest\Formatter;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
@@ -11,7 +13,7 @@ use Roave\DocbookTool\Formatter\AggregatePageFormatter;
 use Roave\DocbookTool\Formatter\ExtractFrontMatter;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 
-/** @covers \Roave\DocbookTool\Formatter\ExtractFrontMatter */
+#[CoversClass(ExtractFrontMatter::class)]
 final class ExtractFrontMatterTest extends TestCase
 {
     /** @return array<string,array{content:non-empty-string,expectedTitle:non-empty-string}> */
@@ -75,9 +77,8 @@ MD,
     /**
      * @param non-empty-string $content
      * @param non-empty-string $expectedTitle
-     *
-     * @dataProvider titleProvider
      */
+    #[DataProvider('titleProvider')]
     public function testTitleCanBeSetInFrontMatter(string $content, string $expectedTitle): void
     {
         $logger = new NullLogger();
