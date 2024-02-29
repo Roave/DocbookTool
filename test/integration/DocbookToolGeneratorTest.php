@@ -14,6 +14,7 @@ use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 use Roave\DocbookTool\Formatter\RenderPlantUmlDiagramInline;
 use Roave\DocbookTool\RecursivelyLoadPagesFromPath;
+use Roave\DocbookTool\RetrieveLocalFileContents;
 use Roave\DocbookTool\SortThePages;
 use Roave\DocbookTool\WriteAllTheOutputs;
 use Roave\DocbookTool\Writer\MultiplePdfFilesWriter;
@@ -37,8 +38,9 @@ final class DocbookToolGeneratorTest extends TestCase
 
     public function testGeneration(): void
     {
-        $twig   = new Environment(new FilesystemLoader(self::TEMPLATE_PATH));
-        $logger = new NullLogger();
+        $twig                 = new Environment(new FilesystemLoader(self::TEMPLATE_PATH));
+        $logger               = new NullLogger();
+        $retrieveFileContents = new RetrieveLocalFileContents();
 
         (new WriteAllTheOutputs([
             new SingleStaticHtmlWriter($twig, 'online.twig', self::OUTPUT_DOCBOOK_HTML, $logger),
@@ -49,11 +51,11 @@ final class DocbookToolGeneratorTest extends TestCase
                     [
                         new AggregatePageFormatter([
                             new ExtractFrontMatter($logger),
-                            new InlineExternalImages($logger),
+                            new InlineExternalImages($logger, $retrieveFileContents),
                             new RenderPlantUmlDiagramInline($logger),
                             new MarkdownToHtml($logger),
-                            new InlineCodeFromFile(self::CONTENT_PATH, $logger),
-                            new InlineFeatureFile(self::FEATURES_PATH, $logger),
+                            new InlineCodeFromFile(self::CONTENT_PATH, $logger, $retrieveFileContents),
+                            new InlineFeatureFile(self::FEATURES_PATH, $logger, $retrieveFileContents),
                         ]),
                         '__invoke',
                     ],

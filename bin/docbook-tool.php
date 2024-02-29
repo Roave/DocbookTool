@@ -38,18 +38,20 @@ use function is_string;
     $logger = new Logger('cli');
     $logger->pushHandler(new StreamHandler('php://stdout'));
 
+    $retrieveFileContents = new RetrieveLocalFileContents();
+
     $outputWriters = (new WriterFactory($twig, $logger))($arguments);
 
     $pageFormatters = [
         new ExtractFrontMatter($logger),
-        new InlineExternalImages($logger),
+        new InlineExternalImages($logger, $retrieveFileContents),
         new RenderPlantUmlDiagramInline($logger),
         new MarkdownToHtml($logger),
-        new InlineCodeFromFile($contentPath, $logger),
+        new InlineCodeFromFile($contentPath, $logger, $retrieveFileContents),
     ];
 
     if (is_string($featuresPath)) {
-        $pageFormatters[] = new InlineFeatureFile($featuresPath, $logger);
+        $pageFormatters[] = new InlineFeatureFile($featuresPath, $logger, $retrieveFileContents);
     }
 
     (new WriteAllTheOutputs($outputWriters))(
