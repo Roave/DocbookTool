@@ -62,8 +62,7 @@ RUN  \
     --mount=source=composer.lock,target=composer.lock \
     composer install \
     --no-autoloader \
-    --no-dev \
-    --no-plugins
+    --no-dev
 
 
 FROM production-composer-dependencies AS development-composer-dependencies
@@ -75,8 +74,7 @@ RUN \
     --mount=type=cache,target=/root/.composer,id=composer \
     --mount=source=composer.json,target=composer.json \
     --mount=source=composer.lock,target=composer.lock \
-    composer install \
-    --no-plugins
+    composer install
 
 
 FROM base-with-dependencies AS base-with-codebase
