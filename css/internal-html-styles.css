@@ -1,0 +1,155 @@
+/**
+Basic CSS styles that may be useful for rendering your Docbook Tool HTML pages
+NOTE: this file may be in use by some internal projects, be careful editing/breaking it!
+*/
+html {
+    font-family: Roboto, sans-serif;
+}
+h1 {
+    font-size: 32px;
+    border-bottom: 2px solid #0179DA;
+}
+.hidden {
+    display: none !important;
+}
+html, body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+div.page-wrapper {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+section.tab-content {
+    flex-grow: 1;
+    display: flex;
+}
+iframe.tabIframe {
+    width: 100%;
+    border: none;
+    flex-grow: 1;
+}
+
+/** Top nav bar **/
+nav.top-nav {
+    border-bottom: 3px solid #0179DA;
+}
+nav.top-nav h1 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-bottom: none;
+}
+nav.top-nav h1 img {
+    float: left;
+    margin-top: 2px;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+nav.top-nav ul#top-nav-tabs {
+    padding: 0;
+    margin: 0 0 0 10px;
+}
+nav.top-nav ul#top-nav-tabs li {
+    display: inline-block;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background: #e0f1f7;
+    padding: 3px 5px;
+
+    -webkit-box-shadow: 5px -5px 10px -5px rgba(128,128,128,0.7);
+    -moz-box-shadow: 5px -5px 10px -5px rgba(128,128,128,0.7);
+    box-shadow: 5px -5px 10px -5px rgba(128,128,128,0.7);
+}
+nav.top-nav ul#top-nav-tabs li a {
+    text-decoration: none;
+    color: black;
+}
+nav.top-nav ul#top-nav-tabs li.selected {
+    background: #0179DA
+}
+nav.top-nav ul#top-nav-tabs li.selected a {
+    color: white;
+}
+nav.top-nav p.updated {
+    float: right;
+    margin: 10px 10px;
+    display: block;
+    font-size: 14px;
+}
+
+/** Docs - navigation & content **/
+#docs {
+    flex-flow: row;
+}
+nav.docs-side, #docs-content {
+    padding: 10px;
+    height: calc(100vh - 87px);
+    overflow: hidden;
+}
+nav.docs-side {
+    background-color: #0179DA;
+    min-width: 400px;
+}
+#docs-content {
+    background-color: #f5f5f5;
+    overflow: scroll;
+}
+#docs-content img {
+    max-width: 100%;
+}
+ul#docs-side-nav {
+    padding: 0;
+    margin: 0;
+}
+ul#docs-side-nav li {
+    list-style-type: none;
+}
+ul#docs-side-nav li a {
+    text-decoration: none;
+    color: white;
+}
+ul#docs-side-nav li.selected {
+    font-weight: bold;
+}
+code:not([class]) {
+    background-color: #d0d0d0;
+    padding: 2px 5px;
+}
+pre[class*="lang-"], pre[class*="language-"] {
+    border: 1px dotted #0179DA;
+}
+.selectedHeaderFromRoute {
+    background-color: #fafad2;
+    padding: 2px;
+}
+.permalink {
+    text-decoration: none;
+    font-size: 12px;
+    vertical-align: middle;
+    color: #d3d3d3;
+    margin-left: 5px;
+}
+.permalink:hover {
+    color: #696969;
+}
+.pdf-link {
+    background-color: white;
+    border: 1px dotted dimgrey;
+    float: right;
+    margin-right: 20px;
+    margin-top: -20px;
+}
+.pdf-link a {
+    text-decoration: none;
+    color: #000;
+    display: flex;
+    padding: 5px 10px;
+}
+.pdf-link a:hover {
+    background-color: #a9c8ec;
+}
+.pdf-link a span {
+    padding: 6px;
+}

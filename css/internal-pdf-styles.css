@@ -1,0 +1,43 @@
+/**
+Basic CSS styles that may be useful for rendering your Docbook Tool PDF pages
+NOTE: this file may be in use by some internal projects, be careful editing/breaking it!
+*/
+html {
+    font-family: sans-serif;
+    margin: 50px 50px;
+}
+h1 {
+    border-bottom: 2px solid #0179DA;
+}
+code:not([class]) {
+    background-color: #d0d0d0;
+    padding: 2px 5px;
+}
+pre[class*="lang-"], pre[class*="language-"] {
+    border: 1px dotted #0179DA;
+}
+#cover-page {
+    page-break-after: always;
+}
+#cover-roave-logo {
+    text-align: center;
+    margin: 300px 0 300px;
+}
+#cover-title {
+    text-align: right;
+}
+#cover-title h1 {
+    font-size: 48px;
+    margin-bottom: 5px;
+}
+#cover-title h2 {
+    margin-top: 0px;
+    font-size: 32px;
+    color: #6a6a6a;
+}
+#cover-private {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 300px;
+    color: #a70000;
+}
