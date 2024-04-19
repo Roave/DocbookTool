@@ -263,4 +263,103 @@ HTML,
             $this->testLogger->logMessages,
         );
     }
+
+    public function testConfluenceUploadWithLinksToOtherPages(): void
+    {
+        $guzzleLog = [];
+
+        $handlerStack = HandlerStack::create(new MockHandler([
+            // GET /{pageId}
+            0 => new Response(200, [], json_encode([
+                'id' => '111111111',
+                'type' => 'page type',
+                'title' => 'page title',
+                'space' => ['key' => 'space key'],
+                'version' => ['number' => '1'],
+            ], JSON_THROW_ON_ERROR)),
+            // GET /{pageId}/child/attachment
+            1 => new Response(200, [], json_encode([
+                'results' => [
+                    ['title' => 'attachment'],
+                ],
+            ], JSON_THROW_ON_ERROR)),
+            // PUT /{pageId}
+            2 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
+            // GET /{pageId}
+            3 => new Response(200, [], json_encode([
+                'id' => '222222222',
+                'type' => 'page type',
+                'title' => 'page title',
+                'space' => ['key' => 'space key'],
+                'version' => ['number' => '1'],
+            ], JSON_THROW_ON_ERROR)),
+            // GET /{pageId}/child/attachment
+            4 => new Response(200, [], json_encode([
+                'results' => [
+                    ['title' => 'attachment'],
+                ],
+            ], JSON_THROW_ON_ERROR)),
+            // PUT /{pageId}
+            5 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
+        ]));
+        $handlerStack->push(Middleware::history($guzzleLog));
+
+        $confluence = new ConfluenceWriter(
+            new Client(['handler' => $handlerStack]),
+            'https://fake-confluence-url',
+            'Something',
+            $this->testLogger,
+            true,
+        );
+
+        $confluence->__invoke([
+            DocbookPage::fromSlugAndContent(
+                '/path/to/page1.md',
+                'page1-slug',
+                <<<'HTML'
+<a href="./page2.md">page2</a>
+HTML,
+            )->withFrontMatter(['confluencePageId' => 111111111]),
+            DocbookPage::fromSlugAndContent(
+                '/path/to/page2.md',
+                'page2-slug',
+                <<<'HTML'
+<a href="page1.md">page1</a>
+HTML,
+            )->withFrontMatter(['confluencePageId' => 222222222]),
+        ]);
+
+        /** @psalm-var array<self::*,array{request:RequestInterface}> $guzzleLog */
+
+        $postedPageContent = $guzzleLog[2]['request'];
+        assert($postedPageContent instanceof RequestInterface);
+        $this->assertPostContentRequestWasCorrect(
+            $postedPageContent,
+            111111111,
+            <<<'HTML'
+<a href="https://fake-confluence-url/pages/viewpage.action?pageId=222222222">page2</a>
+HTML,
+            2,
+        );
+
+        $postedPageContent = $guzzleLog[5]['request'];
+        assert($postedPageContent instanceof RequestInterface);
+        $this->assertPostContentRequestWasCorrect(
+            $postedPageContent,
+            222222222,
+            <<<'HTML'
+<a href="https://fake-confluence-url/pages/viewpage.action?pageId=111111111">page1</a>
+HTML,
+            2,
+        );
+
+        self::assertContains(
+            sprintf('[%s] - OK! Successfully updated confluence page 111111111 with page1-slug ...', ConfluenceWriter::class),
+            $this->testLogger->logMessages,
+        );
+        self::assertContains(
+            sprintf('[%s] - OK! Successfully updated confluence page 222222222 with page2-slug ...', ConfluenceWriter::class),
+            $this->testLogger->logMessages,
+        );
+    }
 }
