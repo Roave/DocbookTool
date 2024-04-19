@@ -20,6 +20,7 @@ use function assert;
 use function json_decode;
 use function json_encode;
 use function md5;
+use function realpath;
 use function sprintf;
 use function str_replace;
 use function strlen;
@@ -54,7 +55,7 @@ final class ConfluenceWriterTest extends TestCase
         int $expectedVersion,
     ): void {
         self::assertSame('PUT', $postedContentRequest->getMethod());
-        self::assertSame('https://fake-confluence-url/' . $confluencePageId, (string) $postedContentRequest->getUri());
+        self::assertSame('https://fake-confluence-url/rest/api/content/' . $confluencePageId, (string) $postedContentRequest->getUri());
         self::assertSame(
             [
                 'id' => (string) $confluencePageId,
@@ -83,7 +84,7 @@ HTML,
         string $expectedFileExtension,
     ): void {
         self::assertSame('POST', $postedAttachmentRequest->getMethod());
-        self::assertSame('https://fake-confluence-url/' . $confluencePageId . '/child/attachment', (string) $postedAttachmentRequest->getUri());
+        self::assertSame('https://fake-confluence-url/rest/api/content/' . $confluencePageId . '/child/attachment', (string) $postedAttachmentRequest->getUri());
         $body = $postedAttachmentRequest->getBody();
         assert($body instanceof MultipartStream);
         $expectedHash          = md5($expectedContent);
@@ -314,17 +315,25 @@ HTML,
 
         $confluence->__invoke([
             DocbookPage::fromSlugAndContent(
-                '/path/to/page1.md',
+                realpath(__DIR__ . '/../../fixture/docbook/test.md'),
                 'page1-slug',
                 <<<'HTML'
-<a href="./page2.md">page2</a>
+<a href="subdir/another.md">page2</a>
+<a href="./subdir/another.md">page2 with ./</a>
+<a href="./subdir/../subdir/another.md">page2 with .. in it</a>
+<a href="another.md">Should not be replaced, it is wrong place</a>
+<a href="https://example.com">Should not be replaced.</a>
+<a href="this-does-not-exist.md">Should not be replaced either.</a>
+<a href="/this/path/should/not/exist">Should not be replaced either again.</a>
+<a href="mailto:example@example.com">Should not be replaced either, it is an email.</a>
+<a href="ftp://user:pass@example.com/path/here">Should not be replaced either, it is an FTP.</a>
 HTML,
             )->withFrontMatter(['confluencePageId' => 111111111]),
             DocbookPage::fromSlugAndContent(
-                '/path/to/page2.md',
+                realpath(__DIR__ . '/../../fixture/docbook/subdir/another.md'),
                 'page2-slug',
                 <<<'HTML'
-<a href="page1.md">page1</a>
+<a href="../test.md">page1</a>
 HTML,
             )->withFrontMatter(['confluencePageId' => 222222222]),
         ]);
@@ -338,6 +347,14 @@ HTML,
             111111111,
             <<<'HTML'
 <a href="https://fake-confluence-url/pages/viewpage.action?pageId=222222222">page2</a>
+<a href="https://fake-confluence-url/pages/viewpage.action?pageId=222222222">page2 with ./</a>
+<a href="https://fake-confluence-url/pages/viewpage.action?pageId=222222222">page2 with .. in it</a>
+<a href="another.md">Should not be replaced, it is wrong place</a>
+<a href="https://example.com">Should not be replaced.</a>
+<a href="this-does-not-exist.md">Should not be replaced either.</a>
+<a href="/this/path/should/not/exist">Should not be replaced either again.</a>
+<a href="mailto:example@example.com">Should not be replaced either, it is an email.</a>
+<a href="ftp://user:pass@example.com/path/here">Should not be replaced either, it is an FTP.</a>
 HTML,
             2,
         );

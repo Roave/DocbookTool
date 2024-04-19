@@ -101,7 +101,7 @@ class WriterFactory
 
                 $outputWriters[] = new ConfluenceWriter(
                     new Client(['verify' => false]),
-                    $confluenceUrl . '/rest/api/content',
+                    $confluenceUrl,
                     $confluenceAuthToken,
                     $this->logger,
                     $skipContentHashChecks,

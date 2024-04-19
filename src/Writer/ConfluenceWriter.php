@@ -16,16 +16,20 @@ use Safe\Exceptions\SafeExceptionInterface;
 use Webmozart\Assert\Assert;
 
 use function array_column;
+use function array_key_exists;
 use function array_merge;
+use function dirname;
 use function hash_equals;
 use function in_array;
 use function md5;
 use function preg_replace_callback;
+use function realpath;
 use function Safe\base64_decode;
 use function Safe\json_decode;
 use function Safe\json_encode;
 use function sprintf;
 
+use const DIRECTORY_SEPARATOR;
 use const JSON_THROW_ON_ERROR;
 
 /** @psalm-type ListOfExtractedImageData = list<array{hashFilename: string, data: string}> */
@@ -33,13 +37,16 @@ final class ConfluenceWriter implements OutputWriter
 {
     private const CONFLUENCE_HEADER = '<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p>';
 
+    private readonly string $confluenceContentApiUrl;
+
     public function __construct(
-        private ClientInterface $client,
-        private string $confluenceContentApiUrl,
-        private string $authHeader,
-        private LoggerInterface $logger,
+        private readonly ClientInterface $client,
+        private readonly string $confluenceContentBaseUrl,
+        private readonly string $authHeader,
+        private readonly LoggerInterface $logger,
         private readonly bool $skipContentHashChecks,
     ) {
+        $this->confluenceContentApiUrl = $this->confluenceContentBaseUrl . '/rest/api/content';
     }
 
     /**
@@ -51,6 +58,16 @@ final class ConfluenceWriter implements OutputWriter
      */
     public function __invoke(array $docbookPages): void
     {
+        /** @var array<string, int> $mapPathsToConfluencePageIds */
+        $mapPathsToConfluencePageIds = [];
+        foreach ($docbookPages as $page) {
+            if ($page->confluencePageId() === null) {
+                continue;
+            }
+
+            $mapPathsToConfluencePageIds[$page->path()] = $page->confluencePageId();
+        }
+
         foreach ($docbookPages as $page) {
             if ($page->confluencePageId() === null) {
                 continue;
@@ -68,6 +85,8 @@ final class ConfluenceWriter implements OutputWriter
             [$confluenceContent, $imageData] = $this->extractImagesFromContent(
                 self::CONFLUENCE_HEADER . $page->content(),
             );
+
+            $confluenceContent = $this->replaceLocalMarkdownLinks($page, $mapPathsToConfluencePageIds, $confluenceContent);
 
             $hashUpdateMethod  = 'POST';
             $latestContentHash = md5($confluenceContent);
@@ -238,6 +257,27 @@ final class ConfluenceWriter implements OutputWriter
 
         /** @psalm-var ListOfExtractedImageData $images */
         return [$replacedContent, $images];
+    }
+
+    /** @param array<string, int> $mapPathsToConfluencePageIds */
+    private function replaceLocalMarkdownLinks(DocbookPage $page, array $mapPathsToConfluencePageIds, string $renderedContent): string
+    {
+        $currentPagePath = dirname($page->path());
+
+        return (string) preg_replace_callback(
+            '/<a href="([^\"]+)">/',
+            function (array $m) use ($currentPagePath, $mapPathsToConfluencePageIds): string {
+                /** @var array{1: string} $m */
+                $fullPath = realpath($currentPagePath . DIRECTORY_SEPARATOR . $m[1]);
+
+                if ($fullPath === false || ! array_key_exists($fullPath, $mapPathsToConfluencePageIds)) {
+                    return '<a href="' . $m[1] . '">';
+                }
+
+                return '<a href="' . $this->confluenceContentBaseUrl . '/pages/viewpage.action?pageId=' . $mapPathsToConfluencePageIds[$fullPath] . '">';
+            },
+            $renderedContent,
+        );
     }
 
     /**
