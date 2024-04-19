@@ -12,17 +12,18 @@ use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerTrait;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Writer\ConfluenceWriter;
-use Stringable;
+use Roave\DocbookToolUnitTest\TestLogger;
 
 use function assert;
 use function json_decode;
 use function json_encode;
+use function md5;
+use function realpath;
 use function sprintf;
 use function str_replace;
+use function strlen;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -38,20 +39,77 @@ final class ConfluenceWriterTest extends TestCase
     private const PUT_PAGE            = 5;
     private const POST_PUT_HASH       = 6;
 
+    private TestLogger $testLogger;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->testLogger = new TestLogger();
+    }
+
+    private function assertPostContentRequestWasCorrect(
+        RequestInterface $postedContentRequest,
+        int $confluencePageId,
+        string $expectedContent,
+        int $expectedVersion,
+    ): void {
+        self::assertSame('PUT', $postedContentRequest->getMethod());
+        self::assertSame('https://fake-confluence-url/rest/api/content/' . $confluencePageId, (string) $postedContentRequest->getUri());
+        self::assertSame(
+            [
+                'id' => (string) $confluencePageId,
+                'type' => 'page type',
+                'title' => 'page title',
+                'space' => ['key' => 'space key'],
+                'body' => [
+                    'storage' => [
+                        'value' => <<<HTML
+<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p>$expectedContent
+HTML,
+                        'representation' => 'storage',
+                    ],
+                ],
+                'version' => ['number' => $expectedVersion],
+            ],
+            json_decode((string) $postedContentRequest->getBody(), true, 512, JSON_THROW_ON_ERROR),
+        );
+    }
+
+    private function assertPostAttatchmentRequestWasCorrect(
+        RequestInterface $postedAttachmentRequest,
+        int $confluencePageId,
+        string $expectedContent,
+        string $expectedMimeType,
+        string $expectedFileExtension,
+    ): void {
+        self::assertSame('POST', $postedAttachmentRequest->getMethod());
+        self::assertSame('https://fake-confluence-url/rest/api/content/' . $confluencePageId . '/child/attachment', (string) $postedAttachmentRequest->getUri());
+        $body = $postedAttachmentRequest->getBody();
+        assert($body instanceof MultipartStream);
+        $expectedHash          = md5($expectedContent);
+        $expectedContentLength = strlen($expectedContent);
+        self::assertSame(
+            sprintf(
+                <<<EXPECTED_BODY
+--%s
+Content-Disposition: form-data; name="file"; filename="$expectedHash.$expectedFileExtension"
+Content-Length: $expectedContentLength
+Content-Type: $expectedMimeType
+
+$expectedContent
+--%s--
+
+EXPECTED_BODY,
+                $body->getBoundary(),
+                $body->getBoundary(),
+            ),
+            str_replace("\r\n", "\n", (string) $body),
+        );
+    }
+
     public function testConfluenceUpload(): void
     {
-        $testLogger = new class implements LoggerInterface {
-            /** @var list<string> */
-            public array $logMessages = [];
-            use LoggerTrait;
-
-            /** @param array<array-key,mixed> $context */
-            public function log(mixed $level, Stringable|string $message, array $context = []): void
-            {
-                $this->logMessages[] = (string) $message;
-            }
-        };
-
         $guzzleLog = [];
 
         $handlerStack = HandlerStack::create(new MockHandler([
@@ -89,7 +147,7 @@ final class ConfluenceWriterTest extends TestCase
             new Client(['handler' => $handlerStack]),
             'https://fake-confluence-url',
             'Something',
-            $testLogger,
+            $this->testLogger,
             false,
         );
 
@@ -109,97 +167,45 @@ HTML,
 
         $postedJpgAttachment = $guzzleLog[self::POST_ATTACHMENT_JPG]['request'];
         assert($postedJpgAttachment instanceof RequestInterface);
-        self::assertSame('POST', $postedJpgAttachment->getMethod());
-        self::assertSame('https://fake-confluence-url/123456789/child/attachment', (string) $postedJpgAttachment->getUri());
-        $body = $postedJpgAttachment->getBody();
-        assert($body instanceof MultipartStream);
-        self::assertSame(
-            sprintf(
-                <<<'EXPECTED_BODY'
---%s
-Content-Disposition: form-data; name="file"; filename="9b808ef712db49f2a0cc5e6e0dd7758e.jpg"
-Content-Length: 47
-Content-Type: image/jpeg
-
-You will find that I am a JPG, make no mistakes
---%s--
-
-EXPECTED_BODY,
-                $body->getBoundary(),
-                $body->getBoundary(),
-            ),
-            str_replace("\r\n", "\n", (string) $body),
+        $this->assertPostAttatchmentRequestWasCorrect(
+            $postedJpgAttachment,
+            123456789,
+            'You will find that I am a JPG, make no mistakes',
+            'image/jpeg',
+            'jpg',
         );
 
         $postedPngAttachment = $guzzleLog[self::POST_ATTACHMENT_PNG]['request'];
         assert($postedPngAttachment instanceof RequestInterface);
-        self::assertSame('POST', $postedPngAttachment->getMethod());
-        self::assertSame('https://fake-confluence-url/123456789/child/attachment', (string) $postedPngAttachment->getUri());
-        $body = $postedPngAttachment->getBody();
-        assert($body instanceof MultipartStream);
-        self::assertSame(
-            sprintf(
-                <<<'EXPECTED_BODY'
---%s
-Content-Disposition: form-data; name="file"; filename="b3b5b79f3d9b7144e6046bb148bccad5.png"
-Content-Length: 23
-Content-Type: image/png
-
-I am a PNG honestly guv
---%s--
-
-EXPECTED_BODY,
-                $body->getBoundary(),
-                $body->getBoundary(),
-            ),
-            str_replace("\r\n", "\n", (string) $body),
+        $this->assertPostAttatchmentRequestWasCorrect(
+            $postedPngAttachment,
+            123456789,
+            'I am a PNG honestly guv',
+            'image/png',
+            'png',
         );
 
         $postedPageContent = $guzzleLog[self::PUT_PAGE]['request'];
         assert($postedPageContent instanceof RequestInterface);
-        self::assertSame('PUT', $postedPageContent->getMethod());
-        self::assertSame('https://fake-confluence-url/123456789', (string) $postedPageContent->getUri());
-        self::assertSame(
-            [
-                'id' => '123456789',
-                'type' => 'page type',
-                'title' => 'page title',
-                'space' => ['key' => 'space key'],
-                'body' => [
-                    'storage' => [
-                        'value' => <<<'HTML'
-<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p><strong>Hello</strong>
+        $this->assertPostContentRequestWasCorrect(
+            $postedPageContent,
+            123456789,
+            <<<'HTML'
+<strong>Hello</strong>
 <ac:image><ri:attachment ri:filename="9b808ef712db49f2a0cc5e6e0dd7758e.jpg" /></ac:image>
 <ac:image><ri:attachment ri:filename="b3b5b79f3d9b7144e6046bb148bccad5.png" /></ac:image>
 HTML,
-                        'representation' => 'storage',
-                    ],
-                ],
-                'version' => ['number' => 2],
-            ],
-            json_decode((string) $postedPageContent->getBody(), true, 512, JSON_THROW_ON_ERROR),
+            2,
         );
 
         self::assertContains(
             sprintf('[%s] - OK! Successfully updated confluence page 123456789 with page-slug ...', ConfluenceWriter::class),
-            $testLogger->logMessages,
+            $this->testLogger->logMessages,
         );
     }
 
     public function testConfluenceUploadSkippingHashChecks(): void
     {
-        $testLogger = new class implements LoggerInterface {
-            /** @var list<string> */
-            public array $logMessages = [];
-            use LoggerTrait;
-
-            /** @param array<array-key,mixed> $context */
-            public function log(mixed $level, Stringable|string $message, array $context = []): void
-            {
-                $this->logMessages[] = (string) $message;
-            }
-        };
-
         $guzzleLog = [];
 
         $handlerStack = HandlerStack::create(new MockHandler([
@@ -217,12 +223,8 @@ HTML,
                     ['title' => 'attachment'],
                 ],
             ], JSON_THROW_ON_ERROR)),
-            // POST /{pageId}/child/attachment
-            2 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
-            // POST /{pageId}/child/attachment
-            3 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
             // PUT /{pageId}
-            4 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
+            2 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
         ]));
         $handlerStack->push(Middleware::history($guzzleLog));
 
@@ -230,7 +232,7 @@ HTML,
             new Client(['handler' => $handlerStack]),
             'https://fake-confluence-url',
             'Something',
-            $testLogger,
+            $this->testLogger,
             true,
         );
 
@@ -240,90 +242,141 @@ HTML,
                 'page-slug',
                 <<<'HTML'
 <strong>Hello</strong>
-<img src="data:image/jpg;base64,WW91IHdpbGwgZmluZCB0aGF0IEkgYW0gYSBKUEcsIG1ha2Ugbm8gbWlzdGFrZXM=" alt="a JPG" />
-<img src="data:image/png;base64,SSBhbSBhIFBORyBob25lc3RseSBndXY=" alt="a PNG" />
 HTML,
             )->withFrontMatter(['confluencePageId' => 123456789]),
         ]);
 
         /** @psalm-var array<self::*,array{request:RequestInterface}> $guzzleLog */
 
-        $postedJpgAttachment = $guzzleLog[2]['request'];
-        assert($postedJpgAttachment instanceof RequestInterface);
-        self::assertSame('POST', $postedJpgAttachment->getMethod());
-        self::assertSame('https://fake-confluence-url/123456789/child/attachment', (string) $postedJpgAttachment->getUri());
-        $body = $postedJpgAttachment->getBody();
-        assert($body instanceof MultipartStream);
-        self::assertSame(
-            sprintf(
-                <<<'EXPECTED_BODY'
---%s
-Content-Disposition: form-data; name="file"; filename="9b808ef712db49f2a0cc5e6e0dd7758e.jpg"
-Content-Length: 47
-Content-Type: image/jpeg
-
-You will find that I am a JPG, make no mistakes
---%s--
-
-EXPECTED_BODY,
-                $body->getBoundary(),
-                $body->getBoundary(),
-            ),
-            str_replace("\r\n", "\n", (string) $body),
-        );
-
-        $postedPngAttachment = $guzzleLog[3]['request'];
-        assert($postedPngAttachment instanceof RequestInterface);
-        self::assertSame('POST', $postedPngAttachment->getMethod());
-        self::assertSame('https://fake-confluence-url/123456789/child/attachment', (string) $postedPngAttachment->getUri());
-        $body = $postedPngAttachment->getBody();
-        assert($body instanceof MultipartStream);
-        self::assertSame(
-            sprintf(
-                <<<'EXPECTED_BODY'
---%s
-Content-Disposition: form-data; name="file"; filename="b3b5b79f3d9b7144e6046bb148bccad5.png"
-Content-Length: 23
-Content-Type: image/png
-
-I am a PNG honestly guv
---%s--
-
-EXPECTED_BODY,
-                $body->getBoundary(),
-                $body->getBoundary(),
-            ),
-            str_replace("\r\n", "\n", (string) $body),
-        );
-
-        $postedPageContent = $guzzleLog[4]['request'];
+        $postedPageContent = $guzzleLog[2]['request'];
         assert($postedPageContent instanceof RequestInterface);
-        self::assertSame('PUT', $postedPageContent->getMethod());
-        self::assertSame('https://fake-confluence-url/123456789', (string) $postedPageContent->getUri());
-        self::assertSame(
-            [
-                'id' => '123456789',
-                'type' => 'page type',
-                'title' => 'page title',
-                'space' => ['key' => 'space key'],
-                'body' => [
-                    'storage' => [
-                        'value' => <<<'HTML'
-<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p><strong>Hello</strong>
-<ac:image><ri:attachment ri:filename="9b808ef712db49f2a0cc5e6e0dd7758e.jpg" /></ac:image>
-<ac:image><ri:attachment ri:filename="b3b5b79f3d9b7144e6046bb148bccad5.png" /></ac:image>
+        $this->assertPostContentRequestWasCorrect(
+            $postedPageContent,
+            123456789,
+            <<<'HTML'
+<strong>Hello</strong>
 HTML,
-                        'representation' => 'storage',
-                    ],
-                ],
-                'version' => ['number' => 2],
-            ],
-            json_decode((string) $postedPageContent->getBody(), true, 512, JSON_THROW_ON_ERROR),
+            2,
         );
 
         self::assertContains(
             sprintf('[%s] - OK! Successfully updated confluence page 123456789 with page-slug ...', ConfluenceWriter::class),
-            $testLogger->logMessages,
+            $this->testLogger->logMessages,
+        );
+    }
+
+    public function testConfluenceUploadWithLinksToOtherPages(): void
+    {
+        $guzzleLog = [];
+
+        $handlerStack = HandlerStack::create(new MockHandler([
+            // GET /{pageId}
+            0 => new Response(200, [], json_encode([
+                'id' => '111111111',
+                'type' => 'page type',
+                'title' => 'page title',
+                'space' => ['key' => 'space key'],
+                'version' => ['number' => '1'],
+            ], JSON_THROW_ON_ERROR)),
+            // GET /{pageId}/child/attachment
+            1 => new Response(200, [], json_encode([
+                'results' => [
+                    ['title' => 'attachment'],
+                ],
+            ], JSON_THROW_ON_ERROR)),
+            // PUT /{pageId}
+            2 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
+            // GET /{pageId}
+            3 => new Response(200, [], json_encode([
+                'id' => '222222222',
+                'type' => 'page type',
+                'title' => 'page title',
+                'space' => ['key' => 'space key'],
+                'version' => ['number' => '1'],
+            ], JSON_THROW_ON_ERROR)),
+            // GET /{pageId}/child/attachment
+            4 => new Response(200, [], json_encode([
+                'results' => [
+                    ['title' => 'attachment'],
+                ],
+            ], JSON_THROW_ON_ERROR)),
+            // PUT /{pageId}
+            5 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
+        ]));
+        $handlerStack->push(Middleware::history($guzzleLog));
+
+        $confluence = new ConfluenceWriter(
+            new Client(['handler' => $handlerStack]),
+            'https://fake-confluence-url',
+            'Something',
+            $this->testLogger,
+            true,
+        );
+
+        $confluence->__invoke([
+            DocbookPage::fromSlugAndContent(
+                realpath(__DIR__ . '/../../fixture/docbook/test.md'),
+                'page1-slug',
+                <<<'HTML'
+<a href="subdir/another.md">page2</a>
+<a href="./subdir/another.md">page2 with ./</a>
+<a href="./subdir/../subdir/another.md">page2 with .. in it</a>
+<a href="another.md">Should not be replaced, it is wrong place</a>
+<a href="https://example.com">Should not be replaced.</a>
+<a href="this-does-not-exist.md">Should not be replaced either.</a>
+<a href="/this/path/should/not/exist">Should not be replaced either again.</a>
+<a href="mailto:example@example.com">Should not be replaced either, it is an email.</a>
+<a href="ftp://user:pass@example.com/path/here">Should not be replaced either, it is an FTP.</a>
+HTML,
+            )->withFrontMatter(['confluencePageId' => 111111111]),
+            DocbookPage::fromSlugAndContent(
+                realpath(__DIR__ . '/../../fixture/docbook/subdir/another.md'),
+                'page2-slug',
+                <<<'HTML'
+<a href="../test.md">page1</a>
+HTML,
+            )->withFrontMatter(['confluencePageId' => 222222222]),
+        ]);
+
+        /** @psalm-var array<self::*,array{request:RequestInterface}> $guzzleLog */
+
+        $postedPageContent = $guzzleLog[2]['request'];
+        assert($postedPageContent instanceof RequestInterface);
+        $this->assertPostContentRequestWasCorrect(
+            $postedPageContent,
+            111111111,
+            <<<'HTML'
+<a href="https://fake-confluence-url/pages/viewpage.action?pageId=222222222">page2</a>
+<a href="https://fake-confluence-url/pages/viewpage.action?pageId=222222222">page2 with ./</a>
+<a href="https://fake-confluence-url/pages/viewpage.action?pageId=222222222">page2 with .. in it</a>
+<a href="another.md">Should not be replaced, it is wrong place</a>
+<a href="https://example.com">Should not be replaced.</a>
+<a href="this-does-not-exist.md">Should not be replaced either.</a>
+<a href="/this/path/should/not/exist">Should not be replaced either again.</a>
+<a href="mailto:example@example.com">Should not be replaced either, it is an email.</a>
+<a href="ftp://user:pass@example.com/path/here">Should not be replaced either, it is an FTP.</a>
+HTML,
+            2,
+        );
+
+        $postedPageContent = $guzzleLog[5]['request'];
+        assert($postedPageContent instanceof RequestInterface);
+        $this->assertPostContentRequestWasCorrect(
+            $postedPageContent,
+            222222222,
+            <<<'HTML'
+<a href="https://fake-confluence-url/pages/viewpage.action?pageId=111111111">page1</a>
+HTML,
+            2,
+        );
+
+        self::assertContains(
+            sprintf('[%s] - OK! Successfully updated confluence page 111111111 with page1-slug ...', ConfluenceWriter::class),
+            $this->testLogger->logMessages,
+        );
+        self::assertContains(
+            sprintf('[%s] - OK! Successfully updated confluence page 222222222 with page2-slug ...', ConfluenceWriter::class),
+            $this->testLogger->logMessages,
         );
     }
 }
