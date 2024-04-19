@@ -38,9 +38,13 @@ final class ConfluenceWriterTest extends TestCase
     private const PUT_PAGE            = 5;
     private const POST_PUT_HASH       = 6;
 
-    public function testConfluenceUpload(): void
+    private LoggerInterface $testLogger;
+
+    public function setUp(): void
     {
-        $testLogger = new class implements LoggerInterface {
+        parent::setUp();
+
+        $this->testLogger = new class implements LoggerInterface {
             /** @var list<string> */
             public array $logMessages = [];
             use LoggerTrait;
@@ -51,7 +55,10 @@ final class ConfluenceWriterTest extends TestCase
                 $this->logMessages[] = (string) $message;
             }
         };
+    }
 
+    public function testConfluenceUpload(): void
+    {
         $guzzleLog = [];
 
         $handlerStack = HandlerStack::create(new MockHandler([
@@ -89,7 +96,7 @@ final class ConfluenceWriterTest extends TestCase
             new Client(['handler' => $handlerStack]),
             'https://fake-confluence-url',
             'Something',
-            $testLogger,
+            $this->testLogger,
             false,
         );
 
@@ -182,24 +189,12 @@ HTML,
 
         self::assertContains(
             sprintf('[%s] - OK! Successfully updated confluence page 123456789 with page-slug ...', ConfluenceWriter::class),
-            $testLogger->logMessages,
+            $this->testLogger->logMessages,
         );
     }
 
     public function testConfluenceUploadSkippingHashChecks(): void
     {
-        $testLogger = new class implements LoggerInterface {
-            /** @var list<string> */
-            public array $logMessages = [];
-            use LoggerTrait;
-
-            /** @param array<array-key,mixed> $context */
-            public function log(mixed $level, Stringable|string $message, array $context = []): void
-            {
-                $this->logMessages[] = (string) $message;
-            }
-        };
-
         $guzzleLog = [];
 
         $handlerStack = HandlerStack::create(new MockHandler([
@@ -230,7 +225,7 @@ HTML,
             new Client(['handler' => $handlerStack]),
             'https://fake-confluence-url',
             'Something',
-            $testLogger,
+            $this->testLogger,
             true,
         );
 
@@ -323,7 +318,7 @@ HTML,
 
         self::assertContains(
             sprintf('[%s] - OK! Successfully updated confluence page 123456789 with page-slug ...', ConfluenceWriter::class),
-            $testLogger->logMessages,
+            $this->testLogger->logMessages,
         );
     }
 }
