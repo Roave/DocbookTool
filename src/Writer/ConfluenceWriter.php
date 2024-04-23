@@ -20,6 +20,7 @@ use function array_key_exists;
 use function array_merge;
 use function dirname;
 use function hash_equals;
+use function html_entity_decode;
 use function in_array;
 use function md5;
 use function preg_replace_callback;
@@ -337,7 +338,7 @@ final class ConfluenceWriter implements OutputWriter
 </ac:structured-macro>
 XML,
                     $confluenceCodeLanguage,
-                    $m[2],
+                    html_entity_decode($m[2]), // Since this is rendered in CDATA, we should not escape HTML entities
                 );
             },
             $renderedContent,

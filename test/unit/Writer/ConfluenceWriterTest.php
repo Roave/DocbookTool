@@ -472,11 +472,11 @@ HTML,
 </ac:structured-macro>
 <ac:structured-macro ac:name="code" ac:schema-version="1">
   <ac:parameter ac:name="language">html</ac:parameter>
-  <ac:plain-text-body><![CDATA[&lt;html&gt;
-&lt;body&gt;
-&lt;pre&gt;&lt;code&gt;Example of some HTML to trip up the regex&lt;/code&gt;&lt;/pre&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+  <ac:plain-text-body><![CDATA[<html>
+<body>
+<pre><code>Example of some HTML to trip up the regex</code></pre>
+</body>
+</html>
 ]]>
   </ac:plain-text-body>
 </ac:structured-macro>
