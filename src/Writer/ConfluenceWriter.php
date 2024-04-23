@@ -35,6 +35,37 @@ use const JSON_THROW_ON_ERROR;
 /** @psalm-type ListOfExtractedImageData = list<array{hashFilename: string, data: string}> */
 final class ConfluenceWriter implements OutputWriter
 {
+    /** @link https://confluence.atlassian.com/doc/code-block-macro-139390.html */
+    private const ALLOWED_CONFLUENCE_CODE_FORMATS = [
+        'actionscript',
+        'applescript',
+        'bash',
+        'csharp',
+        'coldfusion',
+        'cpp',
+        'css',
+        'delphi',
+        'diff',
+        'erlang',
+        'groovy',
+        'html',
+        'java',
+        'javafx',
+        'javascript',
+        'none',
+        'perl',
+        'php',
+        'powershell',
+        'python',
+        'ruby',
+        'sass',
+        'scala',
+        'sql',
+        'xml',
+        'vb',
+        'yaml',
+    ];
+
     private const CONFLUENCE_HEADER = '<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p>';
 
     private readonly string $confluenceContentApiUrl;
@@ -87,6 +118,7 @@ final class ConfluenceWriter implements OutputWriter
             );
 
             $confluenceContent = $this->replaceLocalMarkdownLinks($page, $mapPathsToConfluencePageIds, $confluenceContent);
+            $confluenceContent = $this->replaceCodeBlocks($confluenceContent);
 
             $hashUpdateMethod  = 'POST';
             $latestContentHash = md5($confluenceContent);
@@ -275,6 +307,38 @@ final class ConfluenceWriter implements OutputWriter
                 }
 
                 return '<a href="' . $this->confluenceContentBaseUrl . '/pages/viewpage.action?pageId=' . $mapPathsToConfluencePageIds[$fullPath] . '">';
+            },
+            $renderedContent,
+        );
+    }
+
+    private function replaceCodeBlocks(string $renderedContent): string
+    {
+        return (string) preg_replace_callback(
+            '/<pre><code(?: class="lang-([^"]+)"|)>([^<]+)<\/code><\/pre>/',
+            static function (array $m): string {
+                /** @var array{1: string, 2: string} $m */
+                $confluenceCodeLanguage = match ($m[1]) {
+                    'json', 'js' => 'javascript',
+                    'shell' => 'bash',
+                    default => $m[1]
+                };
+
+                if (! in_array($confluenceCodeLanguage, self::ALLOWED_CONFLUENCE_CODE_FORMATS, true)) {
+                    $confluenceCodeLanguage = 'none';
+                }
+
+                return sprintf(
+                    <<<'XML'
+<ac:structured-macro ac:name="code" ac:schema-version="1">
+  <ac:parameter ac:name="language">%s</ac:parameter>
+  <ac:plain-text-body><![CDATA[%s]]>
+  </ac:plain-text-body>
+</ac:structured-macro>
+XML,
+                    $confluenceCodeLanguage,
+                    $m[2],
+                );
             },
             $renderedContent,
         );

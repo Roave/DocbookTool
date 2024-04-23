@@ -379,4 +379,115 @@ HTML,
             $this->testLogger->logMessages,
         );
     }
+
+    public function testConfluenceUploadReplacesCodeBlocks(): void
+    {
+        $guzzleLog = [];
+
+        $handlerStack = HandlerStack::create(new MockHandler([
+            // GET /{pageId}
+            0 => new Response(200, [], json_encode([
+                'id' => '123456789',
+                'type' => 'page type',
+                'title' => 'page title',
+                'space' => ['key' => 'space key'],
+                'version' => ['number' => '1'],
+            ], JSON_THROW_ON_ERROR)),
+            // GET /{pageId}/child/attachment
+            1 => new Response(200, [], json_encode([
+                'results' => [
+                    ['title' => 'attachment'],
+                ],
+            ], JSON_THROW_ON_ERROR)),
+            // PUT /{pageId}
+            2 => new Response(200, [], json_encode([], JSON_THROW_ON_ERROR)),
+        ]));
+        $handlerStack->push(Middleware::history($guzzleLog));
+
+        $confluence = new ConfluenceWriter(
+            new Client(['handler' => $handlerStack]),
+            'https://fake-confluence-url',
+            'Something',
+            $this->testLogger,
+            true,
+        );
+
+        $confluence->__invoke([
+            DocbookPage::fromSlugAndContent(
+                '/fake/path',
+                'page-slug',
+                <<<'HTML'
+<p>Regular text before.</p>
+<pre><code>just some plaintext code</code></pre>
+<pre><code class="lang-json">{
+    "some": true,
+    "json": 123
+}
+</code></pre>
+<pre><code class="lang-shell">make build</code></pre>
+<pre><code class="lang-gobbledygook">this gobbledygook language is not a supported Confluence language</code></pre>
+<pre><code class="lang-html">&lt;html&gt;
+&lt;body&gt;
+&lt;pre&gt;&lt;code&gt;Example of some HTML to trip up the regex&lt;/code&gt;&lt;/pre&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>Regular text after.</p>
+HTML,
+            )->withFrontMatter(['confluencePageId' => 123456789]),
+        ]);
+
+        /** @psalm-var array<self::*,array{request:RequestInterface}> $guzzleLog */
+
+        $postedPageContent = $guzzleLog[2]['request'];
+        assert($postedPageContent instanceof RequestInterface);
+        $this->assertPostContentRequestWasCorrect(
+            $postedPageContent,
+            123456789,
+            <<<'HTML'
+<p>Regular text before.</p>
+<ac:structured-macro ac:name="code" ac:schema-version="1">
+  <ac:parameter ac:name="language">none</ac:parameter>
+  <ac:plain-text-body><![CDATA[just some plaintext code]]>
+  </ac:plain-text-body>
+</ac:structured-macro>
+<ac:structured-macro ac:name="code" ac:schema-version="1">
+  <ac:parameter ac:name="language">javascript</ac:parameter>
+  <ac:plain-text-body><![CDATA[{
+    "some": true,
+    "json": 123
+}
+]]>
+  </ac:plain-text-body>
+</ac:structured-macro>
+<ac:structured-macro ac:name="code" ac:schema-version="1">
+  <ac:parameter ac:name="language">bash</ac:parameter>
+  <ac:plain-text-body><![CDATA[make build]]>
+  </ac:plain-text-body>
+</ac:structured-macro>
+<ac:structured-macro ac:name="code" ac:schema-version="1">
+  <ac:parameter ac:name="language">none</ac:parameter>
+  <ac:plain-text-body><![CDATA[this gobbledygook language is not a supported Confluence language]]>
+  </ac:plain-text-body>
+</ac:structured-macro>
+<ac:structured-macro ac:name="code" ac:schema-version="1">
+  <ac:parameter ac:name="language">html</ac:parameter>
+  <ac:plain-text-body><![CDATA[&lt;html&gt;
+&lt;body&gt;
+&lt;pre&gt;&lt;code&gt;Example of some HTML to trip up the regex&lt;/code&gt;&lt;/pre&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+]]>
+  </ac:plain-text-body>
+</ac:structured-macro>
+<p>Regular text after.</p>
+HTML,
+            2,
+        );
+
+        self::assertContains(
+            sprintf('[%s] - OK! Successfully updated confluence page 123456789 with page-slug ...', ConfluenceWriter::class),
+            $this->testLogger->logMessages,
+        );
+    }
 }
