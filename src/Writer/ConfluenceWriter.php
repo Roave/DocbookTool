@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Writer;
 
+use DOMDocument;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
@@ -82,11 +83,18 @@ final class ConfluenceWriter implements OutputWriter
                 $page->slug(),
             ));
 
-            [$confluenceContent, $imageData] = $this->extractImagesFromContent(
+            $confluenceDomContent = new DOMDocument();
+            $confluenceDomContent->loadHTML(
                 self::CONFLUENCE_HEADER . $page->content(),
+                \LIBXML_HTML_NODEFDTD | \LIBXML_HTML_NOIMPLIED
             );
 
-            $confluenceContent = $this->replaceLocalMarkdownLinks($page, $mapPathsToConfluencePageIds, $confluenceContent);
+            $imageData = $this->extractImagesFromContent($confluenceDomContent);
+
+            // @todo ADD THIS BACK IN
+//            $confluenceDomContent = $this->replaceLocalMarkdownLinks($page, $mapPathsToConfluencePageIds, $confluenceDomContent);
+
+            $confluenceContent = $confluenceDomContent->saveHTML();
 
             $hashUpdateMethod  = 'POST';
             $latestContentHash = md5($confluenceContent);
@@ -229,34 +237,52 @@ final class ConfluenceWriter implements OutputWriter
         }
     }
 
-    /** @psalm-return array{0:string, 1:ListOfExtractedImageData} */
-    private function extractImagesFromContent(string $renderedContent): array
+    /** @psalm-return ListOfExtractedImageData */
+    private function extractImagesFromContent(DOMDocument &$renderedContent): array
     {
         $images = [];
 
-        $replacedContent = (string) preg_replace_callback(
-            '/<img src="data:([^;]+);base64,([a-zA-Z0-9=+\/]+)" alt="([^\"]+)" \/>/',
-            static function (array $m) use (&$images): string {
-                /** @var array{1: string, 2: string, 3: string} $m */
-                $imageBinaryData   = base64_decode($m[2]);
-                $imageHashFilename = md5($imageBinaryData) . '.' . match ($m[1]) {
-                    'image/png' => 'png',
-                    'image/jpeg', 'image/jpg' => 'jpg',
-                    'image/gif' => 'gif',
-                };
+        /** @var list<array{old:\DOMElement,new:\DOMElement}> $nodeReplacements */
+        $nodeReplacements = [];
 
-                $images[] = [
-                    'hashFilename' => $imageHashFilename,
-                    'data' => $imageBinaryData,
-                ];
+        foreach ($renderedContent->getElementsByTagName('img') as $img) {
+            /** @var \DOMNode $img */
+            $srcAttributeValue = $img->getAttribute('src');
 
-                return '<ac:image><ri:attachment ri:filename="' . $imageHashFilename . '" /></ac:image>';
-            },
-            $renderedContent,
-        );
+            Assert::stringNotEmpty($srcAttributeValue);
+            if (!preg_match('#data:([^;]+);base64,([a-zA-Z0-9=+\/]+)#', $srcAttributeValue, $dataUrlParts)) {
+                continue;
+            }
+
+            /** @var array{1: string, 2: string} $dataUrlParts */
+            $imageBinaryData   = base64_decode($dataUrlParts[2]);
+            $imageHashFilename = md5($imageBinaryData) . '.' . match ($dataUrlParts[1]) {
+                'image/png' => 'png',
+                'image/jpeg', 'image/jpg' => 'jpg',
+                'image/gif' => 'gif',
+            };
+
+            $images[] = [
+                'hashFilename' => $imageHashFilename,
+                'data' => $imageBinaryData,
+            ];
+            $riFilename = $renderedContent->createAttribute('ri:filename');
+            $riFilename->value = $imageHashFilename;
+            $riAttachment = $renderedContent->createElement('ri:attachment');
+            $riAttachment->appendChild($riFilename);
+            $acImage = $renderedContent->createElement('ac:image');
+            $acImage->appendChild($riAttachment);
+
+            $nodeReplacements[] = ['old' => $img, 'new' => $acImage];
+            //'<ac:image><ri:attachment ri:filename="' . $imageHashFilename . '" /></ac:image>'
+        }
+
+        foreach ($nodeReplacements as $replacementSet) {
+            $replacementSet['old']->parentNode->replaceChild($replacementSet['new'], $replacementSet['old']);
+        }
 
         /** @psalm-var ListOfExtractedImageData $images */
-        return [$replacedContent, $images];
+        return $images;
     }
 
     /** @param array<string, int> $mapPathsToConfluencePageIds */
