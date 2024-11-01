@@ -1,0 +1,6 @@
+@startuml dummy_filename
+!include external-diagram.puml
+!include_many subdir2/includes.puml
+Bob<-Alice : hello2
+Bob->Alice : $someReference
+@enduml
