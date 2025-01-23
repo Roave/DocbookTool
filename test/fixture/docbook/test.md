@@ -22,6 +22,29 @@ This is some markdown
 }
 ```
 
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
+
+and
+
+> [!TIP]
+> Helpful advice for doing things better or more easily.
+
+and
+
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
+and
+
+> [!WARNING]
+> Urgent info that needs immediate user attention to avoid problems.
+
+and
+
+> [!CAUTION]
+> Advises about risks or negative outcomes of certain actions.
+
 ## Subtitle
 
 Links [here](https://www.google.com). **Bold**, _italic_, ~~strikethrough~~, `inline code`.
