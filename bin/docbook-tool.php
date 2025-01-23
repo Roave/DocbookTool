@@ -16,6 +16,7 @@ use Roave\DocbookTool\Formatter\InlineExternalImages;
 use Roave\DocbookTool\Formatter\InlineFeatureFile;
 use Roave\DocbookTool\Formatter\MarkdownToHtml;
 use Roave\DocbookTool\Formatter\RenderPlantUmlDiagramInline;
+use Roave\DocbookTool\Formatter\ReplaceGithubMarkdownAlerts;
 use Roave\DocbookTool\Writer\WriterFactory;
 use Twig\Environment as Twig;
 use Twig\Loader\FilesystemLoader;
@@ -47,6 +48,7 @@ use function is_string;
         new InlineExternalImages($logger, $retrieveFileContents),
         new RenderPlantUmlDiagramInline($logger),
         new MarkdownToHtml($logger),
+        new ReplaceGithubMarkdownAlerts($logger),
         new InlineCodeFromFile($contentPath, $logger, $retrieveFileContents),
     ];
 
