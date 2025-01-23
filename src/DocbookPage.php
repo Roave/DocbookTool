@@ -18,7 +18,7 @@ use function strtok;
 /** @psalm-immutable */
 class DocbookPage
 {
-    private const DEFAULT_ORDER = 100;
+    private const int DEFAULT_ORDER = 100;
 
     /** @param array<array-key, mixed> $frontMatter */
     private function __construct(

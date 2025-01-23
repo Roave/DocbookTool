@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.6
 
-FROM composer:2.6.6 AS composer-base-image
+FROM composer:2.8.5 AS composer-base-image
 FROM node:23.4.0 AS npm-base-image
-FROM ubuntu:22.04 AS ubuntu-base-image
+FROM ubuntu:24.04 AS ubuntu-base-image
 
 FROM npm-base-image AS npm-dependencies
 
@@ -40,7 +40,7 @@ RUN  \
       php8.3-curl \
       php8.3-gd \
       nodejs \
-      openjdk-18-jre \
+      openjdk-21-jre \
       xfonts-75dpi \
       xfonts-base \
       fontconfig \
@@ -48,7 +48,7 @@ RUN  \
       wkhtmltopdf \
     && mkdir -p /docs-package/pdf /app /docs-src/book /docs-src/templates /docs-src/features
 
-ADD https://github.com/plantuml/plantuml/releases/download/v1.2023.4/plantuml-1.2023.4.jar app/bin/plantuml.jar
+ADD https://github.com/plantuml/plantuml/releases/download/v1.2025.0/plantuml-1.2025.0.jar app/bin/plantuml.jar
 ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 
 FROM base-with-dependencies AS production-composer-dependencies
