@@ -16,16 +16,6 @@ jobs:
         with:
           install: true
 
-      # @todo move after the build
-      - name: Build docker image (multi-arch validation)
-        uses: docker/build-push-action@v6
-        with:
-          target: production
-          tags: ghcr.io/roave/docbooktool:test-image
-          platforms: linux/amd64,linux/arm64
-          cache-from: type=gha,scope=ci-cache
-          cache-to: type=gha,mode=max,scope=ci-cache
-
       - name: Build docker image
         uses: docker/build-push-action@v6
         with:
@@ -44,3 +34,12 @@ jobs:
 
       - name: "PHPCS"
         run: docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpcs
+
+      - name: Build docker image (multi-arch validation)
+        uses: docker/build-push-action@v6
+        with:
+          target: production
+          tags: ghcr.io/roave/docbooktool:test-image
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha,scope=ci-cache
+          cache-to: type=gha,mode=max,scope=ci-cache
