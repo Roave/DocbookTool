@@ -1,4 +1,4 @@
-.PHONY: *
+.PHONY: help build build-tested test cs static-analysis test-output production validate-multiarch
 
 CLEAR_CONFIG_CACHE=rm -f storage/app/vars/*
 OPTS=
@@ -27,4 +27,13 @@ test-output: ## Write the test fixture outputs to build/ directory - useful for 
 	docker buildx build --output=build --target=test-output --tag=ghcr.io/roave/docbooktool:test-image .
 
 production: ## Build and tag a production image
-	docker buildx build --load --target=production  --tag=ghcr.io/roave/docbooktool:latest .
+	docker buildx build --load --target=production --tag=ghcr.io/roave/docbooktool:latest .
+
+.builder-name:
+	docker buildx create --use > .builder-name
+
+validate-multiarch: .builder-name ## Validate the production build, multi-arch
+	docker buildx ls
+	docker buildx build --platform linux/amd64,linux/arm64 --target production --tag ghcr.io/roave/docbooktool:test-image .
+	docker buildx rm `cat < .builder-name`
+	rm .builder-name

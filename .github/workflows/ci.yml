@@ -8,26 +8,38 @@ jobs:
     name: Build CI container
     runs-on: ubuntu-latest
     steps:
-      - name: "Install BuildX"
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
         with:
           install: true
 
-      - name: "Build docker image"
-        uses: "docker/build-push-action@v6"
+      - name: Build docker image
+        uses: docker/build-push-action@v6
         with:
-          target: "development"
-          tags: "ghcr.io/roave/docbooktool:test-image"
-          push: "false"
-          load: "true"
-          cache-from: "type=gha,scope=ci-cache"
-          cache-to: "type=gha,mode=max,scope=ci-cache"
+          target: development
+          tags: ghcr.io/roave/docbooktool:test-image
+          push: false
+          load: true
+          cache-from: type=gha,scope=ci-cache
+          cache-to: type=gha,mode=max,scope=ci-cache
 
-      - name: "Psalm"
-        run: "docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/psalm"
+      - name: Psalm
+        run: docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/psalm
 
-      - name: "PHPUnit"
-        run: "docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpunit"
+      - name: PHPUnit
+        run: docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpunit
 
       - name: "PHPCS"
-        run: "docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpcs"
+        run: docker run --rm --entrypoint=php ghcr.io/roave/docbooktool:test-image vendor/bin/phpcs
+
+      - name: Build docker image (multi-arch validation)
+        uses: docker/build-push-action@v6
+        with:
+          target: production
+          tags: ghcr.io/roave/docbooktool:test-image
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha,scope=ci-cache
+          cache-to: type=gha,mode=max,scope=ci-cache
