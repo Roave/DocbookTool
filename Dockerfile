@@ -33,6 +33,7 @@ RUN  \
       bash \
       binutils \
       graphviz \
+      php8.3-bcmath \
       php8.3-cli \
       php8.3-zip \
       php8.3-mbstring \
