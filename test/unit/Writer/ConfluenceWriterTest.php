@@ -20,7 +20,7 @@ use function assert;
 use function json_decode;
 use function json_encode;
 use function md5;
-use function realpath;
+use function Safe\realpath;
 use function sprintf;
 use function str_replace;
 use function strlen;

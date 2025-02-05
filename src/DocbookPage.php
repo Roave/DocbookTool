@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
+use Psl\Str;
 use RuntimeException;
 
 use function array_key_exists;
@@ -13,7 +14,6 @@ use function is_string;
 use function str_ends_with;
 use function str_starts_with;
 use function strip_tags;
-use function strtok;
 
 /** @psalm-immutable */
 class DocbookPage
@@ -71,9 +71,9 @@ class DocbookPage
     /** @throws RuntimeException */
     private function determineTitleFromContent(): string
     {
-        $firstLine = strtok($this->content, "\n");
+        $firstLine = (string) Str\before($this->content, "\n");
 
-        if ($firstLine === false || ! str_starts_with($firstLine, '<h1>') || ! str_ends_with($firstLine, '</h1>')) {
+        if (! str_starts_with($firstLine, '<h1>') || ! str_ends_with($firstLine, '</h1>')) {
             throw new RuntimeException('First line of markdown file ' . $this->slug() . ' did not start with "# "...');
         }
 

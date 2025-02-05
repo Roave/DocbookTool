@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Psl\Regex;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 
 use function array_keys;
 use function implode;
-use function preg_replace_callback;
 use function sprintf;
 use function strtolower;
 use function ucfirst;
@@ -33,7 +33,8 @@ final class ReplaceGithubMarkdownAlerts implements PageFormatter
         $this->logger->debug(sprintf('[%s] Making replacements for GFM alerts in %s', self::class, $page->slug()));
 
         return $page->withReplacedContent(
-            preg_replace_callback(
+            Regex\replace_with(
+                $page->content(),
                 '/(<blockquote>)\s*<p>(\[!(' . implode('|', array_keys(self::ALERT_FLAVOURS)) . ')])/ms',
                 function (array $m) use ($page): string {
                     $flavour = $m[3];
@@ -51,7 +52,6 @@ final class ReplaceGithubMarkdownAlerts implements PageFormatter
                         ucfirst(strtolower($flavour)),
                     );
                 },
-                $page->content(),
             ),
         );
     }

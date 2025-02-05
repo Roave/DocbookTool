@@ -8,9 +8,9 @@ use CurlHandle;
 use RuntimeException;
 
 use function curl_exec;
-use function curl_init;
 use function curl_setopt;
 use function is_string;
+use function Safe\curl_init;
 use function Safe\realpath;
 use function sprintf;
 

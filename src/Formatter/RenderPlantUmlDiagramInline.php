@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Psl\Regex;
+use Psl\Shell\ErrorOutputBehavior;
+use Psl\Str;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 
 use function base64_encode;
-use function escapeshellcmd;
-use function exec;
-use function implode;
 use function md5;
-use function preg_replace;
-use function preg_replace_callback;
+use function Psl\invariant;
+use function Psl\Shell\execute;
 use function Safe\file_get_contents;
 use function Safe\file_put_contents;
 use function Safe\realpath;
 use function Safe\unlink;
 use function sprintf;
-use function substr;
 use function sys_get_temp_dir;
 
 final class RenderPlantUmlDiagramInline implements PageFormatter
@@ -38,7 +37,8 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
         $this->logger->debug(sprintf('[%s] Checking if PlantUML diagrams can be rendered and inlined in %s', self::class, $page->slug()));
 
         return $page->withReplacedContent(
-            preg_replace_callback(
+            Regex\replace_with(
+                $page->content(),
                 '/```puml([\w\W]*?)```/',
                 function (array $m) use ($page) {
                     /** @var array{1: string} $m */
@@ -46,15 +46,18 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
 
                     $this->logger->debug(sprintf('[%s] Found PlantUML diagram to render in %s', self::class, $page->slug()));
 
-                    // fix any "@startuml filename" first lines to omit the filename
-                    $match = preg_replace('/^(\s*@startuml)(.*)$/m', '\\1', $match, count: $startUmls);
+                    $umlRegex = '/^(\s*@startuml)(.*)$/m';
 
-                    if ($startUmls === 0) {
-                        throw new RuntimeException(sprintf(
+                    invariant(
+                        Regex\matches($match, $umlRegex),
+                        sprintf(
                             'Ensure the PUML in %s starts with @startuml and ends with @enduml',
                             $page->slug(),
-                        ));
-                    }
+                        ),
+                    );
+
+                    // fix any "@startuml filename" first lines to omit the filename
+                    $match = Regex\replace($match, '/^(\s*@startuml)(.*)$/m', '\\1');
 
                     $contentHash  = md5($match);
                     $pumlFilename = sys_get_temp_dir() . '/' . $contentHash . '.puml';
@@ -63,21 +66,22 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
 
                     $this->logger->debug(sprintf('[%s] Using %s to render a PlantUML diagram in %s...', self::class, realpath(self::PLANTUML_JAR), $page->slug()));
 
-                    /** @psalm-suppress ForbiddenCode */
-                    exec(
-                        escapeshellcmd('java -jar ' . self::PLANTUML_JAR . ' -v ' . $pumlFilename) . ' 2>&1',
-                        $output,
-                        $exitCode,
-                    );
-
-                    if ($exitCode !== 0) {
-                        /** @psalm-var list<string> $output */
-                        throw new RuntimeException(sprintf(
-                            'Failed to render PUML in %s - starts "%s". Output was: %s',
-                            $page->slug(),
-                            substr($match, 0, 30),
-                            implode("\n", $output),
-                        ));
+                    try {
+                        /** @psalm-suppress ForbiddenCode */
+                        execute(
+                            'java',
+                            ['-jar', self::PLANTUML_JAR, '-v', $pumlFilename],
+                            error_output_behavior: ErrorOutputBehavior::Append,
+                        );
+                    } catch (\Psl\Shell\Exception\RuntimeException $exception) {
+                        throw new RuntimeException(
+                            sprintf(
+                                'Failed to render PUML in %s - starts "%s".',
+                                $page->slug(),
+                                Str\slice($match, 0, 30),
+                            ),
+                            previous: $exception,
+                        );
                     }
 
                     $this->logger->debug(sprintf('[%s] PlantUML diagram render complete %s', self::class, $page->slug()));
@@ -88,7 +92,6 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
 
                     return '![Diagram](data:image/png;base64,' . $pngContent . ')';
                 },
-                $page->content(),
             ),
         );
     }

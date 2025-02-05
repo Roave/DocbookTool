@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Psl\Regex;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\RetrieveLocalFileContents;
 use Safe\Exceptions\SafeExceptionInterface;
 
 use function htmlentities;
-use function preg_replace_callback;
 use function sprintf;
 
 use const ENT_QUOTES;
@@ -27,7 +27,8 @@ final class InlineFeatureFile implements PageFormatter
         $this->logger->debug(sprintf('[%s] Checking if feature files can be inlined in %s', self::class, $page->slug()));
 
         return $page->withReplacedContent(
-            preg_replace_callback(
+            Regex\replace_with(
+                $page->content(),
                 '/{{feature:([a-zA-Z0-9\/.-]+)}}/',
                 function (array $m) use ($page): string {
                     /** @var array{1: non-empty-string} $m */
@@ -37,7 +38,6 @@ final class InlineFeatureFile implements PageFormatter
 
                     return '<pre><code class="lang-gherkin">' . htmlentities($feature, ENT_QUOTES) . '</code></pre>';
                 },
-                $page->content(),
             ),
         );
     }

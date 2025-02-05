@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Psl\Regex;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\RetrieveFileContents;
@@ -11,7 +12,6 @@ use Safe\Exceptions\SafeExceptionInterface;
 
 use function htmlentities;
 use function implode;
-use function preg_replace_callback;
 use function sprintf;
 
 use const ENT_QUOTES;
@@ -30,7 +30,8 @@ final class InlineCodeFromFile implements PageFormatter
         $this->logger->debug(sprintf('[%s] Checking if source code files can be inlined in %s', self::class, $page->slug()));
 
         return $page->withReplacedContent(
-            preg_replace_callback(
+            Regex\replace_with(
+                $page->content(),
                 sprintf(
                     '/{{src-(%s):([a-zA-Z0-9\/.-]+)}}/',
                     implode('|', self::ALLOWED_CODE_TYPES),
@@ -47,7 +48,6 @@ final class InlineCodeFromFile implements PageFormatter
                         htmlentities($sourceCode, ENT_QUOTES),
                     );
                 },
-                $page->content(),
             ),
         );
     }
