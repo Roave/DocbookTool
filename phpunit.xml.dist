@@ -4,6 +4,11 @@
     colors="true"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     displayDetailsOnTestsThatTriggerWarnings="true"
+    failOnNotice="true"
+    failOnPhpunitDeprecation="true"
+    failOnWarning="true"
+    failOnDeprecation="true"
+    failOnEmptyTestSuite="true"
 >
     <testsuites>
         <testsuite name="integration">

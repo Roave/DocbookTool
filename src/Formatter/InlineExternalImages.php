@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Psl\Regex;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\RetrieveFileContents;
@@ -13,7 +14,6 @@ use function base64_encode;
 use function dirname;
 use function getimagesizefromstring;
 use function is_string;
-use function preg_replace_callback;
 use function sprintf;
 use function str_starts_with;
 use function trim;
@@ -32,7 +32,8 @@ final class InlineExternalImages implements PageFormatter
         $this->logger->debug(sprintf('[%s] Checking if external images can be inlined in %s', self::class, $page->slug()));
 
         return $page->withReplacedContent(
-            preg_replace_callback(
+            Regex\replace_with(
+                $page->content(),
                 '/!\[([^]]+)]\(([^)]+?)\)/',
                 function (array $m) use ($page) {
                     /** @var array{1: non-empty-string, 2: non-empty-string} $m */
@@ -65,7 +66,6 @@ final class InlineExternalImages implements PageFormatter
                         base64_encode($imageContent),
                     );
                 },
-                $page->content(),
             ),
         );
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolIntegrationTest\Writer;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
@@ -13,7 +14,7 @@ use Twig\Environment as Twig;
 use function file_exists;
 use function unlink;
 
-/** @covers \Roave\DocbookTool\Writer\MultiplePdfFilesWriter */
+#[CoversClass(MultiplePdfFilesWriter::class)]
 final class MultiplePdfFilesWriterTest extends TestCase
 {
     private const OUTPUT_PDF_PATH = __DIR__;

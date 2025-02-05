@@ -23,9 +23,8 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 use function array_map;
-use function file_exists;
-use function Safe\file_get_contents;
-use function Safe\unlink;
+use function Psl\Filesystem\delete_file;
+use function Psl\Filesystem\exists;
 
 final class DocbookToolGeneratorTest extends TestCase
 {
@@ -64,9 +63,9 @@ final class DocbookToolGeneratorTest extends TestCase
             ),
         );
 
-        self::assertStringMatchesFormat(
-            file_get_contents(self::EXPECTED_OUTPUT_DOCBOOK_HTML),
-            file_get_contents(self::OUTPUT_DOCBOOK_HTML),
+        self::assertFileMatchesFormatFile(
+            self::EXPECTED_OUTPUT_DOCBOOK_HTML,
+            self::OUTPUT_DOCBOOK_HTML,
         );
         self::assertFileExists(self::OUTPUT_PDF_PATH . '/test.pdf');
         // @todo assert PDFs are the same - https://github.com/Roave/DocbookTool/issues/3
@@ -76,14 +75,14 @@ final class DocbookToolGeneratorTest extends TestCase
     {
         parent::tearDown();
 
-        if (file_exists(self::OUTPUT_DOCBOOK_HTML)) {
-            unlink(self::OUTPUT_DOCBOOK_HTML);
+        if (exists(self::OUTPUT_DOCBOOK_HTML)) {
+            delete_file(self::OUTPUT_DOCBOOK_HTML);
         }
 
-        if (! file_exists(self::OUTPUT_PDF_PATH . '/test.pdf')) {
+        if (! exists(self::OUTPUT_PDF_PATH . '/test.pdf')) {
             return;
         }
 
-        unlink(self::OUTPUT_PDF_PATH . '/test.pdf');
+        delete_file(self::OUTPUT_PDF_PATH . '/test.pdf');
     }
 }

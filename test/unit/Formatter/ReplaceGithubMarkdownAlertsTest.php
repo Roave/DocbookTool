@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolUnitTest\Formatter;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
@@ -13,7 +15,7 @@ use Roave\DocbookTool\Formatter\ReplaceGithubMarkdownAlerts;
 
 use function trim;
 
-/** @covers \Roave\DocbookTool\Formatter\ExtractFrontMatter */
+#[CoversClass(ReplaceGithubMarkdownAlerts::class)]
 final class ReplaceGithubMarkdownAlertsTest extends TestCase
 {
     /** @return array<string,array{markdownContent:non-empty-string,expectedContent:non-empty-string}> */
@@ -102,6 +104,7 @@ final class ReplaceGithubMarkdownAlertsTest extends TestCase
      *
      * @dataProvider titleProvider
      */
+    #[DataProvider('titleProvider')]
     public function testGithubMarkdownIsReplaced(string $markdownContent, string $expectedContent): void
     {
         $logger = new NullLogger();

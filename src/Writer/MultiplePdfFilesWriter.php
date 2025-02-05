@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Writer;
 
+use Psl\File\Exception\ExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
-use Safe\Exceptions\SafeExceptionInterface;
 use Twig\Environment as Twig;
 use Twig\Error\Error as TwigException;
 
@@ -16,8 +16,8 @@ use function escapeshellcmd;
 use function exec;
 use function file_exists;
 use function implode;
-use function Safe\file_put_contents;
-use function Safe\unlink;
+use function Psl\File\write;
+use function Psl\Filesystem\delete_file;
 use function sprintf;
 use function sys_get_temp_dir;
 
@@ -36,7 +36,8 @@ class MultiplePdfFilesWriter implements OutputWriter
      * @param DocbookPage[] $docbookPages
      *
      * @throws RuntimeException
-     * @throws SafeExceptionInterface
+     * @throws ExceptionInterface
+     * @throws \Psl\Filesystem\Exception\ExceptionInterface
      * @throws TwigException
      */
     public function __invoke(array $docbookPages): void
@@ -51,7 +52,7 @@ class MultiplePdfFilesWriter implements OutputWriter
 
             $tmpHtmlFile = sys_get_temp_dir() . '/' . $page->slug() . '.html';
             $pdfFile     = $this->pdfOutputPath . '/' . $page->slug() . '.pdf';
-            file_put_contents($tmpHtmlFile, $this->twig->render($this->twigTemplate, ['page' => $page]));
+            write($tmpHtmlFile, $this->twig->render($this->twigTemplate, ['page' => $page]));
 
             exec(
                 escapeshellcmd(implode(
@@ -76,7 +77,7 @@ class MultiplePdfFilesWriter implements OutputWriter
                 $this->logger->debug(sprintf('[%s] wkhtmltopdf output: %s', self::class, implode("\n", $output)));
             }
 
-            unlink($tmpHtmlFile);
+            delete_file($tmpHtmlFile);
 
             /**
              * Previously, we'd check the exit code, but it seems it is not reliable. I observed that the PDF was still

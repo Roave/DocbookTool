@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolUnitTest;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 
-/** @covers \Roave\DocbookTool\DocbookPage */
+#[CoversClass(DocbookPage::class)]
 final class DocbookPageTest extends TestCase
 {
     public function testEmptyPageThrowsExceptionWhenFetchingTitle(): void

@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Roave\DocbookTool;
 
 use CurlHandle;
+use Psl\Type;
 use RuntimeException;
 
 use function curl_exec;
 use function curl_init;
 use function curl_setopt;
 use function is_string;
-use function Safe\realpath;
+use function Psl\Filesystem\canonicalize;
 use function sprintf;
 
 use const CURLOPT_PROTOCOLS;
@@ -25,14 +26,16 @@ final readonly class RetrieveLocalFileContents implements RetrieveFileContents
 
     public function __construct()
     {
-        $this->curlHandle = curl_init();
+        $this->curlHandle = Type\instance_of(CurlHandle::class)
+            ->coerce(curl_init());
+
         curl_setopt($this->curlHandle, CURLOPT_PROTOCOLS, CURLPROTO_FILE);
         curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
     }
 
     public function __invoke(string $filePath, string $workingDirectory): string
     {
-        $fileUri = 'file://' . realpath($workingDirectory) . '/' . $filePath;
+        $fileUri = 'file://' . (string) canonicalize($workingDirectory) . '/' . $filePath;
 
         curl_setopt($this->curlHandle, CURLOPT_URL, $fileUri);
         $fileContent = curl_exec($this->curlHandle);

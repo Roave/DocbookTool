@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool;
 
-use Safe\Exceptions\SafeExceptionInterface;
-use Webmozart\Assert\Assert;
+use Psl\Type;
 
 use function base64_encode;
 use function extension_loaded;
@@ -26,14 +25,12 @@ class InteractiveHttpBasicAuthTokenCreator
     private function readInput(bool $secretive): string
     {
         /** @psalm-suppress ForbiddenCode */
-        $input = shell_exec(sprintf("bash -c 'read %s input && echo \$input'", $secretive ? '-s' : ''));
-
-        Assert::string($input);
-
-        return rtrim($input);
+        return rtrim(
+            Type\string()
+                ->coerce(shell_exec(sprintf("bash -c 'read %s input && echo \$input'", $secretive ? '-s' : ''))),
+        );
     }
 
-    /** @throws SafeExceptionInterface */
     public function __invoke(): string
     {
         echo 'Confluence username: ';

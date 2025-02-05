@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Roave\DocbookTool\Formatter;
 
 use InvalidArgumentException;
+use Psl\Regex;
+use Psl\Regex\Exception\ExceptionInterface;
+use Psl\Type;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
-use Safe\Exceptions\SafeExceptionInterface;
 use Symfony\Component\Yaml\Yaml;
-use Webmozart\Assert\Assert;
 
-use function Safe\preg_match;
+use function count;
+use function Psl\invariant;
 use function sprintf;
 use function str_contains;
 
@@ -22,7 +24,7 @@ final class ExtractFrontMatter implements PageFormatter
     }
 
     /**
-     * @throws SafeExceptionInterface
+     * @throws ExceptionInterface
      * @throws InvalidArgumentException
      */
     public function __invoke(DocbookPage $page): DocbookPage
@@ -35,18 +37,18 @@ final class ExtractFrontMatter implements PageFormatter
             return $page;
         }
 
-        if (! preg_match('/^---\n([\w\W]+?)\n---\n([\w\W]*)$/', $page->content(), $m)) {
+        $m = Regex\first_match($page->content(), '/^---\n([\w\W]+?)\n---\n([\w\W]*)$/', Type\vec(Type\string()));
+
+        if ($m === null) {
             $this->logger->debug(sprintf('[%s] Page "%s" front matter does not appear correctly formatted, ignoring it', self::class, $page->slug()));
 
             return $page;
         }
 
-        Assert::notNull($m);
-        Assert::count($m, 3);
+        invariant(count($m) === 3, 'Exactly 3 elements should be matched');
 
-        $frontMatter = Yaml::parse($m[1]);
-
-        Assert::isArray($frontMatter);
+        $frontMatter = Type\dict(Type\array_key(), Type\mixed())
+            ->coerce(Yaml::parse($m[1]));
 
         $this->logger->debug(sprintf('[%s] Successfully extracted front matter from page "%s"', self::class, $page->slug()));
 

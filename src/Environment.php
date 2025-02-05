@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Roave\DocbookTool;
 
 use RuntimeException;
-use Safe\Exceptions\SafeExceptionInterface;
 
 use function getenv;
 use function in_array;
@@ -13,7 +12,7 @@ use function sprintf;
 
 class Environment
 {
-    /** @throws SafeExceptionInterface */
+    /** @return non-empty-string */
     public static function require(string $name): string
     {
         $value = self::optional($name);

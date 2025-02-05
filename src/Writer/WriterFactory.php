@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Roave\DocbookTool\Writer;
 
 use GuzzleHttp\Client;
+use Psl\Filesystem\Exception\ExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\Environment;
 use Roave\DocbookTool\InteractiveHttpBasicAuthTokenCreator;
 use RuntimeException;
-use Safe\Exceptions\SafeExceptionInterface;
 use Twig\Environment as Twig;
 
 use function count;
 use function dirname;
 use function file_exists;
 use function in_array;
-use function Safe\mkdir;
+use function Psl\Filesystem\create_directory;
 use function sprintf;
 
 class WriterFactory
@@ -30,7 +30,7 @@ class WriterFactory
      *
      * @return non-empty-list<OutputWriter>
      *
-     * @throws SafeExceptionInterface
+     * @throws ExceptionInterface
      */
     public function __invoke(array $arguments): array
     {
@@ -41,7 +41,7 @@ class WriterFactory
             $outputDocbookHtml = Environment::require('DOCBOOK_TOOL_OUTPUT_HTML_FILE');
 
             if (! file_exists(dirname($outputDocbookHtml))) {
-                mkdir(dirname($outputDocbookHtml), recursive: true);
+                create_directory(dirname($outputDocbookHtml));
             }
 
             $this->logger->debug(sprintf(
@@ -63,7 +63,7 @@ class WriterFactory
             $outputPdfPath = Environment::require('DOCBOOK_TOOL_OUTPUT_PDF_PATH');
 
             if (! file_exists($outputPdfPath)) {
-                mkdir($outputPdfPath, recursive: true);
+                create_directory($outputPdfPath);
             }
 
             $this->logger->debug(sprintf(

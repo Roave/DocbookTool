@@ -10,6 +10,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Roave\DocbookTool\DocbookPage;
@@ -20,14 +21,14 @@ use function assert;
 use function json_decode;
 use function json_encode;
 use function md5;
-use function realpath;
+use function Psl\Filesystem\canonicalize;
 use function sprintf;
 use function str_replace;
 use function strlen;
 
 use const JSON_THROW_ON_ERROR;
 
-/** @covers \Roave\DocbookTool\Writer\ConfluenceWriter */
+#[CoversClass(ConfluenceWriter::class)]
 final class ConfluenceWriterTest extends TestCase
 {
     // Indices for Guzzle transactions, as MockHandler only likes integer keys
@@ -315,7 +316,7 @@ HTML,
 
         $confluence->__invoke([
             DocbookPage::fromSlugAndContent(
-                realpath(__DIR__ . '/../../fixture/docbook/test.md'),
+                (string) canonicalize(__DIR__ . '/../../fixture/docbook/test.md'),
                 'page1-slug',
                 <<<'HTML'
 <a href="subdir/another.md">page2</a>
@@ -330,7 +331,7 @@ HTML,
 HTML,
             )->withFrontMatter(['confluencePageId' => 111111111]),
             DocbookPage::fromSlugAndContent(
-                realpath(__DIR__ . '/../../fixture/docbook/subdir/another.md'),
+                (string) canonicalize(__DIR__ . '/../../fixture/docbook/subdir/another.md'),
                 'page2-slug',
                 <<<'HTML'
 <a href="../test.md">page1</a>
