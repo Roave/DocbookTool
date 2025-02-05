@@ -8,7 +8,6 @@ use Psl\Regex;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\RetrieveFileContents;
-use Safe\Exceptions\SafeExceptionInterface;
 
 use function htmlentities;
 use function implode;
@@ -24,7 +23,6 @@ final class InlineCodeFromFile implements PageFormatter
     {
     }
 
-    /** @throws SafeExceptionInterface */
     public function __invoke(DocbookPage $page): DocbookPage
     {
         $this->logger->debug(sprintf('[%s] Checking if source code files can be inlined in %s', self::class, $page->slug()));

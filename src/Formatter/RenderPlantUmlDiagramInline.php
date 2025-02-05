@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Psl\Encoding;
 use Psl\Regex;
 use Psl\Shell\ErrorOutputBehavior;
 use Psl\Str;
@@ -11,16 +12,15 @@ use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use RuntimeException;
 
-use function base64_encode;
 use function md5;
+use function Psl\Env\temp_dir;
+use function Psl\File\read;
+use function Psl\File\write;
+use function Psl\Filesystem\canonicalize;
+use function Psl\Filesystem\delete_file;
 use function Psl\invariant;
 use function Psl\Shell\execute;
-use function Safe\file_get_contents;
-use function Safe\file_put_contents;
-use function Safe\realpath;
-use function Safe\unlink;
 use function sprintf;
-use function sys_get_temp_dir;
 
 final class RenderPlantUmlDiagramInline implements PageFormatter
 {
@@ -59,12 +59,18 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
                     // fix any "@startuml filename" first lines to omit the filename
                     $match = Regex\replace($match, '/^(\s*@startuml)(.*)$/m', '\\1');
 
+                    $temporaryDir = temp_dir();
                     $contentHash  = md5($match);
-                    $pumlFilename = sys_get_temp_dir() . '/' . $contentHash . '.puml';
-                    $pngFilename  = sys_get_temp_dir() . '/' . $contentHash . '.png';
-                    file_put_contents($pumlFilename, $match);
+                    $pumlFilename = $temporaryDir . '/' . $contentHash . '.puml';
+                    $pngFilename  = $temporaryDir . '/' . $contentHash . '.png';
+                    write($pumlFilename, $match);
 
-                    $this->logger->debug(sprintf('[%s] Using %s to render a PlantUML diagram in %s...', self::class, realpath(self::PLANTUML_JAR), $page->slug()));
+                    $this->logger->debug(sprintf(
+                        '[%s] Using %s to render a PlantUML diagram in %s...',
+                        self::class,
+                        (string) canonicalize(self::PLANTUML_JAR),
+                        $page->slug(),
+                    ));
 
                     try {
                         /** @psalm-suppress ForbiddenCode */
@@ -86,9 +92,9 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
 
                     $this->logger->debug(sprintf('[%s] PlantUML diagram render complete %s', self::class, $page->slug()));
 
-                    $pngContent = base64_encode(file_get_contents($pngFilename));
-                    unlink($pumlFilename);
-                    unlink($pngFilename);
+                    $pngContent = Encoding\Base64\encode(read($pngFilename));
+                    delete_file($pumlFilename);
+                    delete_file($pngFilename);
 
                     return '![Diagram](data:image/png;base64,' . $pngContent . ')';
                 },

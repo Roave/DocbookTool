@@ -10,10 +10,11 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use JsonException;
+use Psl\Encoding;
+use Psl\Json;
+use Psl\Type;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
-use Safe\Exceptions\SafeExceptionInterface;
-use Webmozart\Assert\Assert;
 
 use function array_column;
 use function array_key_exists;
@@ -25,13 +26,9 @@ use function in_array;
 use function md5;
 use function preg_replace_callback;
 use function realpath;
-use function Safe\base64_decode;
-use function Safe\json_decode;
-use function Safe\json_encode;
 use function sprintf;
 
 use const DIRECTORY_SEPARATOR;
-use const JSON_THROW_ON_ERROR;
 
 /** @psalm-type ListOfExtractedImageData = list<array{hashFilename: string, data: string}> */
 final class ConfluenceWriter implements OutputWriter
@@ -86,7 +83,6 @@ final class ConfluenceWriter implements OutputWriter
      *
      * @throws GuzzleException
      * @throws JsonException
-     * @throws SafeExceptionInterface
      */
     public function __invoke(array $docbookPages): void
     {
@@ -271,7 +267,7 @@ final class ConfluenceWriter implements OutputWriter
             '/<img src="data:([^;]+);base64,([a-zA-Z0-9=+\/]+)" alt="([^\"]+)" \/>/',
             static function (array $m) use (&$images): string {
                 /** @var array{1: string, 2: string, 3: string} $m */
-                $imageBinaryData   = base64_decode($m[2]);
+                $imageBinaryData   = Encoding\Base64\decode($m[2]);
                 $imageHashFilename = md5($imageBinaryData) . '.' . match ($m[1]) {
                     'image/png' => 'png',
                     'image/jpeg', 'image/jpg' => 'jpg',
@@ -377,7 +373,7 @@ XML,
                         $method,
                         $this->confluenceContentApiUrl . '/' . $endpoint,
                         array_merge($headers, $overrideHeaders),
-                        $bodyContent !== null ? json_encode($bodyContent, JSON_THROW_ON_ERROR) : null,
+                        $bodyContent !== null ? Json\encode($bodyContent) : null,
                     ),
                     $guzzleOptions,
                 )
@@ -397,23 +393,6 @@ XML,
             return [];
         }
 
-        try {
-            $decodedResponse = json_decode(
-                $stringResponse,
-                true,
-                512,
-                JSON_THROW_ON_ERROR,
-            );
-
-            Assert::isArray($decodedResponse);
-
-            return $decodedResponse;
-        } catch (JsonException $jsonException) {
-            echo "Failed to JSON decode response: \n";
-            echo $stringResponse;
-            echo "\n\n";
-
-            throw $jsonException;
-        }
+        return Json\typed($stringResponse, Type\dict(Type\array_key(), Type\mixed()));
     }
 }

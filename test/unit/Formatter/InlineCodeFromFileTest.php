@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolUnitTest\Formatter;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\Formatter\InlineCodeFromFile;
 use Roave\DocbookTool\RetrieveLocalFileContents;
 
-/** @covers \Roave\DocbookTool\Formatter\InlineCodeFromFile */
+#[CoversClass(InlineCodeFromFile::class)]
 final class InlineCodeFromFileTest extends TestCase
 {
     public function testExternalSourceCodeIsInlined(): void

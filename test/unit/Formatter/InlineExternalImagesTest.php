@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolUnitTest\Formatter;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\DocbookPage;
@@ -13,7 +15,7 @@ use RuntimeException;
 
 use function sprintf;
 
-/** @covers \Roave\DocbookTool\Formatter\InlineExternalImages */
+#[CoversClass(InlineExternalImages::class)]
 final class InlineExternalImagesTest extends TestCase
 {
     private const MIME_JPG = 'image/jpeg';
@@ -64,6 +66,7 @@ final class InlineExternalImagesTest extends TestCase
      *
      * @dataProvider contentAndImagePathProvider
      */
+    #[DataProvider('contentAndImagePathProvider')]
     public function testExternalImagesAreInlined(string $contentPath, string $imagePath, string $expectedMimeType): void
     {
         $markdown = <<<MD

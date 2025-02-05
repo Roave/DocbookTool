@@ -8,7 +8,6 @@ use Psl\Regex;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 use Roave\DocbookTool\RetrieveLocalFileContents;
-use Safe\Exceptions\SafeExceptionInterface;
 
 use function htmlentities;
 use function sprintf;
@@ -21,7 +20,6 @@ final class InlineFeatureFile implements PageFormatter
     {
     }
 
-    /** @throws SafeExceptionInterface */
     public function __invoke(DocbookPage $page): DocbookPage
     {
         $this->logger->debug(sprintf('[%s] Checking if feature files can be inlined in %s', self::class, $page->slug()));

@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Roave\DocbookTool\RetrieveLocalFileContents;
 use RuntimeException;
-use Safe\Exceptions\FilesystemException;
 
 #[CoversClass(RetrieveLocalFileContents::class)]
 final class RetrieveLocalFileContentsTest extends TestCase
@@ -37,7 +36,7 @@ final class RetrieveLocalFileContentsTest extends TestCase
 
     public function testInvalidWorkingDirectoryThrowsException(): void
     {
-        $this->expectException(FilesystemException::class);
+        $this->expectException(RuntimeException::class);
         (new RetrieveLocalFileContents())('not-existing.txt', __DIR__ . '/../not-existing');
     }
 }
