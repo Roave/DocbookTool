@@ -1,0 +1,4 @@
+@startuml dummy_filename
+!include_many ../subdir2/includes.puml
+Bob->Alice : $someReference
+@enduml

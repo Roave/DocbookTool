@@ -95,3 +95,7 @@ This is an image that's over 500kb so we can be sure that bigger images work:
 ## Inline PUML file
 
 ![An external PlantUML diagram](./external-diagram.puml)
+
+### Inline PUML with includes
+
+![An external PlantUML diagram with includes](./diagram-with-include.puml)
