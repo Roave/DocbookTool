@@ -34,7 +34,7 @@ use const DIRECTORY_SEPARATOR;
 final class ConfluenceWriter implements OutputWriter
 {
     /** @link https://confluence.atlassian.com/doc/code-block-macro-139390.html */
-    private const ALLOWED_CONFLUENCE_CODE_FORMATS = [
+    private const array ALLOWED_CONFLUENCE_CODE_FORMATS = [
         'actionscript',
         'applescript',
         'bash',
@@ -64,7 +64,7 @@ final class ConfluenceWriter implements OutputWriter
         'yaml',
     ];
 
-    private const CONFLUENCE_HEADER = '<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p>';
+    private const string CONFLUENCE_HEADER = '<p><strong style="color: #ff0000;">NOTE: This documentation is auto generated, do not edit this directly in Confluence, as your changes will be overwritten!</strong></p>';
 
     private readonly string $confluenceContentApiUrl;
 

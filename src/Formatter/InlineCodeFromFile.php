@@ -17,7 +17,7 @@ use const ENT_QUOTES;
 
 final class InlineCodeFromFile implements PageFormatter
 {
-    private const ALLOWED_CODE_TYPES = ['json'];
+    private const array ALLOWED_CODE_TYPES = ['json'];
 
     public function __construct(private string $contentPath, private readonly LoggerInterface $logger, private readonly RetrieveFileContents $retrieveFileContents)
     {
