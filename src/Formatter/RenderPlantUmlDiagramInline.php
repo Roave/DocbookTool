@@ -25,7 +25,7 @@ use function sprintf;
 final class RenderPlantUmlDiagramInline implements PageFormatter
 {
     /** Note: this is added by the `Dockerfile` build, it no longer exists in the repo itself */
-    private const PLANTUML_JAR = __DIR__ . '/../../bin/plantuml.jar';
+    private const string PLANTUML_JAR = __DIR__ . '/../../bin/plantuml.jar';
 
     public function __construct(private readonly LoggerInterface $logger)
     {

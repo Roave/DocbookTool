@@ -16,7 +16,7 @@ use function ucfirst;
 
 final class ReplaceGithubMarkdownAlerts implements PageFormatter
 {
-    private const ALERT_FLAVOURS = [
+    private const array ALERT_FLAVOURS = [
         'NOTE' => 'ℹ️',
         'TIP' => '💡',
         'IMPORTANT' => '⁉️',

@@ -17,7 +17,7 @@ use function unlink;
 #[CoversClass(MultiplePdfFilesWriter::class)]
 final class MultiplePdfFilesWriterTest extends TestCase
 {
-    private const OUTPUT_PDF_PATH = __DIR__;
+    private const string OUTPUT_PDF_PATH = __DIR__;
 
     public function testFileNotFoundInHtmlDoesNotCrashPdfGeneration(): void
     {

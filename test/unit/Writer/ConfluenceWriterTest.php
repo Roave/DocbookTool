@@ -32,13 +32,13 @@ use const JSON_THROW_ON_ERROR;
 final class ConfluenceWriterTest extends TestCase
 {
     // Indices for Guzzle transactions, as MockHandler only likes integer keys
-    private const GET_HASH            = 0;
-    private const GET_PAGE            = 1;
-    private const GET_ATTACHMENTS     = 2;
-    private const POST_ATTACHMENT_JPG = 3;
-    private const POST_ATTACHMENT_PNG = 4;
-    private const PUT_PAGE            = 5;
-    private const POST_PUT_HASH       = 6;
+    private const int GET_HASH            = 0;
+    private const int GET_PAGE            = 1;
+    private const int GET_ATTACHMENTS     = 2;
+    private const int POST_ATTACHMENT_JPG = 3;
+    private const int POST_ATTACHMENT_PNG = 4;
+    private const int PUT_PAGE            = 5;
+    private const int POST_PUT_HASH       = 6;
 
     private TestLogger $testLogger;
 

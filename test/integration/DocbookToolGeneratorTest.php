@@ -28,12 +28,12 @@ use function Psl\Filesystem\exists;
 
 final class DocbookToolGeneratorTest extends TestCase
 {
-    private const TEMPLATE_PATH                = __DIR__ . '/../fixture/templates';
-    private const OUTPUT_DOCBOOK_HTML          = __DIR__ . '/out.html';
-    private const EXPECTED_OUTPUT_DOCBOOK_HTML = __DIR__ . '/../fixture/expectations/out.html';
-    private const OUTPUT_PDF_PATH              = __DIR__;
-    private const FEATURES_PATH                = __DIR__ . '/../fixture/feature';
-    private const CONTENT_PATH                 = __DIR__ . '/../fixture/docbook';
+    private const string TEMPLATE_PATH                = __DIR__ . '/../fixture/templates';
+    private const string OUTPUT_DOCBOOK_HTML          = __DIR__ . '/out.html';
+    private const string EXPECTED_OUTPUT_DOCBOOK_HTML = __DIR__ . '/../fixture/expectations/out.html';
+    private const string OUTPUT_PDF_PATH              = __DIR__;
+    private const string FEATURES_PATH                = __DIR__ . '/../fixture/feature';
+    private const string CONTENT_PATH                 = __DIR__ . '/../fixture/docbook';
 
     public function testGeneration(): void
     {
