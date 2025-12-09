@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.6
 
 FROM composer:2.8.5 AS composer-base-image
-FROM node:24.8.0 AS npm-base-image
+FROM node:25.2.1 AS npm-base-image
 FROM ubuntu:22.04 AS ubuntu-base-image
 
 FROM npm-base-image AS npm-dependencies
