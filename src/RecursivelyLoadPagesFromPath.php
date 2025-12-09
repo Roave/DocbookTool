@@ -16,6 +16,7 @@ use function Psl\invariant;
 use function sprintf;
 use function str_replace;
 
+/** @final */
 class RecursivelyLoadPagesFromPath
 {
     public function __construct(private readonly LoggerInterface $logger)

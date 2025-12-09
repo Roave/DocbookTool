@@ -10,6 +10,7 @@ use function getenv;
 use function in_array;
 use function sprintf;
 
+/** @final */
 class Environment
 {
     /** @return non-empty-string */

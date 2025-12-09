@@ -15,6 +15,7 @@ use function sprintf;
 
 use const STDIN;
 
+/** @final */
 class InteractiveHttpBasicAuthTokenCreator
 {
     public static function isInteractiveTty(): bool

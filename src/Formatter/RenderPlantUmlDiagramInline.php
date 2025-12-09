@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Override;
 use Psl\Encoding;
 use Psl\Regex;
 use Psl\Shell\ErrorOutputBehavior;
@@ -32,6 +33,7 @@ final class RenderPlantUmlDiagramInline implements PageFormatter
     }
 
     /** @throws RuntimeException */
+    #[Override]
     public function __invoke(DocbookPage $page): DocbookPage
     {
         $this->logger->debug(sprintf('[%s] Checking if PlantUML diagrams can be rendered and inlined in %s', self::class, $page->slug()));

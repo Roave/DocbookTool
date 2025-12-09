@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\DocbookTool\Formatter;
 
 use InvalidArgumentException;
+use Override;
 use Psl\Regex;
 use Psl\Regex\Exception\ExceptionInterface;
 use Psl\Type;
@@ -27,6 +28,7 @@ final class ExtractFrontMatter implements PageFormatter
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      */
+    #[Override]
     public function __invoke(DocbookPage $page): DocbookPage
     {
         $this->logger->debug(sprintf('[%s] Checking page "%s" for YAML front matter', self::class, $page->slug()));

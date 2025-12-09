@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Override;
 use Psl\Regex;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
@@ -28,6 +29,7 @@ final class ReplaceGithubMarkdownAlerts implements PageFormatter
     {
     }
 
+    #[Override]
     public function __invoke(DocbookPage $page): DocbookPage
     {
         $this->logger->debug(sprintf('[%s] Making replacements for GFM alerts in %s', self::class, $page->slug()));

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\DocbookTool\Formatter;
 
 use Michelf\MarkdownExtra;
+use Override;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
 
@@ -26,6 +27,7 @@ final class MarkdownToHtml implements PageFormatter
         ini_set('pcre.backtrack_limit', 5_000_000);
     }
 
+    #[Override]
     public function __invoke(DocbookPage $page): DocbookPage
     {
         $this->logger->debug(sprintf('[%s] Converting MD to HTML in "%s"', self::class, $page->slug()));

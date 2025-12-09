@@ -10,6 +10,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Response;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
@@ -42,6 +43,7 @@ final class ConfluenceWriterTest extends TestCase
 
     private TestLogger $testLogger;
 
+    #[Override]
     public function setUp(): void
     {
         parent::setUp();

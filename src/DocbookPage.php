@@ -15,7 +15,10 @@ use function str_ends_with;
 use function str_starts_with;
 use function strip_tags;
 
-/** @psalm-immutable */
+/**
+ * @psalm-immutable
+ * @final
+ */
 class DocbookPage
 {
     private const int DEFAULT_ORDER = 100;

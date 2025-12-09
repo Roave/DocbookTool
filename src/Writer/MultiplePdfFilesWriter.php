@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Writer;
 
+use Override;
 use Psl\File\Exception\ExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
@@ -21,6 +22,7 @@ use function Psl\Filesystem\delete_file;
 use function sprintf;
 use function sys_get_temp_dir;
 
+/** @final */
 class MultiplePdfFilesWriter implements OutputWriter
 {
     public function __construct(
@@ -40,6 +42,7 @@ class MultiplePdfFilesWriter implements OutputWriter
      * @throws \Psl\Filesystem\Exception\ExceptionInterface
      * @throws TwigException
      */
+    #[Override]
     public function __invoke(array $docbookPages): void
     {
         foreach ($docbookPages as $page) {

@@ -10,6 +10,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use JsonException;
+use Override;
 use Psl\Encoding;
 use Psl\Json;
 use Psl\Type;
@@ -84,6 +85,7 @@ final class ConfluenceWriter implements OutputWriter
      * @throws GuzzleException
      * @throws JsonException
      */
+    #[Override]
     public function __invoke(array $docbookPages): void
     {
         /** @var array<string, int> $mapPathsToConfluencePageIds */
