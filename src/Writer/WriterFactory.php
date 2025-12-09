@@ -19,6 +19,7 @@ use function in_array;
 use function Psl\Filesystem\create_directory;
 use function sprintf;
 
+/** @final */
 class WriterFactory
 {
     public function __construct(private readonly Twig $twig, private readonly LoggerInterface $logger)

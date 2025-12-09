@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Override;
 use Psl\Regex;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
@@ -23,6 +24,7 @@ final class InlineCodeFromFile implements PageFormatter
     {
     }
 
+    #[Override]
     public function __invoke(DocbookPage $page): DocbookPage
     {
         $this->logger->debug(sprintf('[%s] Checking if source code files can be inlined in %s', self::class, $page->slug()));

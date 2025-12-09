@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Formatter;
 
+use Override;
 use Roave\DocbookTool\DocbookPage;
 
+/** @final */
 class AggregatePageFormatter implements PageFormatter
 {
     /**
@@ -16,6 +18,7 @@ class AggregatePageFormatter implements PageFormatter
     {
     }
 
+    #[Override]
     public function __invoke(DocbookPage $page): DocbookPage
     {
         foreach ($this->formatters as $formatter) {

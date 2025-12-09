@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Roave\DocbookTool;
 
 use CurlHandle;
+use Override;
 use Psl\Type;
 use RuntimeException;
 
@@ -33,6 +34,7 @@ final readonly class RetrieveLocalFileContents implements RetrieveFileContents
         curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
     }
 
+    #[Override]
     public function __invoke(string $filePath, string $workingDirectory): string
     {
         $fileUri = 'file://' . (string) canonicalize($workingDirectory) . '/' . $filePath;

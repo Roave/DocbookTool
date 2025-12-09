@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolIntegrationTest;
 
+use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Roave\DocbookTool\Formatter\AggregatePageFormatter;
@@ -71,6 +72,7 @@ final class DocbookToolGeneratorTest extends TestCase
         // @todo assert PDFs are the same - https://github.com/Roave/DocbookTool/issues/3
     }
 
+    #[Override]
     public function tearDown(): void
     {
         parent::tearDown();

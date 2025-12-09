@@ -6,6 +6,7 @@ namespace Roave\DocbookTool;
 
 use Roave\DocbookTool\Writer\OutputWriter;
 
+/** @final */
 class WriteAllTheOutputs
 {
     /** @param OutputWriter[] $writers */

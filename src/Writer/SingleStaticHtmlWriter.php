@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookTool\Writer;
 
+use Override;
 use Psl\File\Exception\ExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Roave\DocbookTool\DocbookPage;
@@ -28,6 +29,7 @@ final class SingleStaticHtmlWriter implements OutputWriter
      *
      * @throws ExceptionInterface
      */
+    #[Override]
     public function __invoke(array $docbookPages): void
     {
         $this->logger->info(sprintf('[%s] Writing HTML output to %s', self::class, $this->outputFile));

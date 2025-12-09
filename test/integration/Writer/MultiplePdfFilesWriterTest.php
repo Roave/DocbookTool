@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Roave\DocbookToolIntegrationTest\Writer;
 
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -68,6 +69,7 @@ HTML,
         self::assertFileExists(self::OUTPUT_PDF_PATH . '/slug.pdf');
     }
 
+    #[Override]
     public function tearDown(): void
     {
         parent::tearDown();

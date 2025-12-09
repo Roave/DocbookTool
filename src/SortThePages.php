@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use function sprintf;
 use function usort;
 
+/** @final */
 class SortThePages
 {
     public function __construct(private readonly LoggerInterface $logger)
