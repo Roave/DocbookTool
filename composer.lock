@@ -4150,12 +4150,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "8a08058dd09fdd6cc42f420f4cdbf0cac027c82b"
+                "reference": "ed005b7ebb25c82bb29af88d634357073f3b7a33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/8a08058dd09fdd6cc42f420f4cdbf0cac027c82b",
-                "reference": "8a08058dd09fdd6cc42f420f4cdbf0cac027c82b",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ed005b7ebb25c82bb29af88d634357073f3b7a33",
+                "reference": "ed005b7ebb25c82bb29af88d634357073f3b7a33",
                 "shasum": ""
             },
             "conflict": {
@@ -5060,7 +5060,7 @@
                 "wikibase/wikibase": "<=1.39.3",
                 "wikimedia/parsoid": "<0.12.2",
                 "willdurand/js-translation-bundle": "<2.1.1",
-                "winter/wn-backend-module": "<1.2.4",
+                "winter/wn-backend-module": "<1.2.12",
                 "winter/wn-cms-module": "<=1.2.9",
                 "winter/wn-dusk-plugin": "<2.1",
                 "winter/wn-system-module": "<1.2.4",
@@ -5172,7 +5172,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-11T22:08:36+00:00"
+            "time": "2026-03-12T14:21:15+00:00"
         },
         {
             "name": "sebastian/cli-parser",
