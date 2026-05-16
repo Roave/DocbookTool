@@ -4148,12 +4148,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "16706d82a6f250e56047a9e95791a92a8a29f791"
+                "reference": "80f4d3dbb1fc1ef5bb1eee68dbfb44060e1fb4e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/16706d82a6f250e56047a9e95791a92a8a29f791",
-                "reference": "16706d82a6f250e56047a9e95791a92a8a29f791",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/80f4d3dbb1fc1ef5bb1eee68dbfb44060e1fb4e8",
+                "reference": "80f4d3dbb1fc1ef5bb1eee68dbfb44060e1fb4e8",
                 "shasum": ""
             },
             "conflict": {
@@ -4274,7 +4274,7 @@
                 "clickstorm/cs-seo": ">=6,<6.8|>=7,<7.5|>=8,<8.4|>=9,<9.3",
                 "co-stack/fal_sftp": "<0.2.6",
                 "cockpit-hq/cockpit": "<2.14",
-                "code16/sharp": "<9.20",
+                "code16/sharp": "<9.22",
                 "codeception/codeception": "<3.1.3|>=4,<4.1.22",
                 "codeigniter/framework": "<3.1.10",
                 "codeigniter4/framework": "<4.6.2",
@@ -4898,6 +4898,7 @@
                 "simplesamlphp/saml2": "<=4.16.15|>=5.0.0.0-alpha1,<=5.0.0.0-alpha19",
                 "simplesamlphp/saml2-legacy": "<=4.16.15",
                 "simplesamlphp/simplesamlphp": "<1.18.6",
+                "simplesamlphp/simplesamlphp-module-casserver": "<=7.0.2",
                 "simplesamlphp/simplesamlphp-module-infocard": "<1.0.1",
                 "simplesamlphp/simplesamlphp-module-openid": "<1",
                 "simplesamlphp/simplesamlphp-module-openidprovider": "<0.9",
@@ -5206,7 +5207,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-14T13:38:25+00:00"
+            "time": "2026-05-15T18:36:41+00:00"
         },
         {
             "name": "sebastian/cli-parser",
