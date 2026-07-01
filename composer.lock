@@ -4234,12 +4234,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "36ba91e82e1b493faef2c13277d6bd2669ea9f31"
+                "reference": "9eb7881a3ed4824d580790ef7d52d9bf14dac23d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/36ba91e82e1b493faef2c13277d6bd2669ea9f31",
-                "reference": "36ba91e82e1b493faef2c13277d6bd2669ea9f31",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/9eb7881a3ed4824d580790ef7d52d9bf14dac23d",
+                "reference": "9eb7881a3ed4824d580790ef7d52d9bf14dac23d",
                 "shasum": ""
             },
             "conflict": {
@@ -4851,7 +4851,7 @@
                 "paragonie/random_compat": "<2",
                 "paragonie/sodium_compat": "<1.24|>=2,<2.5",
                 "passbolt/passbolt_api": "<4.6.2",
-                "paymenter/paymenter": "<1.5",
+                "paymenter/paymenter": "<=1.5.4",
                 "paypal/adaptivepayments-sdk-php": "<=3.9.2",
                 "paypal/invoice-sdk-php": "<=3.9",
                 "paypal/merchant-sdk-php": "<3.12",
@@ -5341,7 +5341,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-26T23:29:05+00:00"
+            "time": "2026-06-30T19:37:35+00:00"
         },
         {
             "name": "sebastian/cli-parser",
