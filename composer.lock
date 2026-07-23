@@ -4233,12 +4233,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "4991713e587e8b1f2fb7ce80475b4df68fe71be1"
+                "reference": "a149dec0fd68dfc62ce9c67b4db2542d80b4f605"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4991713e587e8b1f2fb7ce80475b4df68fe71be1",
-                "reference": "4991713e587e8b1f2fb7ce80475b4df68fe71be1",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a149dec0fd68dfc62ce9c67b4db2542d80b4f605",
+                "reference": "a149dec0fd68dfc62ce9c67b4db2542d80b4f605",
                 "shasum": ""
             },
             "conflict": {
@@ -4435,7 +4435,7 @@
                 "doctrine/mongodb-odm-bundle": "<3.0.1",
                 "doctrine/orm": ">=1,<1.2.4|>=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
                 "dolibarr/dolibarr": "<=23.0.2",
-                "dompdf/dompdf": "<2.0.4",
+                "dompdf/dompdf": "<3.1.6",
                 "doublethreedigital/guest-entries": "<3.1.2",
                 "dreamfactory/df-core": "<1.0.4",
                 "drupal-pattern-lab/unified-twig-extensions": "<=0.1",
@@ -5347,7 +5347,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-21T19:20:48+00:00"
+            "time": "2026-07-22T23:02:35+00:00"
         },
         {
             "name": "sebastian/cli-parser",
