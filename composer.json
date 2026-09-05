@@ -13,7 +13,7 @@
         "php": "~8.3.3",
         "ext-curl": "*",
         "ext-gd": "*",
-        "azjezz/psl": "^4.2.0",
+        "azjezz/psl": "^6.2.1",
         "guzzlehttp/guzzle": "^7.10.0",
         "guzzlehttp/psr7": "^2.8.0",
         "jasny/twig-extensions": "^1.3.1",
