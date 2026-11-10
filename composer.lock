@@ -4315,12 +4315,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "a09945ae024a4cb2be97d080558455b979e3f743"
+                "reference": "97142706570e7254bd5072e6d8cb9ae9f060cbf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a09945ae024a4cb2be97d080558455b979e3f743",
-                "reference": "a09945ae024a4cb2be97d080558455b979e3f743",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/97142706570e7254bd5072e6d8cb9ae9f060cbf2",
+                "reference": "97142706570e7254bd5072e6d8cb9ae9f060cbf2",
                 "shasum": ""
             },
             "conflict": {
@@ -4699,6 +4699,7 @@
                 "hillelcoren/invoice-ninja": "<5.3.35",
                 "himiklab/yii2-jqgrid-widget": "<1.0.8",
                 "hjue/justwriting": "<=1",
+                "hms5232/laravel-swagger": "<0.2.1",
                 "hov/jobfair": "<1.0.13|>=2,<2.0.2",
                 "httpsoft/http-message": "<1.0.12",
                 "hybridauth/hybridauth": "<=3.12.2",
@@ -5482,8 +5483,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-07T01:38:18+00:00",
-            "published-time": "2026-11-07T01:38:22+00:00"
+            "time": "2026-11-09T20:26:53+00:00",
+            "published-time": "2026-11-09T20:26:59+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -6366,16 +6367,16 @@
         },
         {
             "name": "sebastian/version",
-            "version": "6.0.1",
+            "version": "6.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/version.git",
-                "reference": "9e935a16187e14f39b0e79910dabd614972cdb26"
+                "reference": "a8b6643a19ba6c8125a473623e45fb8cbb0e4159"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/version/zipball/9e935a16187e14f39b0e79910dabd614972cdb26",
-                "reference": "9e935a16187e14f39b0e79910dabd614972cdb26",
+                "url": "https://api.github.com/repos/sebastianbergmann/version/zipball/a8b6643a19ba6c8125a473623e45fb8cbb0e4159",
+                "reference": "a8b6643a19ba6c8125a473623e45fb8cbb0e4159",
                 "shasum": ""
             },
             "require": {
@@ -6408,7 +6409,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/version/issues",
                 "security": "https://github.com/sebastianbergmann/version/security/policy",
-                "source": "https://github.com/sebastianbergmann/version/tree/6.0.1"
+                "source": "https://github.com/sebastianbergmann/version/tree/6.0.2"
             },
             "funding": [
                 {
@@ -6428,8 +6429,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-04T05:50:08+00:00",
-            "published-time": "2026-10-04T05:50:36+00:00"
+            "time": "2026-11-09T06:30:55+00:00",
+            "published-time": "2026-11-09T06:31:20+00:00"
         },
         {
             "name": "slevomat/coding-standard",
